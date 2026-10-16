@@ -24,24 +24,6 @@ export default function Navbar({
 
   return (
     <header className="w-full sticky top-0 z-50 bg-[#14100c]/95 backdrop-blur-md border-b border-[#c69429]/40 shadow-2xl">
-      {/* Top Air Mail Postal Ribbon */}
-      <div className="w-full bg-gradient-to-r from-[#15453b] via-[#b83a2e] to-[#1c4568] px-4 py-1 flex items-center justify-between text-[11px] text-[#fbf8f1] font-semibold tracking-wider select-none border-b border-[#c69429]/30">
-        <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#f6d16f] animate-ping" />
-          <span className="font-regal uppercase tracking-widest text-[10px] text-[#f6d16f]">
-            ★ AIR MAIL বিমান ডাক • DHAKA 2026 ISSUE ★
-          </span>
-        </div>
-        <div className="hidden sm:flex items-center gap-4 text-[10px] text-[#f5eedf]/90 font-mono">
-          <span>COORDINATES: 23.6850° N, 90.3563° E</span>
-          <span className="text-[#f6d16f]">THE LAND OF RIVERS & RICKSHAWS</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="px-2 py-0.2 rounded bg-black/30 border border-[#f6d16f]/40 text-[#f6d16f] font-mono text-[9px]">
-            POST 85 BDT
-          </span>
-        </div>
-      </div>
 
       {/* ================= DESKTOP HEADER (>768px) ================= */}
       <div className="hidden md:flex items-center justify-between px-6 py-3 max-w-7xl mx-auto">
