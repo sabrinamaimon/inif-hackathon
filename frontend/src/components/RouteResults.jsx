@@ -169,35 +169,50 @@ export default function RouteResults({
                       </p>
                     </div>
 
-                    {/* Resized & Responsive Metric Badges Bar (Never overflows or cuts off) */}
-                    <div className="w-full xl:w-auto flex items-center justify-around sm:justify-end gap-1.5 sm:gap-2.5 bg-[#f5eedf] px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl border-2 border-[#c69429]/40 shadow-inner shrink-0">
+                    {/* Resized & Responsive Metric Badges Bar */}
+                    <div className="w-full xl:w-auto flex items-center justify-around sm:justify-end gap-2 sm:gap-3 bg-[#f5eedf] px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-2xl border-2 border-[#c69429]/40 shadow-inner shrink-0">
                       {/* Total Duration */}
-                      <div className="px-2 sm:px-3 text-center border-r-2 border-[#c69429]/30 flex-1 sm:flex-initial">
-                        <div className="text-[10px] sm:text-[11px] font-anek font-bold text-[#7a6654] uppercase tracking-wide">
+                      <div className="px-2.5 sm:px-3.5 text-center border-r-2 border-[#c69429]/30 flex-1 sm:flex-initial">
+                        <div className="text-[11px] sm:text-xs font-anek font-bold text-[#7a6654] uppercase tracking-wider mb-0.5">
                           {t.durationLabel}
                         </div>
-                        <div className="text-lg sm:text-xl md:text-2xl font-mono font-black text-[#15453b] whitespace-nowrap">
-                          {formatDuration(route.total_duration_mins, lang)}
+                        <div className="flex items-baseline justify-center gap-1 text-[#15453b] whitespace-nowrap">
+                          <span className="font-anek text-2xl sm:text-3xl font-extrabold tracking-tight">
+                            {lang === 'bn' ? toBnDigits(route.total_duration_mins) : route.total_duration_mins}
+                          </span>
+                          <span className="font-anek text-xs sm:text-sm font-bold text-[#15453b]/80">
+                            {lang === 'bn' ? 'মিনিট' : 'mins'}
+                          </span>
                         </div>
                       </div>
 
                       {/* Regular Fare */}
-                      <div className="px-2 sm:px-3 text-center border-r-2 border-[#c69429]/30 flex-1 sm:flex-initial">
-                        <div className="text-[10px] sm:text-[11px] font-anek font-bold text-[#7a6654] uppercase tracking-wide">
+                      <div className="px-2.5 sm:px-3.5 text-center border-r-2 border-[#c69429]/30 flex-1 sm:flex-initial">
+                        <div className="text-[11px] sm:text-xs font-anek font-bold text-[#7a6654] uppercase tracking-wider mb-0.5">
                           {t.regularFare}
                         </div>
-                        <div className="text-lg sm:text-xl md:text-2xl font-mono font-black text-[#b83a2e] whitespace-nowrap">
-                          {formatFare(route.total_regular_fare, lang)}
+                        <div className="flex items-baseline justify-center gap-0.5 text-[#b83a2e] whitespace-nowrap">
+                          <span className="font-anek text-2xl sm:text-3xl font-extrabold tracking-tight">
+                            {lang === 'bn' ? toBnDigits(route.total_regular_fare) : route.total_regular_fare}
+                          </span>
+                          <span className="font-anek text-sm sm:text-base font-extrabold text-[#b83a2e] ml-0.5">
+                            {lang === 'bn' ? '৳' : 'BDT'}
+                          </span>
                         </div>
                       </div>
 
                       {/* Student Half-Pass Fare */}
-                      <div className="px-2 sm:px-3 text-center flex-1 sm:flex-initial">
-                        <div className="text-[10px] sm:text-[11px] font-anek font-bold text-[#0e6e41] flex items-center justify-center gap-1 whitespace-nowrap">
+                      <div className="px-2.5 sm:px-3.5 text-center flex-1 sm:flex-initial">
+                        <div className="text-[11px] sm:text-xs font-anek font-bold text-[#0e6e41] uppercase tracking-wider mb-0.5 flex items-center justify-center gap-1 whitespace-nowrap">
                           <span>🎓 {t.studentFare}</span>
                         </div>
-                        <div className="text-lg sm:text-xl md:text-2xl font-mono font-black text-[#0e6e41] whitespace-nowrap">
-                          {formatFare(route.total_student_fare, lang)}
+                        <div className="flex items-baseline justify-center gap-0.5 text-[#0e6e41] whitespace-nowrap">
+                          <span className="font-anek text-2xl sm:text-3xl font-extrabold tracking-tight">
+                            {lang === 'bn' ? toBnDigits(route.total_student_fare) : route.total_student_fare}
+                          </span>
+                          <span className="font-anek text-sm sm:text-base font-extrabold text-[#0e6e41] ml-0.5">
+                            {lang === 'bn' ? '৳' : 'BDT'}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -209,7 +224,7 @@ export default function RouteResults({
                       <span className="flex items-center gap-1.5">
                         <span>🎓 সরকারি শিক্ষার্থী ৫০% হাফ-পাস ছাড় প্রযোজ্য (বাসে সর্বনিম্ন ভাড়া ১০ ৳)।</span>
                       </span>
-                      <span className="text-sm font-mono font-black bg-[#0e6e41] text-white px-2.5 py-0.5 rounded-lg shadow-sm">
+                      <span className="text-sm font-anek font-extrabold bg-[#0e6e41] text-white px-2.5 py-0.5 rounded-lg shadow-sm">
                         সাশ্রয়: {formatFare(savingsAmount, lang)}
                       </span>
                     </div>
@@ -219,7 +234,7 @@ export default function RouteResults({
                   <div className="mt-5 space-y-3">
                     <div className="font-anek text-sm sm:text-base font-extrabold text-[#120e0b] border-b border-[#c69429]/20 pb-1.5 flex items-center gap-2">
                       <span className="text-[#b83a2e]">✦</span>
-                      <span>{lang === 'bn' ? 'যাত্রার প্রতিটি ধাপ ও ওঠার স্থান (বড় অক্ষরে বিস্তারিত):' : 'Step-by-Step Boarding & Landmark Instructions:'}</span>
+                      <span>{lang === 'bn' ? 'যাত্রার প্রতিটি ধাপ ও ওঠার স্থান (বোর্ডিং নির্দেশিকা):' : 'Step-by-Step Boarding & Landmark Instructions:'}</span>
                     </div>
 
                     <div className="space-y-3">
@@ -258,12 +273,12 @@ export default function RouteResults({
                             </div>
 
                             {/* Leg Metrics */}
-                            <div className="flex items-center gap-3 font-mono text-xs sm:text-sm font-bold text-[#120e0b] shrink-0 pl-11 md:pl-0">
-                              <span className="px-2.5 py-1 rounded-lg bg-[#f5eedf] border border-[#c69429]/40">
+                            <div className="flex items-center gap-2.5 font-anek text-xs sm:text-sm font-bold text-[#120e0b] shrink-0 pl-11 md:pl-0">
+                              <span className="px-2.5 py-1 rounded-lg bg-[#f5eedf] border border-[#c69429]/40 text-[#15453b]">
                                 ⏱ {formatDuration(leg.duration_mins, lang)}
                               </span>
                               <span className="px-2.5 py-1 rounded-lg bg-[#b83a2e]/10 text-[#b83a2e] border border-[#b83a2e]/30">
-                                ৳ {formatFare(leg.regular_fare_bdt, lang)}
+                                {formatFare(leg.regular_fare_bdt, lang)}
                               </span>
                               {leg.student_fare_bdt < leg.regular_fare_bdt && (
                                 <span className="px-2.5 py-1 rounded-lg bg-[#0e6e41]/10 text-[#0e6e41] border border-[#0e6e41]/30">
@@ -303,10 +318,10 @@ export default function RouteResults({
                         generateOfflineRouteCard({ route, origin, destination, lang });
                       }}
                       className="flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#15453b] to-[#0d342c] hover:from-[#1f5e51] hover:to-[#15453b] text-[#fbf8f1] font-anek font-bold text-sm border-2 border-[#2a6f62] active:scale-95 transition-all shadow-lg"
-                      title="Download large print postcard for offline commute"
+                      title="Download offline commute card"
                     >
                       <Download className="w-5 h-5 text-[#6ee7b7]" />
-                      <span>{lang === 'bn' ? '💾 বড় অক্ষরে অফলাইন কার্ড ডাউনলোড' : '💾 Save Offline Postcard'}</span>
+                      <span>{lang === 'bn' ? '💾 অফলাইন রুট কার্ড ডাউনলোড' : '💾 Save Offline Commute Card'}</span>
                     </button>
                   </div>
 

@@ -1,11 +1,39 @@
+import { formatFare, formatDuration, toBnDigits } from './localization';
+
 /**
- * Generates a high-resolution Vintage Bangladesh Commute Postcard (৮ আনা ডাকটিকিট শৈলী)
- * with extra large, high-contrast typography so older commuters can read it with ease.
+ * Generates a high-resolution, beautifully formatted Commute Pass Card
+ * with Vintage Postcard / Rickshaw Art aesthetic, high contrast, and perfectly balanced layout.
+ * Eliminates gimmicky text and focuses on essential commuter route information.
  * Uses native HTML5 Canvas - requires zero external dependencies.
  */
 
+// Helper to draw clean rounded rectangles on any canvas
+function drawRoundedRect(ctx, x, y, width, height, radius) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+}
+
+// Helper to truncate text that exceeds maxWidth with ellipsis
+function fitText(ctx, text, maxWidth) {
+  if (!text) return '';
+  if (ctx.measureText(text).width <= maxWidth) return text;
+  let truncated = text;
+  while (truncated.length > 0 && ctx.measureText(truncated + '…').width > maxWidth) {
+    truncated = truncated.slice(0, -1);
+  }
+  return truncated + '…';
+}
+
 export function generateOfflineRouteCard(arg1, arg2, arg3, arg4) {
-  // Support both object syntax: { route, origin, destination, lang } and positional syntax
   let route, origin, destination, lang;
   if (arg1 && arg1.route) {
     route = arg1.route;
@@ -21,166 +49,302 @@ export function generateOfflineRouteCard(arg1, arg2, arg3, arg4) {
 
   if (!route) return;
 
+  const isBn = lang === 'bn';
+
+  // 1. High-Resolution Canvas Dimensions (Width: 940px, Height: 650px)
   const canvas = document.createElement('canvas');
-  canvas.width = 850;
-  canvas.height = 580;
+  canvas.width = 940;
+  canvas.height = 650;
   const ctx = canvas.getContext('2d');
 
-  // 1. Vintage Aged Parchment Cream Background
-  ctx.fillStyle = '#f8f4eb';
-  ctx.fillRect(0, 0, 850, 580);
+  // 2. Vintage Cream Parchment Background
+  ctx.fillStyle = '#faf6ee';
+  ctx.fillRect(0, 0, 940, 650);
 
-  // 2. Air Mail Postal Serrated / Perforated Border
+  // 3. Vintage Double Borders (Gold + Crimson Dashed Postal Line)
   ctx.strokeStyle = '#c69429';
   ctx.lineWidth = 4;
-  ctx.strokeRect(16, 16, 818, 548);
+  ctx.strokeRect(16, 16, 908, 618);
 
   ctx.strokeStyle = '#b83a2e';
   ctx.lineWidth = 1.5;
   ctx.setLineDash([8, 6]);
-  ctx.strokeRect(24, 24, 802, 532);
+  ctx.strokeRect(24, 24, 892, 602);
   ctx.setLineDash([]); // Reset dash
 
-  // 3. Top Postal Header Banner
-  ctx.fillStyle = '#15453b';
-  ctx.fillRect(35, 35, 780, 50);
+  // 4. Clean Official Header Banner (Full Width: 868px)
+  const bannerX = 36;
+  const bannerY = 36;
+  const bannerW = 868;
+  const bannerH = 48;
 
+  ctx.fillStyle = '#15453b';
+  drawRoundedRect(ctx, bannerX, bannerY, bannerW, bannerH, 8);
+  ctx.fill();
+  ctx.strokeStyle = '#c69429';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Left Title: Official Commute Card Branding
   ctx.fillStyle = '#f6d16f';
-  ctx.font = 'bold 22px Georgia, serif';
-  ctx.fillText('BANGLADESH POSTCARD — DHAKAPATH COMMUTE CARD', 50, 68);
+  ctx.font = 'bold 20px "Anek Bangla", "Segoe UI", Georgia, serif';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(
+    isBn ? 'DHAKAPATH • ট্রানজিট রুট কার্ড' : 'DHAKAPATH • TRANSIT COMMUTE CARD',
+    bannerX + 18,
+    bannerY + bannerH / 2
+  );
+
+  // Right Badge: Smart City Verification Pass
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 13px "Anek Bangla", "Segoe UI", sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText(
+    isBn ? 'স্মার্ট সিটি ট্রানজিট নেটওয়ার্ক ২০২৬ • ভেরিফাইড পাস' : 'SMART CITY TRANSIT NETWORK 2026 • VERIFIED PASS',
+    bannerX + bannerW - 18,
+    bannerY + bannerH / 2
+  );
+
+  // 5. Center Focused Route Ledger (White High-Contrast Panel)
+  const panelX = 36;
+  const panelY = 96;
+  const panelW = 868;
+  const panelH = 466;
 
   ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 15px sans-serif';
-  ctx.fillText('৮ আনা ডাকটিকিট • লাইভ ট্রানজিট রুট', 600, 68);
+  drawRoundedRect(ctx, panelX, panelY, panelW, panelH, 12);
+  ctx.fill();
+  ctx.strokeStyle = '#c69429';
+  ctx.lineWidth = 2;
+  ctx.stroke();
 
-  // 4. Circular Postal Seal Stamp (Top Right)
+  // 6. Vintage Transit Rubber Stamp Seal (Top Right of Panel)
   ctx.save();
-  ctx.translate(720, 140);
-  ctx.rotate(-0.1);
-  ctx.strokeStyle = 'rgba(184, 58, 46, 0.75)';
-  ctx.lineWidth = 2.5;
+  ctx.translate(panelX + panelW - 85, panelY + 68);
+  ctx.rotate(-0.08); // Slight organic tilt
+  ctx.strokeStyle = 'rgba(184, 58, 46, 0.7)';
+  ctx.lineWidth = 2.2;
   ctx.beginPath();
   ctx.arc(0, 0, 42, 0, Math.PI * 2);
   ctx.stroke();
 
+  // Inner dotted ring
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath();
+  ctx.arc(0, 0, 36, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
   ctx.fillStyle = '#b83a2e';
-  ctx.font = 'bold 11px sans-serif';
+  ctx.font = 'bold 10px "Segoe UI", sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('DHAKA G.P.O.', 0, -18);
-  ctx.font = 'bold 14px Georgia, serif';
-  ctx.fillText('2026', 0, 2);
-  ctx.font = 'bold 10px sans-serif';
-  ctx.fillText('POSTAL TRANSIT', 0, 20);
+  ctx.fillText('DHAKAPATH', 0, -18);
+  ctx.font = 'bold 13px Georgia, serif';
+  ctx.fillText('★ 2026 ★', 0, 0);
+  ctx.font = 'bold 9px "Segoe UI", sans-serif';
+  ctx.fillText('COMMUTE PASS', 0, 16);
+  ctx.fillText('VERIFIED', 0, 27);
   ctx.restore();
 
-  // 5. Center Focused Route Ledger (White/Cream High Contrast Panel for Easy Reading)
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(45, 100, 640, 435);
-  ctx.strokeStyle = 'rgba(198, 148, 41, 0.4)';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(45, 100, 640, 435);
-
-  // 6. Huge Route Heading (Large for Older People to Read Easily!)
-  ctx.fillStyle = '#120e0b';
-  ctx.font = 'bold 28px Georgia, sans-serif';
+  // 7. Journey Route Header
+  const contentLeft = panelX + 24;
   ctx.textAlign = 'left';
-  ctx.fillText(`${origin}   ➔   ${destination}`, 65, 140);
+  ctx.textBaseline = 'alphabetic';
 
+  // Category Tag
   ctx.fillStyle = '#b83a2e';
-  ctx.font = 'bold 16px sans-serif';
-  ctx.fillText(lang === 'bn' ? route.title_bn : route.title, 65, 168);
+  ctx.font = 'bold 12px "Anek Bangla", "Segoe UI", sans-serif';
+  ctx.fillText(
+    isBn ? 'সরাসরি যাত্রাপথ করিডোর' : 'DIRECT TRANSIT CORRIDOR',
+    contentLeft,
+    panelY + 30
+  );
 
-  // Divider
+  // Route Title (Origin ➔ Destination)
+  ctx.fillStyle = '#120e0b';
+  ctx.font = 'bold 28px "Anek Bangla", "Segoe UI", Georgia, serif';
+  const corridorText = `${origin}   ➔   ${destination}`;
+  ctx.fillText(fitText(ctx, corridorText, panelW - 200), contentLeft, panelY + 64);
+
+  // Route Subtitle
+  ctx.fillStyle = '#7a6654';
+  ctx.font = 'bold 15px "Anek Bangla", "Segoe UI", sans-serif';
+  const subtitle = isBn ? (route.title_bn || route.title) : (route.title || route.title_bn);
+  ctx.fillText(fitText(ctx, subtitle, panelW - 200), contentLeft, panelY + 90);
+
+  // Hairline Divider
   ctx.strokeStyle = '#c69429';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(contentLeft, panelY + 104);
+  ctx.lineTo(panelX + panelW - 24, panelY + 104);
+  ctx.stroke();
+
+  // 8. Key Metrics Bar (Fare & Duration Slip)
+  const metricBoxX = contentLeft;
+  const metricBoxY = panelY + 116;
+  const metricBoxW = panelW - 48;
+  const metricBoxH = 68;
+
+  ctx.fillStyle = '#f5eedf';
+  drawRoundedRect(ctx, metricBoxX, metricBoxY, metricBoxW, metricBoxH, 10);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(198, 148, 41, 0.45)';
   ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.moveTo(65, 185);
-  ctx.lineTo(665, 185);
   ctx.stroke();
 
-  // 7. Key Metrics in Extra Large Font
-  // Duration
-  ctx.fillStyle = '#15453b';
-  ctx.font = 'bold 15px sans-serif';
-  ctx.fillText(lang === 'bn' ? 'মোট সময়:' : 'Total Duration:', 65, 215);
-  ctx.font = 'bold 24px monospace';
-  ctx.fillStyle = '#120e0b';
-  ctx.fillText(`${route.total_duration_mins} mins`, 65, 245);
+  const colW = metricBoxW / 3;
 
-  // Regular Fare
+  // Metric 1: Total Duration
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#7a6654';
+  ctx.font = 'bold 11px "Anek Bangla", "Segoe UI", sans-serif';
+  ctx.fillText(isBn ? 'মোট আনুমানিক সময়' : 'TOTAL DURATION', metricBoxX + colW * 0.5, metricBoxY + 24);
   ctx.fillStyle = '#15453b';
-  ctx.font = 'bold 15px sans-serif';
-  ctx.fillText(lang === 'bn' ? 'সাধারণ ভাড়া:' : 'Regular Fare:', 240, 215);
-  ctx.font = 'bold 26px monospace';
+  ctx.font = 'bold 24px "Anek Bangla", monospace';
+  ctx.fillText(formatDuration(route.total_duration_mins, lang), metricBoxX + colW * 0.5, metricBoxY + 54);
+
+  // Divider 1
+  ctx.strokeStyle = 'rgba(198, 148, 41, 0.35)';
+  ctx.beginPath();
+  ctx.moveTo(metricBoxX + colW, metricBoxY + 10);
+  ctx.lineTo(metricBoxX + colW, metricBoxY + metricBoxH - 10);
+  ctx.stroke();
+
+  // Metric 2: Regular Fare
+  ctx.fillStyle = '#7a6654';
+  ctx.font = 'bold 11px "Anek Bangla", "Segoe UI", sans-serif';
+  ctx.fillText(isBn ? 'সাধারণ ভাড়া' : 'REGULAR FARE', metricBoxX + colW * 1.5, metricBoxY + 24);
   ctx.fillStyle = '#b83a2e';
-  ctx.fillText(`${route.total_regular_fare} ৳`, 240, 245);
+  ctx.font = 'bold 24px "Anek Bangla", monospace';
+  ctx.fillText(formatFare(route.total_regular_fare, lang), metricBoxX + colW * 1.5, metricBoxY + 54);
 
-  // Student Half-Pass Fare
-  ctx.fillStyle = '#15453b';
-  ctx.font = 'bold 15px sans-serif';
-  ctx.fillText(lang === 'bn' ? 'শিক্ষার্থী হাফ-পাস:' : 'Student Half-Pass:', 430, 215);
-  ctx.font = 'bold 26px monospace';
-  ctx.fillStyle = '#0e6e41';
-  ctx.fillText(`${route.total_student_fare} ৳`, 430, 245);
-
-  // Divider
-  ctx.strokeStyle = '#e2d5bd';
-  ctx.lineWidth = 1;
+  // Divider 2
   ctx.beginPath();
-  ctx.moveTo(65, 265);
-  ctx.lineTo(665, 265);
+  ctx.moveTo(metricBoxX + colW * 2, metricBoxY + 10);
+  ctx.lineTo(metricBoxX + colW * 2, metricBoxY + metricBoxH - 10);
   ctx.stroke();
 
-  // 8. Step-by-Step Large Print Instructions
-  ctx.fillStyle = '#120e0b';
-  ctx.font = 'bold 16px Georgia, sans-serif';
-  ctx.fillText(lang === 'bn' ? 'যাত্রার ধাপ ও ওঠার স্থান (বড় অক্ষরে নির্দেশিকা):' : 'Step-by-Step Instructions & Boarding Landmarks:', 65, 295);
+  // Metric 3: Student Fare
+  ctx.fillStyle = '#0e6e41';
+  ctx.font = 'bold 11px "Anek Bangla", "Segoe UI", sans-serif';
+  ctx.fillText(isBn ? '🎓 শিক্ষার্থী হাফ-পাস' : '🎓 STUDENT HALF-PASS', metricBoxX + colW * 2.5, metricBoxY + 24);
+  ctx.fillStyle = '#0e6e41';
+  ctx.font = 'bold 24px "Anek Bangla", monospace';
+  ctx.fillText(formatFare(route.total_student_fare, lang), metricBoxX + colW * 2.5, metricBoxY + 54);
 
-  let yOffset = 330;
-  route.legs.forEach((leg, idx) => {
-    if (idx >= 3) return; // Top legs
-    // Step Number Badge
+  // 9. Step-by-Step Leg Instructions
+  const stepsStartY = metricBoxY + metricBoxH + 26;
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#120e0b';
+  ctx.font = 'bold 15px "Anek Bangla", "Segoe UI", Georgia, serif';
+  ctx.fillText(
+    isBn ? 'যাত্রাপথের ধাপ ও বাহন নির্দেশিকা:' : 'Step-by-Step Transit Instructions & Boarding:',
+    contentLeft,
+    stepsStartY
+  );
+
+  let currentY = stepsStartY + 24;
+  const maxLegs = Math.min(route.legs.length, 3);
+
+  route.legs.slice(0, maxLegs).forEach((leg, idx) => {
+    // Numbered Badge Circle
     ctx.fillStyle = '#b83a2e';
     ctx.beginPath();
-    ctx.arc(78, yOffset - 6, 12, 0, Math.PI * 2);
+    ctx.arc(contentLeft + 12, currentY + 10, 12, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 13px sans-serif';
+    ctx.font = 'bold 13px "Segoe UI", sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`${idx + 1}`, 78, yOffset - 2);
+    ctx.textBaseline = 'middle';
+    ctx.fillText(`${idx + 1}`, contentLeft + 12, currentY + 10);
 
+    // Leg Line Title & Route
     ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
     ctx.fillStyle = '#120e0b';
-    ctx.font = 'bold 17px sans-serif';
+    ctx.font = 'bold 16px "Anek Bangla", "Segoe UI", sans-serif';
+
+    const modeTag = leg.mode ? `[${leg.mode.toUpperCase()}] ` : '';
+    const legTitle = `${modeTag}${leg.line_name} (${leg.from_hub} ➔ ${leg.to_hub})`;
+    ctx.fillText(fitText(ctx, legTitle, 530), contentLeft + 32, currentY + 7);
+
+    // Leg Right-Aligned Quick Metrics
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#15453b';
+    ctx.font = 'bold 13px "Anek Bangla", "Segoe UI", monospace';
+    const legDurationText = formatDuration(leg.duration_mins, lang);
+    const legFareText = formatFare(leg.regular_fare_bdt, lang);
+    const legStudentText = formatFare(leg.student_fare_bdt, lang);
     ctx.fillText(
-      `[${leg.mode.toUpperCase()}] ${leg.line_name} (${leg.from_hub} ➔ ${leg.to_hub})`,
-      100,
-      yOffset - 5
+      `⏱ ${legDurationText}  •  ভাড়া: ${legFareText} (হাফ: ${legStudentText})`,
+      panelX + panelW - 24,
+      currentY + 7
     );
 
-    ctx.fillStyle = '#3d3026';
-    ctx.font = 'bold 14px sans-serif';
-    ctx.fillText(
-      `বোর্ডিং স্থান: ${leg.landmark_instructions} | সময়: ${leg.duration_mins} মিনিট | ভাড়া: ${leg.regular_fare_bdt} ৳ (হাফ-পাস: ${leg.student_fare_bdt} ৳)`,
-      100,
-      yOffset + 18
-    );
+    // Landmark & Boarding Instruction
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#59473a';
+    ctx.font = '13px "Anek Bangla", "Segoe UI", sans-serif';
+    const landmarkPrefix = isBn ? 'বোর্ডিং নির্দেশিকা: ' : 'Boarding Landmark: ';
+    const landmarkFull = `${landmarkPrefix}${leg.landmark_instructions || 'নির্ধারিত কাউন্টার বা স্টপেজ থেকে উঠুন।'}`;
+    ctx.fillText(fitText(ctx, landmarkFull, panelW - 70), contentLeft + 32, currentY + 28);
 
-    yOffset += 55;
+    // Subtle divider between legs
+    if (idx < maxLegs - 1) {
+      ctx.strokeStyle = '#e8dec9';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(contentLeft + 32, currentY + 38);
+      ctx.lineTo(panelX + panelW - 24, currentY + 38);
+      ctx.stroke();
+    }
+
+    currentY += 46;
   });
 
-  // Emergency Footer Bar
-  ctx.fillStyle = '#1c1511';
-  ctx.fillRect(45, 485, 640, 40);
+  // 10. Emergency Helpline Footer Bar (Span Across Full Width)
+  const footerX = panelX;
+  const footerY = 574;
+  const footerW = panelW;
+  const footerH = 40;
+
+  ctx.fillStyle = '#18130f';
+  drawRoundedRect(ctx, footerX, footerY, footerW, footerH, 8);
+  ctx.fill();
 
   ctx.fillStyle = '#f6d16f';
-  ctx.font = 'bold 13px sans-serif';
-  ctx.fillText('জরুরি ট্রাফিক কন্ট্রোল: 01713398500  |  জাতীয় জরুরি সেবা: 999  |  মেট্রোরেল হেল্পলাইন: 16111', 65, 510);
+  ctx.font = 'bold 12.5px "Anek Bangla", "Segoe UI", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(
+    isBn 
+      ? 'জরুরি সহায়তা: ট্রাফিক কন্ট্রোল ০১৭১৩-৩৯৮৫০০  |  জাতীয় জরুরি সেবা ৯৯৯  |  মেট্রোরেল হেল্পলাইন ১৬১১১'
+      : 'Emergency Contacts: Traffic Control 01713398500  |  National Service 999  |  Metro Helpline 16111',
+    footerX + footerW / 2,
+    footerY + footerH / 2
+  );
 
-  // Trigger download
+  // 11. Subtle Bottom Credit
+  ctx.fillStyle = '#8c7762';
+  ctx.font = '11px "Anek Bangla", "Segoe UI", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText(
+    isBn 
+      ? 'DhakaPath Urban Mobility Intelligence • অফলাইনে সহজে পড়ার জন্য ডিজিটাল ট্রানজিট কার্ড'
+      : 'DhakaPath Urban Mobility Intelligence • Digital Transit Commute Pass for Offline Use',
+    940 / 2,
+    642
+  );
+
+  // 12. Trigger Instant Download as PNG
+  const safeOrigin = (origin || 'origin').replace(/\s+/g, '-');
+  const safeDest = (destination || 'destination').replace(/\s+/g, '-');
   const link = document.createElement('a');
-  link.download = `dhakapath-postcard-${origin}-to-${destination}.png`;
+  link.download = `dhakapath-commute-pass-${safeOrigin}-to-${safeDest}.png`;
   link.href = canvas.toDataURL('image/png');
   link.click();
 }
