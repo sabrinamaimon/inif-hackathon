@@ -474,7 +474,7 @@ export default function RouteResults({
 
                 {/* Bottom Large Action Buttons for Easy Accessibility */}
                 <div className="pt-2 flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-3">
                     {/* Big Audio Readout Button (Very helpful for older people!) */}
                     <button
                       type="button"
@@ -482,11 +482,30 @@ export default function RouteResults({
                         e.stopPropagation();
                         handleAudioBriefing(route);
                       }}
-                      className="flex items-center gap-2 px-4 sm:px-5 py-3 rounded-xl bg-gradient-to-r from-[#292019] to-[#3d3026] hover:from-[#3d3026] hover:to-[#59473a] text-[#f6d16f] font-anek font-bold text-sm sm:text-base border-2 border-[#c69429] active:scale-95 transition-all shadow-lg"
+                      className="flex items-center gap-2 px-4 sm:px-5 py-3 rounded-xl bg-gradient-to-r from-[#292019] to-[#3d3026] hover:from-[#3d3026] hover:to-[#59473a] text-[#f6d16f] font-anek font-bold text-sm sm:text-base border-2 border-[#c69429] active:scale-95 transition-all shadow-lg cursor-pointer"
                       title="Audio voice readout of itinerary"
                     >
                       <Volume2 className="w-5 h-5 text-[#f6d16f]" />
                       <span>{lang === 'bn' ? '🔊 পড়ে শোনান (অডিও ব্রিফিং)' : '🔊 Read Aloud (Audio)'}</span>
+                    </button>
+
+                    {/* Download Commute Card Button for this Route */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        generateOfflineRouteCard({
+                          route,
+                          origin: origin || 'Mirpur 10',
+                          destination: destination || 'Motijheel',
+                          lang
+                        });
+                      }}
+                      className="flex items-center gap-2 px-4 sm:px-5 py-3 rounded-xl bg-gradient-to-r from-[#15453b] to-[#0e3b32] hover:from-[#1b5e50] hover:to-[#15453b] text-[#fbf8f1] font-anek font-bold text-sm sm:text-base border-2 border-[#2a6f62] active:scale-95 transition-all shadow-lg cursor-pointer group"
+                      title={lang === 'bn' ? 'এই রুটের অফলাইন পোস্টকার্ড বা কমিউট কার্ড ডাউনলোড করুন' : 'Download Commute Pass Card for this route'}
+                    >
+                      <Download className="w-5 h-5 text-[#6ee7b7] group-hover:scale-110 transition-transform" />
+                      <span>{lang === 'bn' ? '📥 কমিউট কার্ড ডাউনলোড' : '📥 Download Commute Card'}</span>
                     </button>
                   </div>
 
@@ -497,7 +516,7 @@ export default function RouteResults({
                       e.stopPropagation();
                       onOpenFareBreakdown && onOpenFareBreakdown(route);
                     }}
-                    className="flex items-center gap-2 px-4 sm:px-5 py-3 rounded-xl bg-gradient-to-r from-[#b83a2e] to-[#891e17] hover:from-[#d6645a] hover:to-[#b83a2e] text-[#fbf8f1] font-anek font-bold text-sm sm:text-base border-2 border-[#f6d16f] active:scale-95 transition-all shadow-lg ml-auto"
+                    className="flex items-center gap-2 px-4 sm:px-5 py-3 rounded-xl bg-gradient-to-r from-[#b83a2e] to-[#891e17] hover:from-[#d6645a] hover:to-[#b83a2e] text-[#fbf8f1] font-anek font-bold text-sm sm:text-base border-2 border-[#f6d16f] active:scale-95 transition-all shadow-lg ml-auto cursor-pointer"
                   >
                     <HelpCircle className="w-4 h-4 text-[#f6d16f]" />
                     <span>{t.viewFareBreakdown}</span>

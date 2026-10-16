@@ -43,8 +43,8 @@ export const I18N = {
 
     // Search
     searchTitle: "Plan Multi-Modal Journey",
-    originLabel: "From (Origin Hub)",
-    destLabel: "To (Destination Hub)",
+    originLabel: "From",
+    destLabel: "To",
     passengerType: "Passenger Category",
     generalCommuter: "General Commuter",
     studentPass: "Student (50% Half-Pass)",
@@ -98,7 +98,7 @@ export const I18N = {
     audioPrompt: "Listen to audio response"
   },
   bn: {
-    brandName: "ঢাকা-পাথ",
+    brandName: "ঢাকার পথ",
     tagline: "লাইভ আরবান ট্রানজিট ও রুট ইন্টেলিজেন্স",
     cityStatus: "১৪টি প্রধান হাব সংযুক্ত",
     liveCityStatus: "ঢাকা লাইভ গ্রিড: স্বাভাবিক চলাচল",
@@ -120,8 +120,8 @@ export const I18N = {
 
     // Search
     searchTitle: "স্মার্ট মাল্টি-মোডাল ভ্রমণ পরিকল্পনা",
-    originLabel: "যাত্রা শুরু (হাব)",
-    destLabel: "গন্তব্য (হাব)",
+    originLabel: "শুরু",
+    destLabel: "শেষ",
     passengerType: "যাত্রীর ধরন",
     generalCommuter: "সাধারণ যাত্রী",
     studentPass: "শিক্ষার্থী (৫০% হাফ-পাস)",

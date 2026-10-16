@@ -47,10 +47,14 @@ export default function MobileDrawer({
           {/* Header */}
           <div className="flex items-center justify-between pb-4 border-b border-[#c69429]/30">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#b83a2e] to-[#891e17] border border-[#f6d16f] flex items-center justify-center font-bold text-lg shadow-md">
-                🛺
+              <div className="w-10 h-10 rounded-xl overflow-hidden border border-[#f6d16f] shadow-md shrink-0">
+                <img 
+                  src="/assets/dhakar_poth_logo.jpg" 
+                  alt={t.brandName} 
+                  className="w-full h-full object-cover object-center"
+                />
               </div>
-              <span className="font-rickshaw text-lg font-bold text-[#f6d16f] rickshaw-text-pop">{t.brandName}</span>
+              <span className="font-rickshaw text-2xl font-bold rickshaw-brand-typography">{t.brandName}</span>
             </div>
             <button 
               onClick={onClose}

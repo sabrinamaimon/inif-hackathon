@@ -27,11 +27,18 @@ export default function Home() {
   const [currentTab, setCurrentTab] = useState('home');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  // Synchronize light/dark theme class on document body
+  // Synchronize light/dark theme class on document body & root html
   useEffect(() => {
     if (typeof document !== 'undefined') {
-      document.body.classList.remove('light-theme', 'dark-theme');
-      document.body.classList.add(theme === 'light' ? 'light-theme' : 'dark-theme');
+      document.body.classList.remove('light-theme', 'dark-theme', 'dark', 'light');
+      document.documentElement.classList.remove('dark', 'light');
+      if (theme === 'dark') {
+        document.body.classList.add('dark-theme', 'dark');
+        document.documentElement.classList.add('dark');
+      } else {
+        document.body.classList.add('light-theme', 'light');
+        document.documentElement.classList.remove('dark');
+      }
     }
   }, [theme]);
 

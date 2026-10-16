@@ -197,24 +197,19 @@ export default function RouteSearch({
               <span>{t.originLabel}</span>
             </label>
 
-            {/* Quick GPS Location Detect Button */}
+            {/* Quick GPS Location Detect Button (Icon Only) */}
             <button
               type="button"
               onClick={handleDetectCurrentLocation}
               disabled={isLocating}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#241a14] hover:bg-[#342419] text-[#6ee7b7] border border-[#10b981]/40 hover:border-[#10b981] text-xs font-anek font-bold transition-all shadow-sm active:scale-95"
-              title={lang === 'bn' ? 'বর্তমান জিপিএস অবস্থান অনুযায়ী নিকটস্থ স্টেশন নির্বাচন করুন' : 'Auto-detect closest station from GPS'}
+              className="inline-flex items-center justify-center p-1.5 rounded-lg bg-[#241a14] hover:bg-[#342419] text-[#38bdf8] border border-[#10b981]/40 hover:border-[#10b981] transition-all shadow-sm active:scale-95 cursor-pointer"
+              title={lang === 'bn' ? 'জিপিএস দিয়ে বর্তমান নিকটস্থ স্টেশন শনাক্ত করুন' : 'Auto-detect closest station from GPS'}
+              aria-label="Detect current location"
             >
               {isLocating ? (
-                <>
-                  <Loader2 className="w-3 h-3 animate-spin text-[#6ee7b7]" />
-                  <span>{lang === 'bn' ? 'শনাক্ত হচ্ছে...' : 'Locating...'}</span>
-                </>
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-[#6ee7b7]" />
               ) : (
-                <>
-                  <Navigation className="w-3 h-3 text-[#38bdf8]" />
-                  <span>{lang === 'bn' ? '📍 বর্তমান অবস্থান' : '📍 My Location'}</span>
-                </>
+                <Navigation className="w-3.5 h-3.5 text-[#38bdf8]" />
               )}
             </button>
           </div>

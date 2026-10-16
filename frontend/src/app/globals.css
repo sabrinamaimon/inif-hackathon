@@ -723,6 +723,24 @@ body.light-theme .transit-leguna-badge * {
   color: #7f1d1d !important;
 }
 
-
-
-
+/* ==========================================================================
+   RICKSHAW PAINT CALLIGRAPHY TYPOGRAPHY (AUTHENTIC DHAKA HERITAGE ART)
+   ========================================================================== */
+.rickshaw-brand-typography,
+body.light-theme .rickshaw-brand-typography,
+body.dark-theme .rickshaw-brand-typography {
+  background: linear-gradient(180deg, #fff375 0%, #ffb300 32%, #f43f5e 72%, #be123c 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  filter: drop-shadow(1.5px 2px 0px #7f1d1d) drop-shadow(3px 4px 0px #3c0606) drop-shadow(0 0 14px rgba(251, 191, 36, 0.45)) !important;
+  display: inline-block;
+  font-family: var(--font-rickshaw);
+  padding-top: 0.22em !important;
+  padding-bottom: 0.18em !important;
+  padding-left: 0.04em !important;
+  padding-right: 0.12em !important;
+  line-height: 1.35 !important;
+  vertical-align: middle;
+}

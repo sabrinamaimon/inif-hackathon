@@ -18,40 +18,71 @@ export default function Navbar({
   const t = I18N[lang] || I18N.bn;
 
   const navLinks = [
-    { id: 'home', label: lang === 'bn' ? 'রুট প্ল্যানার' : 'Route Planner', icon: Navigation },
-    { id: 'alerts', label: lang === 'bn' ? 'সড়ক বিঘ্ন' : 'Street Alerts', icon: AlertTriangle, badge: activeAlertCount },
-    { id: 'simulator', label: lang === 'bn' ? 'ম্যাপ ও সিমুলেটর' : 'Map & Simulator', icon: Map },
-    { id: 'cms', label: lang === 'bn' ? 'ডিরেক্টরি' : 'Directory', icon: Bus },
-    { id: 'rideshare', label: lang === 'bn' ? 'রাইড শেয়ার' : 'Ride Share', icon: Users },
+    { 
+      id: 'home', 
+      label: lang === 'bn' ? 'রুট প্ল্যানার' : 'Route Planner', 
+      shortLabel: lang === 'bn' ? 'প্ল্যানার' : 'Planner', 
+      icon: Navigation 
+    },
+    { 
+      id: 'alerts', 
+      label: lang === 'bn' ? 'সড়ক বিঘ্ন' : 'Street Alerts', 
+      shortLabel: lang === 'bn' ? 'বিঘ্ন' : 'Alerts', 
+      icon: AlertTriangle, 
+      badge: activeAlertCount 
+    },
+    { 
+      id: 'simulator', 
+      label: lang === 'bn' ? 'ম্যাপ ও সিমুলেটর' : 'Map & Simulator', 
+      shortLabel: lang === 'bn' ? 'সিমুলেটর' : 'Simulator', 
+      icon: Map 
+    },
+    { 
+      id: 'cms', 
+      label: lang === 'bn' ? 'ডিরেক্টরি' : 'Directory', 
+      shortLabel: lang === 'bn' ? 'ডিরেক্টরি' : 'Directory', 
+      icon: Bus 
+    },
+    { 
+      id: 'rideshare', 
+      label: lang === 'bn' ? 'রাইড শেয়ার' : 'Ride Share', 
+      shortLabel: lang === 'bn' ? 'রাইড' : 'Rides', 
+      icon: Users 
+    },
   ];
 
   return (
     <header className="w-full sticky top-0 z-50 bg-[#16110d]/95 backdrop-blur-md border-b border-[#c69429]/40 shadow-xl overflow-x-hidden">
       {/* ================= DESKTOP HEADER (>=1024px) ================= */}
-      <div className="hidden lg:flex items-center justify-between gap-3 px-3 sm:px-5 lg:px-6 xl:px-8 py-2.5 w-full max-w-[1920px] mx-auto">
-        {/* Clean, High-End Brand Logo - Enlarged & Impactful */}
+      <div className="hidden lg:flex items-center justify-between gap-2 xl:gap-3 px-2 sm:px-4 lg:px-4 xl:px-6 2xl:px-8 py-2.5 w-full max-w-[1920px] mx-auto">
+        {/* Authentic Rickshaw Art Brand Logo */}
         <div 
-          className="flex items-center gap-2.5 cursor-pointer select-none group shrink-0"
+          className="flex items-center gap-2 xl:gap-2.5 cursor-pointer select-none group shrink-0"
           onClick={() => setCurrentTab('home')}
         >
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-[#b83a2e] to-[#e2b448] p-0.5 shadow-md group-hover:scale-105 transition-transform">
-            <div className="w-full h-full rounded-[10px] bg-[#1a1410] flex items-center justify-center border border-[#f6d16f]/60">
-              <span className="text-2xl">🛺</span>
+          {/* Rickshaw Art Painted Plate Icon */}
+          <div className="w-10 h-10 xl:w-11 xl:h-11 rounded-xl bg-gradient-to-tr from-[#b83a2e] via-[#e2b448] to-[#15453b] p-0.5 shadow-lg group-hover:scale-105 transition-all duration-300 shrink-0">
+            <div className="w-full h-full rounded-[10px] overflow-hidden bg-[#1a1410] border border-[#f6d16f]/80 flex items-center justify-center">
+              <img 
+                src="/assets/dhakar_poth_logo.jpg" 
+                alt={lang === 'bn' ? 'ঢাকার পথ' : 'DhakaPath'} 
+                className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-300"
+              />
             </div>
           </div>
 
-          <div className="flex items-baseline gap-2">
-            <span className="font-rickshaw text-3xl text-[#f6d16f] rickshaw-text-pop tracking-normal">
-              {lang === 'bn' ? 'ঢাকা-পাথ' : 'DhakaPath'}
+          <div className="flex items-center gap-1.5 xl:gap-2">
+            <span className="font-rickshaw text-3xl sm:text-[34px] xl:text-[38px] rickshaw-brand-typography tracking-normal whitespace-nowrap">
+              {lang === 'bn' ? 'ঢাকার পথ' : 'DhakaPath'}
             </span>
-            <span className="font-regal text-sm text-[#dfcfb2] tracking-[0.22em] font-extrabold uppercase">
+            <span className="hidden 2xl:inline font-regal text-xs text-[#dfcfb2] tracking-[0.22em] font-extrabold uppercase">
               TRANSIT
             </span>
           </div>
         </div>
 
         {/* Clean, Compact Navigation Tabs */}
-        <nav className="flex items-center gap-1 bg-[#1e1712]/90 p-1 rounded-xl border border-[#c69429]/30 shadow-inner shrink">
+        <nav className="flex items-center gap-0.5 xl:gap-1 bg-[#1e1712]/90 p-1 rounded-xl border border-[#c69429]/30 shadow-inner shrink-0">
           {navLinks.map((tab) => {
             const Icon = tab.icon;
             const isActive = currentTab === tab.id;
@@ -59,16 +90,17 @@ export default function Navbar({
               <button
                 key={tab.id}
                 onClick={() => setCurrentTab(tab.id)}
-                className={`flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 rounded-lg text-xs lg:text-[13px] font-anek font-bold transition-all duration-200 relative whitespace-nowrap ${
+                className={`flex items-center gap-1 xl:gap-1.5 px-2 xl:px-3 py-1.5 rounded-lg text-xs xl:text-[13px] font-anek font-bold transition-all duration-200 relative whitespace-nowrap ${
                   isActive 
                     ? 'bg-gradient-to-r from-[#b83a2e] to-[#96281e] text-[#fbf8f1] border border-[#f6d16f] shadow-md' 
                     : 'text-[#dfcfb2] hover:text-[#fbf8f1] hover:bg-[#2a2019]'
                 }`}
               >
                 <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[#f6d16f]' : 'text-[#c69429]'}`} />
-                <span>{tab.label}</span>
+                <span className="hidden xl:inline">{tab.label}</span>
+                <span className="inline xl:hidden">{tab.shortLabel || tab.label}</span>
                 {tab.badge !== undefined && tab.badge > 0 && (
-                  <span className="ml-1 px-1.5 py-0.2 text-[10px] font-black rounded-full bg-[#f6d16f] text-[#14100c]">
+                  <span className="ml-0.5 xl:ml-1 px-1.5 py-0.2 text-[10px] font-black rounded-full bg-[#f6d16f] text-[#14100c]">
                     {lang === 'bn' ? toBnDigits(tab.badge) : tab.badge}
                   </span>
                 )}
@@ -78,63 +110,57 @@ export default function Navbar({
         </nav>
 
         {/* Right Action Controls: Postcard Download + Shapla Badge + Theme Toggle + Language Switcher (shrink-0 to prevent clipping) */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          {/* Commute Card Download Button (only on very wide screens to prevent overflow) */}
+        <div className="flex items-center gap-1.5 xl:gap-2 shrink-0">
+          {/* Commute Card Download Button (Responsive: icon on lg, full label on xl+) */}
           {onDownloadPostcard && (
             <button
               onClick={onDownloadPostcard}
-              className="hidden 2xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-[#15453b] to-[#0e3b32] hover:from-[#1b5e50] hover:to-[#15453b] text-[#fbf8f1] text-xs font-anek font-bold border-2 border-[#2a6f62] transition-all active:scale-95 shadow-md group cursor-pointer shrink-0"
+              className="flex items-center gap-1.5 px-2.5 xl:px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#15453b] to-[#0e3b32] hover:from-[#1b5e50] hover:to-[#15453b] text-[#fbf8f1] text-xs font-anek font-bold border-2 border-[#2a6f62] transition-all active:scale-95 shadow-md group cursor-pointer shrink-0"
               title={lang === 'bn' ? 'কমিউট কার্ড ডাউনলোড করুন' : 'Download Commute Card'}
             >
-              <Download className="w-3.5 h-3.5 text-[#6ee7b7] group-hover:scale-110 transition-transform" />
-              <span className="whitespace-nowrap">
+              <Download className="w-3.5 h-3.5 text-[#6ee7b7] group-hover:scale-110 transition-transform shrink-0" />
+              <span className="hidden xl:inline whitespace-nowrap">
                 {lang === 'bn' ? 'কমিউট কার্ড' : 'Commute Card'}
               </span>
             </button>
           )}
 
-          {/* Shapla Chattar Enamel Badge */}
-          <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#15453b]/40 border border-[#2a6f62] text-xs text-[#f6d16f] font-anek font-semibold shrink-0">
+          {/* Shapla Chattar Enamel Badge (Only visible on ultra-wide 2xl screens) */}
+          <div className="hidden 2xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#15453b]/40 border border-[#2a6f62] text-xs text-[#f6d16f] font-anek font-semibold shrink-0">
             <span className="w-2 h-2 rounded-full bg-[#f6d16f] animate-pulse" />
             <span>{lang === 'bn' ? '১৬টি হাব সচল' : '16 Hubs Active'}</span>
           </div>
 
-          {/* Theme Toggle Button (Dark / Light Mode) */}
+          {/* Theme Toggle Button (Dark / Light Mode - Icon Only) */}
           <button
             onClick={() => setTheme && setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-sm font-anek font-bold transition-all active:scale-95 shadow-sm shrink-0 ${
+            className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all active:scale-95 shadow-sm shrink-0 cursor-pointer ${
               theme === 'light'
                 ? 'bg-[#ffffff] hover:bg-[#fcf9f2] text-[#140e0b] border-2 border-[#c69429]/40 shadow-sm'
                 : 'bg-[#2a2019] hover:bg-[#3d3026] text-[#f6d16f] border border-[#c69429]/50 shadow-md'
             }`}
-            title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+            title={theme === 'dark' ? (lang === 'bn' ? 'লাইট মোড' : 'Light Mode') : (lang === 'bn' ? 'ডার্ক মোড' : 'Dark Mode')}
             aria-label="Toggle Theme"
           >
             {theme === 'dark' ? (
-              <>
-                <Sun className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                <span className="hidden sm:inline">{lang === 'bn' ? 'লাইট' : 'Light'}</span>
-              </>
+              <Sun className="w-4 h-4 text-amber-400 shrink-0" />
             ) : (
-              <>
-                <Moon className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-                <span className="hidden sm:inline text-[#140e0b] font-extrabold">{lang === 'bn' ? 'ডার্ক' : 'Dark'}</span>
-              </>
+              <Moon className="w-4 h-4 text-indigo-600 shrink-0" />
             )}
           </button>
 
-          {/* Language Switcher (Never Clips) */}
+          {/* Language Switcher (Icon Only) */}
           <button
             onClick={() => setLang(lang === 'bn' ? 'en' : 'bn')}
-            className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-sm font-anek font-bold transition-all active:scale-95 shadow-sm shrink-0 whitespace-nowrap ${
+            className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all active:scale-95 shadow-sm shrink-0 cursor-pointer ${
               theme === 'light'
                 ? 'bg-[#ffffff] hover:bg-[#fcf9f2] text-[#140e0b] border-2 border-[#c69429]/40 shadow-sm'
                 : 'bg-[#2a2019] hover:bg-[#3d3026] text-[#f6d16f] border border-[#c69429]/50 shadow-md'
             }`}
-            title="Toggle Language"
+            title={lang === 'bn' ? 'Switch to English' : 'বাংলা ভাষায় পরিবর্তন করুন'}
+            aria-label="Toggle Language"
           >
-            <Globe className={`w-3.5 h-3.5 shrink-0 ${theme === 'light' ? 'text-[#b83a2e]' : 'text-[#f6d16f]'}`} />
-            <span className={theme === 'light' ? 'text-[#140e0b] font-extrabold' : ''}>{lang === 'bn' ? 'English' : 'বাংলা'}</span>
+            <Globe className={`w-4 h-4 shrink-0 ${theme === 'light' ? 'text-[#b83a2e]' : 'text-[#f6d16f]'}`} />
           </button>
         </div>
       </div>
@@ -153,8 +179,14 @@ export default function Navbar({
           className="flex items-center gap-2 cursor-pointer"
           onClick={() => setCurrentTab('home')}
         >
-          <span className="text-xl">🛺</span>
-          <span className="font-rickshaw text-xl text-[#f6d16f] rickshaw-gold-pop">{t.brandName}</span>
+          <div className="w-8 h-8 rounded-lg overflow-hidden border border-[#f6d16f]/80 shrink-0 shadow-md">
+            <img 
+              src="/assets/dhakar_poth_logo.jpg" 
+              alt={t.brandName} 
+              className="w-full h-full object-cover object-center"
+            />
+          </div>
+          <span className="font-rickshaw text-2xl rickshaw-brand-typography">{t.brandName}</span>
         </div>
 
         <div className="flex items-center gap-1.5">
@@ -186,16 +218,18 @@ export default function Navbar({
             )}
           </button>
 
+          {/* Mobile Language Toggle (Icon Only) */}
           <button
             onClick={() => setLang(lang === 'bn' ? 'en' : 'bn')}
-            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-anek font-bold active:scale-95 transition-all ${
+            className={`flex items-center justify-center w-8 h-8 rounded-full active:scale-95 transition-all ${
               theme === 'light'
                 ? 'bg-[#ffffff] border border-[#c69429]/40 text-[#140e0b] shadow-sm'
                 : 'bg-[#292019] border border-[#c69429]/50 text-[#f6d16f]'
             }`}
+            title={lang === 'bn' ? 'English' : 'বাংলা'}
+            aria-label="Toggle Language"
           >
-            <Globe className={`w-3.5 h-3.5 ${theme === 'light' ? 'text-[#b83a2e]' : 'text-[#f6d16f]'}`} />
-            <span>{lang === 'bn' ? 'ENG' : 'বাং'}</span>
+            <Globe className={`w-4 h-4 ${theme === 'light' ? 'text-[#b83a2e]' : 'text-[#f6d16f]'}`} />
           </button>
         </div>
       </div>

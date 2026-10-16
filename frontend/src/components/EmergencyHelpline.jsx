@@ -79,12 +79,13 @@ export default function EmergencyHelpline({ lang = 'bn', isHome = true }) {
 
       {/* Classic Vintage Postal Card Footer */}
       <footer className="w-full py-8 border-t-2 border-[#c69429]/30 text-center font-anek text-sm text-[#dfcfb2]">
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <span className="text-2xl">🛺</span>
-          <span className="font-rickshaw text-2xl text-[#f6d16f] rickshaw-text-pop">
-            ঢাকা-পাথ (DhakaPath)
+        <div className="flex items-center justify-center gap-2.5 mb-2">
+          <div className="w-8 h-8 rounded-lg overflow-hidden border border-[#f6d16f] shadow-sm shrink-0 inline-block">
+            <img src="/assets/dhakar_poth_logo.jpg" alt="ঢাকার পথ" className="w-full h-full object-cover" />
+          </div>
+          <span className="font-rickshaw text-2xl rickshaw-brand-typography">
+            ঢাকার পথ (DhakaPath)
           </span>
-          <span className="text-2xl">🛺</span>
         </div>
         <p className="text-sm text-[#dfcfb2]">
           পুরান ঢাকার ৪০০ বছরের সাংস্কৃতিক ঐতিহ্য, রিকশা আর্ট ও আধুনিক মেট্রোরেল ট্রানজিট ইন্টেলিজেন্স।

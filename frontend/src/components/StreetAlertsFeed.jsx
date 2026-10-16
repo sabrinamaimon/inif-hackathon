@@ -20,25 +20,25 @@ export default function StreetAlertsFeed({
       case 'waterlogging':
         return { 
           label: t.waterlogging, 
-          color: 'text-sky-950 bg-sky-100 border-sky-300 dark:text-sky-300 dark:bg-sky-950/70 dark:border-sky-600 font-extrabold', 
+          color: 'text-sky-300 bg-sky-950/80 border-sky-500 font-extrabold', 
           icon: Droplets 
         };
       case 'blockade':
         return { 
           label: t.blockade, 
-          color: 'text-rose-950 bg-rose-100 border-rose-300 dark:text-rose-300 dark:bg-rose-950/70 dark:border-rose-600 font-extrabold', 
+          color: 'text-rose-300 bg-rose-950/80 border-rose-500 font-extrabold', 
           icon: ShieldAlert 
         };
       case 'gridlock':
         return { 
           label: t.gridlock, 
-          color: 'text-amber-950 bg-amber-100 border-amber-300 dark:text-amber-300 dark:bg-amber-950/70 dark:border-amber-600 font-extrabold', 
+          color: 'text-amber-300 bg-amber-950/80 border-amber-500 font-extrabold', 
           icon: Flame 
         };
       default:
         return { 
           label: t.construction, 
-          color: 'text-emerald-950 bg-emerald-100 border-emerald-300 dark:text-emerald-300 dark:bg-emerald-950/70 dark:border-emerald-600 font-extrabold', 
+          color: 'text-emerald-300 bg-emerald-950/80 border-emerald-500 font-extrabold', 
           icon: AlertTriangle 
         };
     }
@@ -91,34 +91,34 @@ export default function StreetAlertsFeed({
                     <BadgeIcon className="w-4 h-4" />
                     <span>{badge.label}</span>
                   </span>
-                  <span className="text-sm font-anek font-black px-3.5 py-1.5 rounded-lg bg-slate-100 dark:bg-[#292019] text-slate-900 dark:text-[#fbf8f1] border border-slate-300 dark:border-[#c69429]/30 shadow-sm">
+                  <span className="text-sm font-anek font-black px-3.5 py-1.5 rounded-lg bg-[#292019] text-[#fbf8f1] border border-[#c69429]/40 shadow-sm">
                     {alert.hub}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-4 text-sm font-mono text-slate-600 dark:text-[#dfcfb2]">
-                  <div className="flex items-center gap-1.5 font-anek">
-                    <Clock className="w-4 h-4 text-amber-600 dark:text-[#c69429]" />
+                <div className="flex items-center gap-4 text-sm font-mono text-[#dfcfb2]">
+                  <div className="flex items-center gap-1.5 font-anek text-[#dfcfb2]">
+                    <Clock className="w-4 h-4 text-[#f6d16f]" />
                     <span>{lang === 'bn' ? `${toBnDigits(alert.minutes_ago)} মিনিট আগে` : `${alert.minutes_ago}m ago`}</span>
                   </div>
 
-                  <div className="flex items-center gap-1.5 font-black text-slate-900 dark:text-[#f6d16f] bg-slate-100 dark:bg-[#120e0b] px-3 py-1 rounded-lg border border-slate-300 dark:border-[#c69429]/30">
-                    <span>{t.trustScoreLabel}:</span>
+                  <div className="flex items-center gap-1.5 font-black text-[#f6d16f] bg-[#120e0b] px-3 py-1 rounded-lg border border-[#c69429]/40">
+                    <span className="text-[#dfcfb2]">{t.trustScoreLabel}:</span>
                     <span>{lang === 'bn' ? `${toBnDigits(Math.round(trust))}%` : `${Math.round(trust)}%`}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Title & Description */}
-              <h4 className="font-rickshaw text-xl sm:text-2xl text-slate-900 dark:text-[#fbf8f1] mb-1.5">
+              {/* Title & Description in Light Colors */}
+              <h4 className="font-rickshaw text-xl sm:text-2xl text-[#fbf8f1] rickshaw-text-pop mb-1.5">
                 {lang === 'bn' ? (alert.title_bn || alert.title) : alert.title}
               </h4>
-              <p className="font-anek text-sm sm:text-base text-slate-700 dark:text-[#dfcfb2] leading-relaxed mb-4 font-normal">
+              <p className="font-anek text-sm sm:text-base text-[#dfcfb2] leading-relaxed mb-4 font-normal">
                 {alert.description}
               </p>
 
               {/* Action Buttons: Confirm & Resolve */}
-              <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-200 dark:border-[#c69429]/20 font-anek text-sm">
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#c69429]/20 font-anek text-sm">
                 <div className="flex items-center gap-2.5">
                   <button
                     onClick={() => onVote(alert.id, 'upvote')}
@@ -130,14 +130,14 @@ export default function StreetAlertsFeed({
 
                   <button
                     onClick={() => onVote(alert.id, 'downvote')}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#292019] dark:hover:bg-[#3d3026] text-slate-800 dark:text-[#dfcfb2] font-bold text-sm border border-slate-300 dark:border-[#c69429]/40 active:scale-95 transition-all shadow-sm"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#292019] hover:bg-[#3d3026] text-[#f6d16f] font-bold text-sm border border-[#c69429]/40 active:scale-95 transition-all shadow-sm"
                   >
-                    <CheckCircle className="w-4 h-4 text-amber-600 dark:text-[#d6645a]" />
+                    <CheckCircle className="w-4 h-4 text-[#f6d16f]" />
                     <span>{t.resolveBtn} ({toBnDigits(alert.downvotes)})</span>
                   </button>
                 </div>
 
-                <div className="text-xs font-mono text-slate-600 dark:text-[#c69429] font-medium">
+                <div className="text-xs font-mono text-[#6ee7b7] font-semibold">
                   {alert.verified ? '✓ পুলিশ ও প্রশাসন দ্বারা পরীক্ষিত' : 'যাত্রী কমিউনিটি রিপোর্ট'}
                 </div>
               </div>
