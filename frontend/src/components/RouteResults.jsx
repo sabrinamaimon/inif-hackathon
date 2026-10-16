@@ -169,10 +169,10 @@ export default function RouteResults({
                       </p>
                     </div>
 
-                    {/* Resized & Responsive Metric Badges Bar */}
-                    <div className="w-full xl:w-auto flex items-center justify-around sm:justify-end gap-2 sm:gap-3 bg-[#f5eedf] px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-2xl border-2 border-[#c69429]/40 shadow-inner shrink-0">
+                    {/* Centered & Perfectly Balanced Metric Badges Bar */}
+                    <div className="w-full xl:w-auto xl:min-w-[420px] flex items-center justify-center bg-[#f5eedf] px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl border-2 border-[#c69429]/40 shadow-inner shrink-0">
                       {/* Total Duration */}
-                      <div className="px-2.5 sm:px-3.5 text-center border-r-2 border-[#c69429]/30 flex-1 sm:flex-initial">
+                      <div className="px-2.5 sm:px-3.5 text-center border-r-2 border-[#c69429]/30 flex-1">
                         <div className="text-xs sm:text-sm font-anek font-bold text-[#7a6654] uppercase tracking-wider mb-0.5">
                           {t.durationLabel}
                         </div>
@@ -187,7 +187,7 @@ export default function RouteResults({
                       </div>
 
                       {/* Regular Fare */}
-                      <div className="px-2.5 sm:px-3.5 text-center border-r-2 border-[#c69429]/30 flex-1 sm:flex-initial">
+                      <div className="px-2.5 sm:px-3.5 text-center border-r-2 border-[#c69429]/30 flex-1">
                         <div className="text-xs sm:text-sm font-anek font-bold text-[#7a6654] uppercase tracking-wider mb-0.5">
                           {t.regularFare}
                         </div>
@@ -202,7 +202,7 @@ export default function RouteResults({
                       </div>
 
                       {/* Student Half-Pass Fare */}
-                      <div className="px-2.5 sm:px-3.5 text-center flex-1 sm:flex-initial">
+                      <div className="px-2.5 sm:px-3.5 text-center flex-1">
                         <div className="text-xs sm:text-sm font-anek font-extrabold text-[#0e6e41] uppercase tracking-wider mb-0.5 flex items-center justify-center gap-1 whitespace-nowrap">
                           <span>🎓 {t.studentFare}</span>
                         </div>
