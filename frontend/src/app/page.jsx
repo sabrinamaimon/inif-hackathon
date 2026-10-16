@@ -18,6 +18,7 @@ import NoticeScanner from '../components/NoticeScanner';
 import EmergencyHelpline from '../components/EmergencyHelpline';
 
 import { STATIC_HUBS, STATIC_ALERTS } from '../data/staticData';
+import { runDijkstraRouting } from '../utils/dijkstra';
 
 export default function Home() {
   const [lang, setLang] = useState('bn');
@@ -82,8 +83,9 @@ export default function Home() {
     }
   };
 
-  const performSearch = async (orig, dest, passType, weath, rush) => {
+  const performSearch = async (orig, dest, passType, weath, rush, alertsOverride = null) => {
     setIsLoadingRoutes(true);
+    const activeAlertsToUse = alertsOverride || alerts;
     try {
       const res = await fetch('/api/search/routes', {
         method: 'POST',
@@ -93,7 +95,8 @@ export default function Home() {
           destination: dest,
           passenger_type: passType,
           weather_condition: weath,
-          is_rush_hour: rush
+          is_rush_hour: rush,
+          active_alerts: activeAlertsToUse
         })
       });
 
@@ -104,76 +107,23 @@ export default function Home() {
         return;
       }
     } catch (err) {
-      console.warn('API error, using local fallback route generator');
+      console.warn('API error, using local Dijkstra route generator');
     } finally {
       setIsLoadingRoutes(false);
     }
 
-    // High quality local fallback route generator
-    const isDirectMetro = (orig === 'Mirpur 10' && dest === 'Motijheel') || 
-                          (orig === 'Uttara' && dest === 'Motijheel');
+    // High precision client-side Dijkstra calculation
+    const calculatedRoutes = runDijkstraRouting({
+      origin: orig,
+      destination: dest,
+      passengerType: passType,
+      weather: weath,
+      isRushHour: rush,
+      activeAlerts: activeAlertsToUse
+    });
 
-    const fallbackRoutes = [
-      {
-        id: 'opt-fastest',
-        title: isDirectMetro ? `MRT-6 Direct Metro Express (${orig} ➔ ${dest})` : `Express Connector (${orig} ➔ ${dest})`,
-        title_bn: isDirectMetro ? `এমআরটি-৬ মেট্রোরেল এক্সপ্রেস (${STATIC_HUBS[orig]?.name_bn || orig} ➔ ${STATIC_HUBS[dest]?.name_bn || dest})` : `দ্রুততম এক্সপ্রেস রুট`,
-        type_badge: 'Fastest Route',
-        total_duration_mins: isDirectMetro ? 24 : 35,
-        total_regular_fare: isDirectMetro ? 50 : 60,
-        total_student_fare: isDirectMetro ? 50 : 60,
-        transfers: isDirectMetro ? 0 : 1,
-        is_recommended: true,
-        is_detour: false,
-        legs: [
-          {
-            leg_number: 1,
-            mode: isDirectMetro ? 'metro' : 'bus',
-            line_name: isDirectMetro ? 'MRT-6 Metro Rail' : 'Bikolpo Auto Service',
-            from_hub: orig,
-            to_hub: dest,
-            distance_km: 8.5,
-            duration_mins: isDirectMetro ? 24 : 35,
-            regular_fare_bdt: isDirectMetro ? 50 : 30,
-            student_fare_bdt: isDirectMetro ? 50 : 15,
-            surge_multiplier: 1.0,
-            landmark_instructions: isDirectMetro 
-              ? `Enter ${orig} Metro Station concourse. Alight at ${dest} platform.`
-              : `Board bus near ${orig} roundabout.`
-          }
-        ]
-      },
-      {
-        id: 'opt-cheapest',
-        title: `Economy Bus Route (Student Half-Pass) (${orig} ➔ ${dest})`,
-        title_bn: `সাশ্রয়ী বাস রুট (শিক্ষার্থী হাফ-পাস)`,
-        type_badge: 'Student & Budget Pick',
-        total_duration_mins: 42,
-        total_regular_fare: 30,
-        total_student_fare: 15,
-        transfers: 0,
-        is_recommended: false,
-        is_detour: false,
-        legs: [
-          {
-            leg_number: 1,
-            mode: 'bus',
-            line_name: 'Bikolpo Auto Service',
-            from_hub: orig,
-            to_hub: dest,
-            distance_km: 8.5,
-            duration_mins: 42,
-            regular_fare_bdt: 30,
-            student_fare_bdt: 15,
-            surge_multiplier: 1.0,
-            landmark_instructions: `Board at ${orig} bus counter. 50% Student discount applies with 10 BDT min floor.`
-          }
-        ]
-      }
-    ];
-
-    setRoutes(fallbackRoutes);
-    setSelectedRoute(fallbackRoutes[0]);
+    setRoutes(calculatedRoutes);
+    setSelectedRoute(calculatedRoutes[0] || null);
   };
 
   const handleManualSearch = () => {
@@ -290,10 +240,65 @@ export default function Home() {
     };
 
     setSimulationState(nextState);
-    setWeather(nextRain ? 'rain' : 'normal');
-    setIsRushHour(nextRush);
+    let updatedAlerts = [...alerts];
+    if (nextRain) {
+      if (!updatedAlerts.some(a => a.hub === 'Malibagh' && a.type === 'waterlogging')) {
+        updatedAlerts = [
+          {
+            id: `alert-malibagh-flood-${Date.now()}`,
+            hub: 'Malibagh',
+            type: 'waterlogging',
+            severity: 95,
+            title: 'Severe Waterlogging at Malibagh Railgate',
+            title_bn: 'মালিবাগে তীব্র জলাবদ্ধতা ও যান চলাচল স্থবির',
+            description: 'Roads submerged. Alternate routes activated.',
+            description_bn: 'মালিবাগ রেলগেটে তীব্র জলাবদ্ধতা। বাস চলাচল বন্ধ।',
+            upvotes: 42,
+            downvotes: 1,
+            is_active: true,
+            minutes_ago: 2,
+            trust_score: 95.0,
+            verified: true
+          },
+          ...updatedAlerts
+        ];
+      }
+    } else {
+      updatedAlerts = updatedAlerts.filter(a => !(a.hub === 'Malibagh' && a.type === 'waterlogging'));
+    }
 
-    performSearch(origin, destination, passengerType, nextRain ? 'rain' : 'normal', nextRush);
+    if (nextBlocked.includes('Shahbagh')) {
+      if (!updatedAlerts.some(a => a.hub === 'Shahbagh' && a.type === 'blockade')) {
+        updatedAlerts = [
+          {
+            id: `alert-shahbagh-blockade-${Date.now()}`,
+            hub: 'Shahbagh',
+            type: 'blockade',
+            severity: 98,
+            title: 'Intersection Blockade at Shahbagh',
+            title_bn: 'শাহবাগ মোড়ে সমাবেশ ও সড়ক অবরোধ',
+            description: 'Ground traffic blocked. MRT-6 Metro running overhead.',
+            description_bn: 'নিচের সব যান চলাচল বন্ধ। উপর দিয়ে মেট্রোরেল পুরোপুরি সচল।',
+            upvotes: 89,
+            downvotes: 0,
+            is_active: true,
+            minutes_ago: 4,
+            trust_score: 99.0,
+            verified: true
+          },
+          ...updatedAlerts
+        ];
+      }
+    } else {
+      updatedAlerts = updatedAlerts.filter(a => !(a.hub === 'Shahbagh' && a.type === 'blockade'));
+    }
+
+    if (action === 'reset') {
+      updatedAlerts = STATIC_ALERTS;
+    }
+
+    setAlerts(updatedAlerts);
+    performSearch(origin, destination, passengerType, nextRain ? 'rain' : 'normal', nextRush, updatedAlerts);
 
     try {
       await fetch('/api/simulation/trigger', {
