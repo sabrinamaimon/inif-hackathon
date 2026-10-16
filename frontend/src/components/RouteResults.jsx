@@ -48,7 +48,7 @@ export default function RouteResults({
     if (idx === 0) {
       return {
         bgImage: '/assets/postcard_shapla_motijheel.jpg',
-        badgeTitle: lang === 'bn' ? '★ ডাকটিকিট রুট ১ • মামা চিনি বোস! এক্সপ্রেস' : '★ Route 1 • Express Transit',
+        badgeTitle: lang === 'bn' ? 'রুট ১' : 'Route 1',
         badgeBg: 'bg-[#e2b448] text-[#120e0b] border-[#fbf8f1]',
         accent: '#c69429',
         border: 'border-[#c69429]'
@@ -56,7 +56,7 @@ export default function RouteResults({
     } else if (idx === 1 || route.type_badge?.toLowerCase().includes('student')) {
       return {
         bgImage: '/assets/postcard_lalbagh_fort.jpg',
-        badgeTitle: lang === 'bn' ? '★ ডাকটিকিট রুট ২ • খাড়াও!!! আইতাছি (হাফ-পাস সেরা)' : '★ Route 2 • Student Half-Pass Best',
+        badgeTitle: lang === 'bn' ? 'রুট ২' : 'Route 2',
         badgeBg: 'bg-[#b83a2e] text-[#fbf8f1] border-[#f6d16f]',
         accent: '#b83a2e',
         border: 'border-[#b83a2e]'
@@ -64,7 +64,7 @@ export default function RouteResults({
     } else {
       return {
         bgImage: '/assets/postcard_ahsan_manzil.jpg',
-        badgeTitle: lang === 'bn' ? '★ ডাকটিকিট রুট ৩ • তোমাকে বুঝিনা প্রিয় (বিকল্প ডিট্যুর)' : '★ Route 3 • Safe Detour Bypass',
+        badgeTitle: lang === 'bn' ? 'রুট ৩' : 'Route 3',
         badgeBg: 'bg-[#15453b] text-[#f6d16f] border-[#f6d16f]',
         accent: '#15453b',
         border: 'border-[#15453b]'
