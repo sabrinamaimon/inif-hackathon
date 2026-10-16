@@ -125,7 +125,7 @@ export const I18N = {
     passengerType: "যাত্রীর ধরন",
     generalCommuter: "সাধারণ যাত্রী",
     studentPass: "শিক্ষার্থী (৫০% হাফ-পাস)",
-    searchPlaceholder: "বাংলা বা বাংলিশে লিখুন (যেমন: 'মিরপুর থেকে মতিঝিল হাফ পাস')",
+    searchPlaceholder: "বাংলা বা বাংলিশে লিখুন (যেমন: 'mirpur theke motijheel student')",
     searchBtn: "রুট খুঁজুন",
     micListening: "শুনছি... কথা বলুন",
     micTooltip: "ভয়েস দিয়ে খুঁজুন (বাংলা বা ইংরেজি)",

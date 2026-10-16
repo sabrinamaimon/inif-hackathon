@@ -198,6 +198,29 @@ export default function ChatDrawer({
             <div ref={messagesEndRef} />
           </div>
 
+          {/* Quick Banglish Prompt Suggestions */}
+          <div className="px-3.5 py-2 bg-slate-900/95 border-t border-slate-800/80 flex items-center gap-2 overflow-x-auto">
+            <span className="text-[11px] font-black text-emerald-400 uppercase tracking-wider shrink-0 flex items-center gap-1">
+              <Sparkles className="w-3 h-3" />
+              <span>বাংলিশ:</span>
+            </span>
+            {[
+              "Mirpur theke motijheel student bhara koto?",
+              "Shahbagh e ki jam ache?",
+              "Brishti hoile rickshaw fare koto barbe?",
+              "Ajke ki metro rail choltese?"
+            ].map((prompt, pIdx) => (
+              <button
+                key={pIdx}
+                type="button"
+                onClick={() => handleSend(prompt)}
+                className="shrink-0 text-xs px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-emerald-950/80 text-slate-300 hover:text-emerald-300 border border-slate-700 hover:border-emerald-500/50 transition-all font-medium whitespace-nowrap active:scale-95"
+              >
+                {prompt}
+              </button>
+            ))}
+          </div>
+
           {/* Input Footer */}
           <div className="p-3.5 bg-slate-900 border-t border-slate-800">
             <form
