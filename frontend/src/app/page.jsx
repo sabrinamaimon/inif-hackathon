@@ -669,11 +669,20 @@ export default function Home() {
               destination={destination}
               setDestination={setDestination}
               passengerType={passengerType}
-              setPassengerType={setPassengerType}
+              setPassengerType={(p) => {
+                setPassengerType(p);
+                if (hasUserSearched) performSearch(origin, destination, p, weather, isRushHour);
+              }}
               weather={weather}
-              setWeather={setWeather}
+              setWeather={(w) => {
+                setWeather(w);
+                if (hasUserSearched) performSearch(origin, destination, passengerType, w, isRushHour);
+              }}
               isRushHour={isRushHour}
-              setIsRushHour={setIsRushHour}
+              setIsRushHour={(r) => {
+                setIsRushHour(r);
+                if (hasUserSearched) performSearch(origin, destination, passengerType, weather, r);
+              }}
               onSearch={handleManualSearch}
               onNlpSearch={handleNlpSearch}
               isLoading={isLoadingRoutes}
@@ -683,17 +692,19 @@ export default function Home() {
               onOpenScanner={() => setIsScannerOpen(true)}
             />
 
-            {/* View Results Button (Only after user initiates a search) */}
+            {/* Inline Route Results (Directly on the page below search - "niche") */}
             {hasUserSearched && routes.length > 0 && (
-              <div className="flex justify-center -mt-3">
-                <button
-                  type="button"
-                  onClick={() => setIsResultsOpen(true)}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#292019] hover:bg-[#3d3026] text-[#fbf8f1] border-2 border-[#c69429]/60 hover:border-[#f6d16f] font-anek font-extrabold text-sm shadow-md hover:scale-[1.02] transition-all cursor-pointer"
-                >
-                  <span className="text-base">🧭</span>
-                  <span>{lang === 'bn' ? `খোঁজা রুটগুলো দেখুন (${toBnDigits(routes.length)}টি বিকল্প)` : `View Search Results (${routes.length} options)`}</span>
-                </button>
+              <div id="route-results-section" className="pt-2 pb-4 scroll-mt-20 animate-in fade-in duration-300">
+                <RouteResults
+                  routes={routes}
+                  origin={origin}
+                  destination={destination}
+                  passengerType={passengerType}
+                  lang={lang}
+                  onSelectRoute={(r) => setSelectedRoute(r)}
+                  onOpenFareBreakdown={(r) => setFareModalRoute(r)}
+                  selectedRouteId={selectedRoute?.id}
+                />
               </div>
             )}
 

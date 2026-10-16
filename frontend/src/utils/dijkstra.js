@@ -273,8 +273,13 @@ export function runDijkstraRouting({
   // =========================================================================
   // 1. LOCAL BUS ROUTE (DIRECT-FIRST: 0 TRANSFERS WHEN RUNNING BUSES EXIST)
   // =========================================================================
-  let busTime = Math.max(16, Math.round(roadDist * 2.8));
-  if (isRushHour) busTime = Math.round(busTime * 1.35);
+  const busNormalTime = Math.max(16, Math.round(roadDist * 2.8));
+  let busTime = busNormalTime;
+  let busRushDelay = 0;
+  if (isRushHour) {
+    busTime = Math.round(busNormalTime * 1.50); // +50% delay during peak office rush hour
+    busRushDelay = busTime - busNormalTime;
+  }
   if (weather === "rain") busTime = Math.round(busTime * (isFloodProneArea ? 1.45 : 1.25));
 
   // Official BRTA Gazette Rate: 2.50 BDT/km rounded to multiple of 5, minimum statutory 10 BDT
@@ -287,22 +292,24 @@ export function runDijkstraRouting({
 
   const busObstacles = weather === "rain"
     ? (isFloodProneArea ? "🔴 নিচু এলাকায় তীব্র বৃষ্টির জলজট ও ধীরগতি" : "🟡 বৃষ্টিতে সড়কে কিছুটা ধীরগতি")
-    : (isRushHour ? "🟡 অফিস ছুটি পিক-আওয়ার সাধারণ ট্রাফিক" : "🟢 নিয়মিত সড়ক ট্রাফিক স্বাভাবিক");
+    : (isRushHour ? `🔴 অফিস ছুটি পিক-আওয়ার: সড়কে তীব্র জ্যাম (+${busRushDelay} মিনিট বিলম্ব)` : "🟢 নিয়মিত সড়ক ট্রাফিক স্বাভাবিক");
 
   const busRoute = {
     id: "opt-bus",
     mode: "bus",
     title: `Direct / Local Bus Transit (${origin} ➔ ${destination})`,
     title_bn: `সরাসরি সিটি বাস: ${busLineName}`,
-    type_badge: "সরাসরি ও সাশ্রয়ী (হাফ-পাস)",
+    type_badge: isRushHour ? "⚠️ পিক-আওয়ারে জ্যাম বিলম্বের ঝুঁকি" : "সরাসরি ও সাশ্রয়ী (হাফ-পাস)",
     total_duration_mins: busTime,
+    normal_duration_mins: busNormalTime,
+    rush_delay_mins: busRushDelay,
     total_regular_fare: busRegularFare,
     total_student_fare: busStudentFare,
     total_distance_km: roadDist,
     obstacles_badge: busObstacles,
     obstacles_status: weather === "rain" || isRushHour ? "warning" : "traffic",
     transfers: 0,
-    is_recommended: true, // Direct buses are default top pick unless both hubs are on Metro
+    is_recommended: !isRushHour, // In rush hour, metro/bike takes recommendation
     is_detour: isDetourActive,
     disruption_warning: isDetourActive ? "যাত্রাপথে কিছু অংশে ধীরগতি থাকতে পারে।" : null,
     legs: [
@@ -338,15 +345,17 @@ export function runDijkstraRouting({
       mode: "metro",
       title: `MRT-6 Metro Rail (${origin} ➔ ${destination})`,
       title_bn: `এমআরটি-৬ মেট্রোরেল (এক্সপ্রেস)`,
-      type_badge: "১০০% বাধামুক্ত ও দ্রুততম",
+      type_badge: isRushHour ? "🌟 পিক-আওয়ারে জ্যামমুক্ত দ্রুততম (সেরা পছন্দ)" : "১০০% বাধামুক্ত ও দ্রুততম",
       total_duration_mins: metroTime,
+      normal_duration_mins: metroTime,
+      rush_delay_mins: 0,
       total_regular_fare: metroFare,
       total_student_fare: metroFare,
       total_distance_km: roadDist,
-      obstacles_badge: "🟢 বাধামুক্ত উড়ালপথ (০% যানজট ও জলজট)",
+      obstacles_badge: isRushHour ? "🟢 বাধামুক্ত উড়ালপথ: অফিস সময়েও ০ মিনিট জ্যাম" : "🟢 বাধামুক্ত উড়ালপথ (০% যানজট ও জলজট)",
       obstacles_status: "safe",
       transfers: 0,
-      is_recommended: true, // If both are metro, metro is #1
+      is_recommended: true, // Metro is always #1
       is_detour: false,
       disruption_warning: null,
       legs: [
@@ -443,15 +452,17 @@ export function runDijkstraRouting({
           mode: "metro",
           title: `Metro Connection (${origin} ➔ ${destination})`,
           title_bn: `মেট্রোরেল সংযোগ (${nearOrigBn} হয়ে)`,
-          type_badge: "উড়ালপথ ও দ্রুত সংযোগ",
+          type_badge: isRushHour ? "🌟 পিক-আওয়ারে জ্যামমুক্ত দ্রুততম (সেরা পছন্দ)" : "উড়ালপথ ও দ্রুত সংযোগ",
           total_duration_mins: totalMetroTime,
+          normal_duration_mins: totalMetroTime,
+          rush_delay_mins: 0,
           total_regular_fare: totalMetroReg,
           total_student_fare: totalMetroReg,
           total_distance_km: Math.round((nearOrig.dist + metroSegmentDist + nearDest.dist) * 10) / 10,
-          obstacles_badge: "🟢 প্রধান অংশ উড়ালপথে সম্পূর্ণ যানজটমুক্ত",
+          obstacles_badge: isRushHour ? "🟢 প্রধান অংশ উড়ালপথে: অফিস সময়েও ০ মিনিট জ্যাম" : "🟢 প্রধান অংশ উড়ালপথে সম্পূর্ণ যানজটমুক্ত",
           obstacles_status: "safe",
           transfers: metroLegs.length - 1,
-          is_recommended: false, // Direct bus is preferred when transfers needed
+          is_recommended: isRushHour, // Recommended in rush hour to bypass surface gridlock
           is_detour: false,
           disruption_warning: null,
           legs: metroLegs
@@ -468,28 +479,35 @@ export function runDijkstraRouting({
   cngBase = Math.max(100, cngBase);
   let cngSurge = 1.0;
   if (weather === "rain") cngSurge += (isFloodProneArea ? 0.35 : 0.20);
-  if (isRushHour) cngSurge += 0.25;
+  if (isRushHour) cngSurge += 0.25; // +25% rush hour surge
   const cngFare = roundTo5(cngBase * cngSurge, 100);
-  let cngTime = Math.max(14, Math.round(roadDist * 2.2));
-  if (isRushHour) cngTime = Math.round(cngTime * 1.25);
+  const cngNormalTime = Math.max(14, Math.round(roadDist * 2.2));
+  let cngTime = cngNormalTime;
+  let cngRushDelay = 0;
+  if (isRushHour) {
+    cngTime = Math.round(cngNormalTime * 1.35); // +35% delay in rush hour
+    cngRushDelay = cngTime - cngNormalTime;
+  }
   if (weather === "rain") cngTime = Math.round(cngTime * (isFloodProneArea ? 1.35 : 1.2));
 
   const cngObstacles = weather === "rain"
-    ? (isFloodProneArea ? "🌧️ নিচু এলাকায় জলজটে সিএনজিতে ৩৫% সার্ফ প্রযোজ্য" : "🌧️ বৃষ্টিতে সিএনজি মিটার সার্ফ ২০% সক্রিয়")
-    : (isRushHour ? "🟡 পিক-আওয়ারে প্রধান সড়কে ট্রাফিকের চাপ" : "🟢 মাঝারি ট্রাফিক, অলিগলি ব্যবহারের সুবিধা");
+    ? (isFloodProneArea ? "🌧️ নিচু এলাকায় জলজটে সিএনজিতে ৩৫% বিশেষ ভাড়া বৃদ্ধি" : "🌧️ বৃষ্টিতে সিএনজি মিটার সার্ফ ২০% সক্রিয়")
+    : (isRushHour ? `🟡 অফিস পিক-আওয়ার: সড়কে ট্রাফিকের চাপ (+${cngRushDelay} মি. বিলম্ব, ২৫% সার্ফ)` : "🟢 মাঝারি ট্রাফিক, অলিগলি ব্যবহারের সুবিধা");
 
   const cngRoute = {
     id: "opt-cng",
     mode: "cng",
     title: `Direct CNG Auto-Rickshaw (${origin} ➔ ${destination})`,
     title_bn: `সরাসরি সিএনজি অটোরিকশা`,
-    type_badge: "ব্যক্তিগত মিটার বাহন",
+    type_badge: isRushHour ? "ব্যক্তিগত মিটার বাহন (পিক-আওয়ার সার্ফ)" : "ব্যক্তিগত মিটার বাহন",
     total_duration_mins: cngTime,
+    normal_duration_mins: cngNormalTime,
+    rush_delay_mins: cngRushDelay,
     total_regular_fare: cngFare,
     total_student_fare: cngFare,
     total_distance_km: roadDist,
     obstacles_badge: cngObstacles,
-    obstacles_status: "traffic",
+    obstacles_status: isRushHour ? "warning" : "traffic",
     transfers: 0,
     is_recommended: false,
     is_detour: false,
@@ -514,21 +532,28 @@ export function runDijkstraRouting({
   // =========================================================================
   // 4. RIDE-SHARE BIKE / MOTORCYCLE (FASTEST SURFACE ROAD TRANSIT)
   // =========================================================================
-  let bikeTime = Math.max(9, Math.round(roadDist * 1.5));
-  if (isRushHour) bikeTime = Math.round(bikeTime * 1.15);
-  const rawBike = 30 + (roadDist - 1) * 12 * (weather === "rain" ? 1.2 : 1.0);
+  const bikeNormalTime = Math.max(9, Math.round(roadDist * 1.5));
+  let bikeTime = bikeNormalTime;
+  let bikeRushDelay = 0;
+  if (isRushHour) {
+    bikeTime = Math.round(bikeNormalTime * 1.20); // only +20% because bikes weave through gridlock
+    bikeRushDelay = bikeTime - bikeNormalTime;
+  }
+  const rawBike = 30 + (roadDist - 1) * 12 * (weather === "rain" ? 1.2 : (isRushHour ? 1.15 : 1.0));
   const bikeFare = roundTo5(rawBike, 35);
   const bikeObstacles = weather === "rain"
     ? "🌧️ বৃষ্টিতে পিচ্ছিল সড়ক ও সতর্ক রাইড"
-    : "🟢 জ্যামের ফাঁক দিয়ে দ্রুত বের হওয়ার সুযোগ";
+    : (isRushHour ? `🟢 জ্যামের ফাঁক গলে দ্রুত যাতায়াত (মাত্র +${bikeRushDelay} মি. বিলম্ব)` : "🟢 জ্যামের ফাঁক দিয়ে দ্রুত বের হওয়ার সুযোগ");
 
   const bikeRoute = {
     id: "opt-bike",
     mode: "bike",
     title: `Ride-Share Bike (${origin} ➔ ${destination})`,
     title_bn: `মোটরসাইকেল / বাইক রাইডশেয়ার`,
-    type_badge: "সড়কপথে দ্রুততম",
+    type_badge: isRushHour ? "⚡ পিক-আওয়ারে সড়কপথে দ্রুততম" : "সড়কপথে দ্রুততম",
     total_duration_mins: bikeTime,
+    normal_duration_mins: bikeNormalTime,
+    rush_delay_mins: bikeRushDelay,
     total_regular_fare: bikeFare,
     total_student_fare: bikeFare,
     total_distance_km: roadDist,
@@ -548,7 +573,7 @@ export function runDijkstraRouting({
         duration_mins: bikeTime,
         regular_fare_bdt: bikeFare,
         student_fare_bdt: bikeFare,
-        surge_multiplier: 1.0,
+        surge_multiplier: isRushHour ? 1.15 : 1.0,
         landmark_instructions: `${origBn} থেকে ওয়ান-অন-ওয়ান বাইক পিকআপ। যানজটের ফাঁক গলে দ্রুততম সময়ে ${destBn}-এ পৌঁছান।`
       }
     ]
@@ -558,13 +583,18 @@ export function runDijkstraRouting({
   // =========================================================================
   // 5. PRIVATE CAR / RIDE-SHARE CAB (UBER / TAXI)
   // =========================================================================
-  let carTime = Math.max(16, Math.round(roadDist * 2.5));
-  if (isRushHour) carTime = Math.round(carTime * 1.35);
+  const carNormalTime = Math.max(16, Math.round(roadDist * 2.5));
+  let carTime = carNormalTime;
+  let carRushDelay = 0;
+  if (isRushHour) {
+    carTime = Math.round(carNormalTime * 1.50); // +50% delay in car during peak rush hour
+    carRushDelay = carTime - carNormalTime;
+  }
   if (weather === "rain") carTime = Math.round(carTime * 1.2);
-  const rawCar = 100 + (roadDist - 1) * 24 * (isRushHour ? 1.2 : 1.0);
+  const rawCar = 100 + (roadDist - 1) * 24 * (isRushHour ? 1.3 : 1.0);
   const carFare = roundTo5(rawCar, 140);
   const carObstacles = isRushHour
-    ? "🔴 পিক-আওয়ারে প্রধান সড়কে যানজটের সম্ভাবনা"
+    ? `🔴 পিক-আওয়ারে প্রধান সড়ক ও সিগন্যালে দীর্ঘ জ্যাম (+${carRushDelay} মিনিট বিলম্ব)`
     : "🟡 স্বাভাবিক সড়ক ট্রাফিক (এসি ও আরামদায়ক)";
 
   const carRoute = {
@@ -572,8 +602,10 @@ export function runDijkstraRouting({
     mode: "car",
     title: `Private Car / ক্যাব (${origin} ➔ ${destination})`,
     title_bn: `প্রাইভেট কার / রাইডশেয়ার ক্যাব`,
-    type_badge: "আরামদায়ক ও এসি",
+    type_badge: isRushHour ? "আরামদায়ক কিন্তু জ্যামের ঝুঁকি" : "আরামদায়ক ও এসি",
     total_duration_mins: carTime,
+    normal_duration_mins: carNormalTime,
+    rush_delay_mins: carRushDelay,
     total_regular_fare: carFare,
     total_student_fare: carFare,
     total_distance_km: Math.round(roadDist * 1.05 * 10) / 10,
@@ -593,7 +625,7 @@ export function runDijkstraRouting({
         duration_mins: carTime,
         regular_fare_bdt: carFare,
         student_fare_bdt: carFare,
-        surge_multiplier: 1.0,
+        surge_multiplier: isRushHour ? 1.3 : 1.0,
         landmark_instructions: `${origBn} থেকে সরাসরি ডোর-টু-ডোর কার ক্যাব। বৃষ্টি ও রোদে সম্পূর্ণ আরামদায়ক এসি যাতায়াত ${destBn}-এ।`
       }
     ]
@@ -605,12 +637,21 @@ export function runDijkstraRouting({
   // =========================================================================
   if (roadDist <= 6.5) {
     const rickshawRainMultiplier = isFloodProneArea ? 1.50 : 1.25;
-    const rawRickshaw = roadDist * 22 * (weather === "rain" ? rickshawRainMultiplier : 1.0);
+    const rawRickshaw = roadDist * 22 * (weather === "rain" ? rickshawRainMultiplier : (isRushHour ? 1.25 : 1.0));
     const rickshawFare = roundTo5(rawRickshaw, 30);
-    const rickshawTime = Math.max(10, Math.round(roadDist * 5.0 * (weather === "rain" && isFloodProneArea ? 1.3 : 1.0)));
+    const rickshawNormalTime = Math.max(10, Math.round(roadDist * 5.0));
+    let rickshawTime = rickshawNormalTime;
+    let rickshawRushDelay = 0;
+    if (isRushHour) {
+      rickshawTime = Math.round(rickshawNormalTime * 1.30);
+      rickshawRushDelay = rickshawTime - rickshawNormalTime;
+    }
+    if (weather === "rain" && isFloodProneArea) {
+      rickshawTime = Math.round(rickshawTime * 1.3);
+    }
     const rickshawObstacles = weather === "rain"
       ? (isFloodProneArea ? "🌧️ নিচু এলাকায় তীব্র জলজটে রিকশায় ৫০% বিশেষ ভাড়া বৃদ্ধি" : "🌧️ বৃষ্টিতে রিকশা ভাড়া ২৫% বৃদ্ধি")
-      : "🟢 অভ্যন্তরীণ অলিগলিতে বাধাহীন চলাচল";
+      : (isRushHour ? `🟡 পিক-আওয়ারে মোড়ে রিকশার জটলা (+${rickshawRushDelay} মিনিট বিলম্ব)` : "🟢 অভ্যন্তরীণ অলিগলিতে বাধাহীন চলাচল");
 
     const rickshawRoute = {
       id: "opt-rickshaw",
@@ -619,11 +660,13 @@ export function runDijkstraRouting({
       title_bn: `ঐতিহ্যবাহী রিকশা ভ্রমণ`,
       type_badge: "লোকাল ও গলিপথ",
       total_duration_mins: rickshawTime,
+      normal_duration_mins: rickshawNormalTime,
+      rush_delay_mins: rickshawRushDelay,
       total_regular_fare: rickshawFare,
       total_student_fare: rickshawFare,
       total_distance_km: roadDist,
       obstacles_badge: rickshawObstacles,
-      obstacles_status: "safe",
+      obstacles_status: isRushHour ? "warning" : "safe",
       transfers: 0,
       is_recommended: false,
       is_detour: false,
@@ -638,7 +681,7 @@ export function runDijkstraRouting({
           duration_mins: rickshawTime,
           regular_fare_bdt: rickshawFare,
           student_fare_bdt: rickshawFare,
-          surge_multiplier: 1.0,
+          surge_multiplier: isRushHour ? 1.25 : 1.0,
           landmark_instructions: `${origBn} থেকে হুড তোলা রিকশা নিয়ে নিরিবিলি অলিগলিপথ দিয়ে ${destBn}-এ যাতায়াত।`
         }
       ]
@@ -647,7 +690,7 @@ export function runDijkstraRouting({
   }
 
   // =========================================================================
-  // 7. FINAL 100% MATHEMATICAL CONSISTENCY RECONCILIATION
+  // 7. FINAL RECONCILIATION & INTELLIGENT RUSH-HOUR VEHICLE RECOMMENDATION
   // =========================================================================
   resultRoutes.forEach(r => {
     r.total_regular_fare = r.legs.reduce((sum, leg) => sum + (leg.regular_fare_bdt || 0), 0);
@@ -655,6 +698,47 @@ export function runDijkstraRouting({
     const legDurationSum = r.legs.reduce((sum, leg) => sum + (leg.duration_mins || 0), 0);
     r.total_duration_mins = legDurationSum + ((r.transfers || 0) * 3);
   });
+
+  // Dynamic Route & Vehicle Preference Sorting during Rush Hour
+  if (isRushHour) {
+    const hasMetro = resultRoutes.find(r => r.mode === 'metro');
+    if (hasMetro) {
+      // Prioritize Metro as #1 recommendation because it has 0 mins traffic delay
+      resultRoutes.forEach(r => {
+        if (r.mode === 'metro') {
+          r.is_recommended = true;
+          r.type_badge = "🌟 পিক-আওয়ারে জ্যামমুক্ত দ্রুততম (সেরা পছন্দ)";
+          r.obstacles_badge = "🟢 বাধামুক্ত উড়ালপথ: অফিস সময়েও ০ মিনিট জ্যাম";
+          r.rush_delay_mins = 0;
+        } else {
+          r.is_recommended = false;
+        }
+      });
+      // Sort Metro first, then Bike (fastest road alternative), then by time
+      resultRoutes.sort((a, b) => {
+        if (a.mode === 'metro') return -1;
+        if (b.mode === 'metro') return 1;
+        if (a.mode === 'bike') return -1;
+        if (b.mode === 'bike') return 1;
+        return a.total_duration_mins - b.total_duration_mins;
+      });
+    } else {
+      // No Metro available on this corridor: Bike becomes the fastest road recommendation
+      const bikeOpt = resultRoutes.find(r => r.mode === 'bike');
+      if (bikeOpt) {
+        resultRoutes.forEach(r => {
+          if (r.mode === 'bike') {
+            r.is_recommended = true;
+            r.type_badge = "🌟 পিক-আওয়ারে সড়কপথে দ্রুততম (সেরা পছন্দ)";
+          } else {
+            r.is_recommended = false;
+          }
+        });
+      }
+      // Sort by fastest duration during peak traffic
+      resultRoutes.sort((a, b) => a.total_duration_mins - b.total_duration_mins);
+    }
+  }
 
   return resultRoutes;
 }

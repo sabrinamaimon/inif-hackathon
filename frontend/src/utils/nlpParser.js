@@ -3,44 +3,44 @@
 
 export const HUB_KEYWORDS = [
   // MRT-6 Stations & North Sector
-  { standard: "Uttara North", triggers: ["uttara north", "uttara uttor", "diabari", "দিয়াবাড়ী", "উত্তরা উত্তর"] },
+  { standard: "Uttara North", triggers: ["uttara north", "uttara uttor", "diabari", "দিয়াবাড়ী", "দিয়াবাড়ি", "উত্তরা উত্তর"] },
   { standard: "Uttara Center", triggers: ["uttara center", "uttara centre", "উত্তরা সেন্টার"] },
   { standard: "Uttara South", triggers: ["uttara south", "uttara dokkhin", "উত্তরা দক্ষিণ"] },
-  { standard: "Uttara", triggers: ["uttara", "utara", "utora", "উত্তরা", "airport", "বিমানবন্দর", "tongi", "টঙ্গী", "gazipur", "গাজীপুর", "আব্দুল্লাহপুর", "abdullahpur"] },
-  { standard: "Pallabi", triggers: ["pallabi", "polbi", "পল্লবী"] },
+  { standard: "Uttara", triggers: ["uttara", "utara", "utora", "উত্তরা", "airport", "bimanbandar", "bimanbondor", "বিমানবন্দর", "azampur", "আজমপুর", "রাজলক্ষ্মী", "rajlokkhi", "rajlakshmi", "house building", "housebuilding", "হাউসবিল্ডিং", "tongi", "টঙ্গী", "gazipur", "গাজীপুর", "আব্দুল্লাহপুর", "abdullahpur"] },
+  { standard: "Pallabi", triggers: ["pallabi", "polbi", "পল্লবী", "মিরপুর ১২ ডি ব্লকে"] },
   { standard: "Mirpur 12", triggers: ["mirpur 12", "mirpur-12", "mirpur12", "m12", "মিরপুর ১২"] },
   { standard: "Mirpur 11", triggers: ["mirpur 11", "mirpur-11", "mirpur11", "m11", "মিরপুর ১১"] },
-  { standard: "Mirpur 10", triggers: ["mirpur 10", "mirpur-10", "mirpur10", "m10", "mirpur", "মিরপুর ১০", "মিরপুর গোলচত্বর", "মিরপুর"] },
-  { standard: "Mirpur 1", triggers: ["mirpur 1", "mirpur-1", "mirpur1", "মিরপুর ১", "মাজার রোড"] },
+  { standard: "Mirpur 10", triggers: ["mirpur 10", "mirpur-10", "mirpur10", "m10", "mirpur", "মিরপুর ১০", "মিরপুর গোলচত্বর", "মিরপুর", "mirpur 2", "mirpur-2", "মিরপুর ২", "mirpur 14", "মিরপুর ১৪"] },
+  { standard: "Mirpur 1", triggers: ["mirpur 1", "mirpur-1", "mirpur1", "মিরপুর ১", "মাজার রোড", "majar road"] },
   { standard: "Kazipara", triggers: ["kazipara", "kajipara", "কাজীপাড়া", "কাজিপাড়া"] },
-  { standard: "Shewrapara", triggers: ["shewrapara", "sewrapara", "শেওড়াপাড়া", "শেওড়াপাড়া"] },
-  { standard: "Agargaon", triggers: ["agargaon", "agargaun", "agargon", "আগারগাঁও"] },
-  { standard: "Bijoy Sarani", triggers: ["bijoy sarani", "bijoy sharoni", "বিজয় সরণি", "চন্দ্রিমা উদ্যান", "aeroplane mor"] },
-  { standard: "Farmgate", triggers: ["farmgate", "farmget", "farm gate", "ফার্মগেট", "framgate", "খামারবাড়ি", "khamarbari"] },
-  { standard: "Karwan Bazar", triggers: ["karwan bazar", "kawran bazar", "karwanbazar", "kawranbazar", "কারওয়an বাজার", "কারওয়ান বাজার", "সোনারগাঁও", "pan pacific"] },
-  { standard: "Shahbagh", triggers: ["shahbagh", "shahbag", "শাহবাগ", "pg hospital", "বিএসএমএমইউ"] },
-  { standard: "Dhaka University", triggers: ["dhaka university", "du", "tsc", "ঢাকা বিশ্ববিদ্যালয়", "টিএসসি", "কার্জন হল", "curzon hall"] },
-  { standard: "Bangladesh Secretariat", triggers: ["secretariat", "press club", "সচিবালয়", "বাংলাদেশ সচিবালয়", "প্রেস ক্লাব"] },
-  { standard: "Motijheel", triggers: ["motijheel", "motijhil", "matijheel", "matijhil", "মতিঝিল", "শাপলা চত্বর", "shapla chattar"] },
-  { standard: "Kamalapur", triggers: ["kamalapur", "komlapur", "কমলাপুর", "kamalapur railway", "কমলাপুর রেলওয়ে"] },
+  { standard: "Shewrapara", triggers: ["shewrapara", "sewrapara", "শেওড়াপাড়া", "শেওড়াপাড়া", "শেওড়াপাড়া বাজার"] },
+  { standard: "Agargaon", triggers: ["agargaon", "agargaun", "agargon", "আগারগাঁও", "পাসপোর্ট অফিস", "passport office", "idb bhaban", "আইডিবি"] },
+  { standard: "Bijoy Sarani", triggers: ["bijoy sarani", "bijoy sharoni", "বিজয় সরণি", "চন্দ্রিমা উদ্যান", "aeroplane mor", "উড়োজাহাজ মোড়"] },
+  { standard: "Farmgate", triggers: ["farmgate", "farmget", "farm gate", "ফার্মগেট", "framgate", "খামারবাড়ি", "khamarbari", "ananda cinema", "আনন্দ সিনেমা", "ইন্দ্র রোড"] },
+  { standard: "Karwan Bazar", triggers: ["karwan bazar", "kawran bazar", "karwanbazar", "kawranbazar", "কারওয়an বাজার", "কারওয়ান বাজার", "সোনারগাঁও", "pan pacific", "banglamotor", "বাংলা মোটর"] },
+  { standard: "Shahbagh", triggers: ["shahbagh", "shahbag", "শাহবাগ", "pg hospital", "বিএসএমএমইউ", "bsmmu", "বারডেম", "bardem", "চারুকলা"] },
+  { standard: "Dhaka University", triggers: ["dhaka university", "du", "tsc", "ঢাকা বিশ্ববিদ্যালয়", "ঢাকা বিশ্ববিদ্যালয়", "টিএসসি", "কার্জন হল", "curzon hall", "শহীদ মিনার", "shohid minar"] },
+  { standard: "Bangladesh Secretariat", triggers: ["secretariat", "press club", "সচিবালয়", "বাংলাদেশ সচিবালয়", "প্রেস ক্লাব", "kakrail", "কাকরাইল", "paltan", "পল্টন", "bijoynagar", "বিজয়নগর"] },
+  { standard: "Motijheel", triggers: ["motijheel", "motijhil", "matijheel", "matijhil", "মতিঝিল", "শাপলা চত্বর", "shapla chattar", "দৈনিক বাংলা", "dainik bangla", "dilkusha", "দিলকুশা"] },
+  { standard: "Kamalapur", triggers: ["kamalapur", "komlapur", "kamlapur", "কমলাপুর", "kamalapur railway", "কমলাপুর রেলওয়ে", "কমলাপুর রেলওয়ে", "রেল স্টেশন"] },
 
   // South & Central Hubs
-  { standard: "Science Lab", triggers: ["science lab", "sciencelab", "science laboratory", "সায়েন্স ল্যাব", "সাইন্সল্যাব", "new market", "নিউ মার্কেট", "নিউমার্কেট", "elephant road", "এলিফ্যান্ট রোড", "nilkhet", "নীলক্ষেত"] },
-  { standard: "Dhanmondi", triggers: ["dhanmondi", "dhanmandi", "ধানমন্ডি", "dhanmondi 27", "dhanmondi 32", "jigatola", "জিগাতলা", "shongkor", "শংকর"] },
-  { standard: "Mohammadpur", triggers: ["mohammadpur", "mohammodpur", "mdpur", "মোহাম্মদপুর", "শিয়া মসজিদ", "টাউন হল", "town hall"] },
-  { standard: "Malibagh", triggers: ["malibagh", "malibag", "মৌচাক", "mouchak", "মালিবাগ", "শান্তিনগর", "shantinagar"] },
-  { standard: "Banasree", triggers: ["banasree", "bonosree", "bonosri", "বনশ্রী", "রামপুরা", "rampura", "হাতিরঝিল", "hatirjheel"] },
-  { standard: "Badda", triggers: ["badda", "বাড্ডা", "মধ্য বাড্ডা", "উত্তর বাড্ডা", "নদ্দা", "nadda"] },
-  { standard: "Mohakhali", triggers: ["mohakhali", "moakhali", "মহাখালী", "মহাখালি", "টিবি গেট", "tb gate"] },
-  { standard: "Jatrabari", triggers: ["jatrabari", "যাত্রাবাড়ী", "যাত্রাবাড়ি", "ধোলাইপাড়", "dhalaiper", "sayedabad", "সায়েদাবাদ"] },
-  { standard: "Sadarghat", triggers: ["sadarghat", "shadarghat", "সদরঘাট", "পুরান ঢাকা", "old dhaka", "নদী বন্দর", "জগন্নাথ বিশ্ববিদ্যালয়", "jnu", "বাহাদুর শাহ পার্ক"] },
-  { standard: "Lalbagh", triggers: ["lalbagh", "lalbag", "চকবাজার", "chawkbazar", "লালবাগ", "লালবাগ কেল্লা"] },
-  { standard: "Kalyanpur", triggers: ["kalyanpur", "কল্যানপুর", "কল্যাণপুর", "গাবতলী", "gabtoli", "gabtali", "savar", "সাভার"] },
-  { standard: "Shyamoli", triggers: ["shyamoli", "শ্যামলী", "শিশু মেলা", "shishu mela"] },
-  { standard: "Banani", triggers: ["banani", "বনানী", "gulshan", "গুলশান", "কাকলী", "kakoli"] },
-  { standard: "Kuril", triggers: ["kuril", "কুড়িল", "kuril flyover", "কুড়িল বিশ্বরোড", "bishwa road", "যমুনা ফিউচার পার্ক"] },
-  { standard: "Khilkhet", triggers: ["khilkhet", "খিলক্ষেত"] },
-  { standard: "Gulisthan", triggers: ["gulisthan", "gulistan", "গুলিস্তান", "ফুটপাত", "গোলাপ শাহ মাজার", "victoria park"] }
+  { standard: "Science Lab", triggers: ["science lab", "sciencelab", "science laboratory", "সায়েন্স ল্যাব", "সাইন্সল্যাব", "new market", "নিউ মার্কেট", "নিউমার্কেট", "elephant road", "এলিফ্যান্ট রোড", "nilkhet", "নীলক্ষেত", "azimpur", "আজিমপুর", "palashi", "পলাশী", "বাটা সিগন্যাল", "bata signal"] },
+  { standard: "Dhanmondi", triggers: ["dhanmondi", "dhanmandi", "ধানমন্ডি", "dhanmondi 27", "dhanmondi 32", "dhanmondi 15", "jigatola", "জিগাতলা", "shongkor", "শংকর", "kolabagan", "kalabagan", "কলাবাগান", "panthapath", "পান্থপথ", "green road", "গ্রিন রোড", "sobhanbag", "সোবহানবাগ"] },
+  { standard: "Mohammadpur", triggers: ["mohammadpur", "mohammodpur", "mdpur", "মোহাম্মদপুর", "শিয়া মসজিদ", "টাউন হল", "town hall", "japan garden city", "আসাদগেট", "asad gate"] },
+  { standard: "Malibagh", triggers: ["malibagh", "malibag", "মৌচাক", "mouchak", "মালিবাগ", "শান্তিনগর", "shantinagar", "moghbazar", "mogbazar", "মগবাজার"] },
+  { standard: "Banasree", triggers: ["banasree", "bonosree", "bonosri", "বনশ্রী", "রামপুরা", "rampura", "হাতিরঝিল", "hatirjheel", "afatbnagar", "আফতাবনগর"] },
+  { standard: "Badda", triggers: ["badda", "বাড্ডা", "মধ্য বাড্ডা", "উত্তর বাড্ডা", "নদ্দা", "nadda", "নতুন বাজার", "notun bazar", "natun bazar"] },
+  { standard: "Mohakhali", triggers: ["mohakhali", "moakhali", "মহাখালী", "মহাখালি", "টিবি গেট", "tb gate", "wireless", "ওয়ারলেস", "mohakhali dohs"] },
+  { standard: "Jatrabari", triggers: ["jatrabari", "যাত্রাবাড়ী", "যাত্রাবাড়ি", "ধোলাইপাড়", "dhalaiper", "sayedabad", "সায়েদাবাদ", "সায়েদাবাদ", "saydabad", "শনির আখড়া", "shonir akhra", "পোস্তগোলা", "postagola"] },
+  { standard: "Sadarghat", triggers: ["sadarghat", "shadarghat", "সদরঘাট", "পুরান ঢাকা", "old dhaka", "নদী বন্দর", "জগন্নাথ বিশ্ববিদ্যালয়", "jnu", "বাহাদুর শাহ পার্ক", "wari", "ওয়ারী", "ওয়ারি", "টিকাটুলি", "tikatuli"] },
+  { standard: "Lalbagh", triggers: ["lalbagh", "lalbag", "চকবাজার", "chawkbazar", "লালবাগ", "লালবাগ কেল্লা", "kamrangirchar", "কামরাঙ্গীরচর"] },
+  { standard: "Kalyanpur", triggers: ["kalyanpur", "কল্যানপুর", "কল্যাণপুর", "গাবতলী", "gabtoli", "gabtali", "technical", "টেকনিক্যাল", "savar", "সাভার"] },
+  { standard: "Shyamoli", triggers: ["shyamoli", "শ্যামলী", "শিশু মেলা", "shishu mela", "shomorita", "সমরিতা"] },
+  { standard: "Banani", triggers: ["banani", "বনানী", "gulshan", "গুলশান", "gulshan 1", "gulshan 2", "কাকলী", "kakoli", "kemal ataturk"] },
+  { standard: "Kuril", triggers: ["kuril", "কুড়িল", "kuril flyover", "কুড়িল বিশ্বরোড", "bishwa road", "যমুনা ফিউচার পার্ক", "bashundhara", "বসুন্ধরা", "bashundhara r/a", "300 feet", "৩০০ ফিট"] },
+  { standard: "Khilkhet", triggers: ["khilkhet", "খিলক্ষেত", "nikunja", "নিকুঞ্জ"] },
+  { standard: "Gulisthan", triggers: ["gulisthan", "gulistan", "গুলিস্তান", "ফুটপাত", "গোলাপ শাহ মাজার", "victoria park", "ফুলবাড়িয়া", "fulbaria"] }
 ];
 
 // Helper to extract non-overlapping matches with their character indices
@@ -158,20 +158,29 @@ export function parseCommuteQuery(query, fallbackOrigin = 'Mirpur 10', fallbackD
 
     const isOriginContext = 
       before.includes('from') || 
+      before.includes('theke') || 
+      before.includes('থেকে') || 
+      before.includes('হতে') ||
       after.includes('theke') || 
       after.includes('থেকে') || 
-      after.includes('হতে');
+      after.includes('হতে') ||
+      after.includes('hote');
 
     const isDestContext = 
       before.includes('to') || 
+      before.includes('jabo') || 
+      before.includes('যাব') || 
+      before.includes('পৌঁছাব') ||
+      after.includes('to') || 
       after.includes('jabo') || 
       after.includes('যাব') || 
-      after.includes('পৌঁছাব');
+      after.includes('পৌঁছাব') ||
+      after.includes('pouchabo');
 
-    if (isOriginContext) {
+    if (isOriginContext && !isDestContext) {
       origin = single.hub;
       destination = fallbackDest === single.hub ? (single.hub === 'Motijheel' ? 'Mirpur 10' : 'Motijheel') : fallbackDest;
-    } else if (isDestContext) {
+    } else if (isDestContext && !isOriginContext) {
       destination = single.hub;
       origin = fallbackOrigin === single.hub ? (single.hub === 'Motijheel' ? 'Mirpur 10' : 'Motijheel') : fallbackOrigin;
     } else {

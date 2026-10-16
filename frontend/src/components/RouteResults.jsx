@@ -462,11 +462,29 @@ export default function RouteResults({
                   </span>
                 </div>
 
-                {/* Verified Transit Badge */}
-                <div className="flex items-center gap-2 text-xs font-anek font-bold text-[#6ee7b7] bg-[#15453b]/40 px-3 py-1 rounded-xl border border-[#2a6f62]">
-                  <span className="w-2 h-2 rounded-full bg-[#6ee7b7] animate-ping" />
-                  <span>{lang === 'bn' ? 'সরাসরি যাচাইকৃত যাত্রাপথ' : 'VERIFIED DIRECT ROUTE'}</span>
-                </div>
+                {/* Verified Transit / Rush Hour Delay Callout */}
+                {route.rush_delay_mins > 0 ? (
+                  <div className="flex items-center gap-2 text-xs font-anek font-bold text-[#fca5a5] bg-[#45120f]/70 px-3 py-1 rounded-xl border border-[#b83a2e]/60">
+                    <Clock className="w-3.5 h-3.5 text-[#f87171] shrink-0" />
+                    <span>
+                      {lang === 'bn' 
+                        ? `অফিস সময়ে সড়কে +${toBnDigits(route.rush_delay_mins)} মিনিট অতিরিক্ত জ্যাম বিলম্ব`
+                        : `Rush Hour: +${route.rush_delay_mins} mins extra road delay`}
+                    </span>
+                  </div>
+                ) : (route.mode === 'metro' ? (
+                  <div className="flex items-center gap-2 text-xs font-anek font-bold text-[#6ee7b7] bg-[#15453b]/70 px-3 py-1 rounded-xl border border-[#10b981]">
+                    <span className="w-2 h-2 rounded-full bg-[#10b981] animate-ping" />
+                    <span>
+                      {lang === 'bn' ? '⚡ পিক-আওয়ারেও উড়ালপথে ০ মিনিট জ্যাম' : '⚡ 0 mins rush delay on elevated viaduct'}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-xs font-anek font-bold text-[#6ee7b7] bg-[#15453b]/40 px-3 py-1 rounded-xl border border-[#2a6f62]">
+                    <span className="w-2 h-2 rounded-full bg-[#6ee7b7] animate-ping" />
+                    <span>{lang === 'bn' ? 'সরাসরি যাচাইকৃত যাত্রাপথ' : 'VERIFIED DIRECT ROUTE'}</span>
+                  </div>
+                ))}
               </div>
 
               {/* ========================================================= */}
@@ -511,6 +529,15 @@ export default function RouteResults({
                             {lang === 'bn' ? 'মিনিট' : 'm'}
                           </span>
                         </div>
+                        {route.rush_delay_mins > 0 ? (
+                          <div className="text-[10px] sm:text-[11px] font-anek font-bold text-[#b83a2e] leading-tight mt-0.5 whitespace-nowrap">
+                            {lang === 'bn' ? `(+${toBnDigits(route.rush_delay_mins)} মি. জ্যাম)` : `(+${route.rush_delay_mins}m rush)`}
+                          </div>
+                        ) : (route.mode === 'metro' ? (
+                          <div className="text-[10px] sm:text-[11px] font-anek font-bold text-[#059669] leading-tight mt-0.5 whitespace-nowrap">
+                            {lang === 'bn' ? '(০ মি. জ্যাম)' : '(0m rush delay)'}
+                          </div>
+                        ) : null)}
                       </div>
 
                       {/* 2. Regular Fare / Cost */}

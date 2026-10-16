@@ -40,6 +40,7 @@ export default function RouteSearch({
   });
 
   const [naturalQuery, setNaturalQuery] = useState('');
+  const [parsedPreview, setParsedPreview] = useState(null);
   const [isListening, setIsListening] = useState(false);
   const [isLocating, setIsLocating] = useState(false);
   const [detectedLocationInfo, setDetectedLocationInfo] = useState(null);
@@ -93,6 +94,7 @@ export default function RouteSearch({
 
   const handleOriginChange = (val) => {
     setOrigin(val);
+    setParsedPreview(null);
     if (val === destination) {
       // Pick a safe fallback destination
       const fallback = val === 'Motijheel' ? 'Mirpur 10' : 'Motijheel';
@@ -102,6 +104,7 @@ export default function RouteSearch({
 
   const handleDestinationChange = (val) => {
     setDestination(val);
+    setParsedPreview(null);
     if (val === origin) {
       // Pick a safe fallback origin
       const fallback = val === 'Mirpur 10' ? 'Motijheel' : 'Mirpur 10';
@@ -114,14 +117,19 @@ export default function RouteSearch({
     const temp = origin;
     setOrigin(destination);
     setDestination(temp);
+    setParsedPreview(null);
   };
 
   const handleQueryChange = (val) => {
     setNaturalQuery(val);
-    if (!val || val.trim().length < 3) return;
+    if (!val || val.trim().length < 2) {
+      setParsedPreview(null);
+      return;
+    }
     try {
       const parsed = parseCommuteQuery(val, origin, destination);
-      if (parsed && parsed.confidence >= 0.8) {
+      if (parsed) {
+        setParsedPreview(parsed);
         if (parsed.origin && parsed.origin !== origin) {
           setOrigin(parsed.origin);
         }
@@ -293,17 +301,14 @@ export default function RouteSearch({
             className="w-full px-4 py-3.5 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/40 text-[#fbf8f1] text-base font-anek font-bold focus:border-[#f6d16f] focus:outline-none transition-all shadow-inner"
           >
             {allHubList.map((name) => {
-              const isSelectedAsDest = name === destination;
               const hub = STATIC_HUBS[name];
               return (
                 <option 
                   key={name} 
                   value={name} 
-                  disabled={isSelectedAsDest}
-                  className={isSelectedAsDest ? "bg-[#1a1410] text-[#7a6654] italic" : "bg-[#1a1410] text-[#fbf8f1]"}
+                  className="bg-[#1a1410] text-[#fbf8f1]"
                 >
-                  {isSelectedAsDest ? (lang === 'bn' ? '🚫 [গন্তব্যে নির্বাচিত] ' : '🚫 [Selected as Destination] ') : '📍 '}
-                  {lang === 'bn' ? (hub?.name_bn || name) : name}
+                  📍 {lang === 'bn' ? (hub?.name_bn || name) : name}
                 </option>
               );
             })}
@@ -379,17 +384,14 @@ export default function RouteSearch({
             className="w-full px-4 py-3.5 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/40 text-[#fbf8f1] text-base font-anek font-bold focus:border-[#f6d16f] focus:outline-none transition-all shadow-inner"
           >
             {allHubList.map((name) => {
-              const isSelectedAsOrig = name === origin;
               const hub = STATIC_HUBS[name];
               return (
                 <option 
                   key={name} 
                   value={name} 
-                  disabled={isSelectedAsOrig}
-                  className={isSelectedAsOrig ? "bg-[#1a1410] text-[#7a6654] italic" : "bg-[#1a1410] text-[#fbf8f1]"}
+                  className="bg-[#1a1410] text-[#fbf8f1]"
                 >
-                  {isSelectedAsOrig ? (lang === 'bn' ? '🚫 [শুরুতে নির্বাচিত] ' : '🚫 [Selected as Origin] ') : '📍 '}
-                  {lang === 'bn' ? (hub?.name_bn || name) : name}
+                  📍 {lang === 'bn' ? (hub?.name_bn || name) : name}
                 </option>
               );
             })}
