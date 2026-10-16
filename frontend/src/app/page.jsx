@@ -16,6 +16,7 @@ import NoticeScanner from '../components/NoticeScanner';
 import EmergencyHelpline from '../components/EmergencyHelpline';
 import DhakaCommuteHeritageShowcase from '../components/DhakaCommuteHeritageShowcase';
 import { generateOfflineRouteCard } from '../utils/offlineCard';
+import { X } from 'lucide-react';
 
 import { STATIC_HUBS, STATIC_ALERTS } from '../data/staticData';
 
@@ -60,6 +61,8 @@ export default function Home() {
   const [isAddAlertOpen, setIsAddAlertOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isResultsOpen, setIsResultsOpen] = useState(false);
+  const [hasUserSearched, setHasUserSearched] = useState(false);
 
   // Fetch initial alerts & run default search on mount
   useEffect(() => {
@@ -214,10 +217,14 @@ export default function Home() {
   };
 
   const handleManualSearch = () => {
+    setHasUserSearched(true);
+    setIsResultsOpen(true);
     performSearch(origin, destination, passengerType, weather, isRushHour);
   };
 
   const handleNlpSearch = async (queryText) => {
+    setHasUserSearched(true);
+    setIsResultsOpen(true);
     setIsLoadingRoutes(true);
     try {
       const res = await fetch('/api/search/nlp', {
@@ -455,17 +462,19 @@ export default function Home() {
               lang={lang}
             />
 
-            {/* Vintage BD Postcard Results */}
-            <RouteResults
-              routes={routes}
-              origin={origin}
-              destination={destination}
-              passengerType={passengerType}
-              lang={lang}
-              selectedRouteId={selectedRoute?.id}
-              onSelectRoute={(r) => setSelectedRoute(r)}
-              onOpenFareBreakdown={(r) => setFareModalRoute(r)}
-            />
+            {/* View Results Button (Only after user initiates a search) */}
+            {hasUserSearched && routes.length > 0 && (
+              <div className="flex justify-center -mt-3">
+                <button
+                  type="button"
+                  onClick={() => setIsResultsOpen(true)}
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#1c1511] hover:bg-[#292019] text-[#f6d16f] border border-[#c69429]/60 hover:border-[#f6d16f] font-anek font-bold text-sm shadow-md hover:scale-[1.02] transition-all cursor-pointer"
+                >
+                  <span>🧭</span>
+                  <span>{lang === 'bn' ? `খোঁজা রুটগুলো দেখুন (${routes.length}টি অপশন)` : `View Search Results (${routes.length} options)`}</span>
+                </button>
+              </div>
+            )}
 
             {/* Dhaka Cultural Heritage & Commute Lifelines Showcase */}
             <DhakaCommuteHeritageShowcase lang={lang} />
@@ -527,6 +536,8 @@ export default function Home() {
           setSelectedRoute(r);
           setIsChatOpen(false);
           setCurrentTab('home');
+          setHasUserSearched(true);
+          setIsResultsOpen(true);
         }}
       />
 
@@ -550,6 +561,61 @@ export default function Home() {
         onClose={() => setIsScannerOpen(false)}
         lang={lang}
       />
+
+      {/* Route Results Modal (On-Demand Popup) */}
+      {isResultsOpen && routes.length > 0 && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 md:p-8 bg-black/80 backdrop-blur-sm animate-fadeIn"
+          onClick={() => setIsResultsOpen(false)}
+        >
+          <div 
+            className="relative w-full max-w-5xl max-h-[92vh] flex flex-col bg-[#120e0b] border-2 border-[#c69429] rounded-2xl shadow-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-5 sm:px-7 py-4 bg-[#1a1410] border-b-2 border-[#c69429]/40 z-10 shrink-0">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl sm:text-3xl">🧭</span>
+                <div>
+                  <h3 className="font-rickshaw text-lg sm:text-2xl font-bold text-[#f6d16f] tracking-wide">
+                    {lang === 'bn' ? 'প্রস্তাবিত রুট ও ভাড়ার তালিকা' : 'Suggested Routes & Fare Details'}
+                  </h3>
+                  <p className="font-anek text-xs sm:text-sm text-[#dfcfb2] flex items-center gap-1.5">
+                    <span className="font-bold text-[#f6d16f]">{origin}</span>
+                    <span>➔</span>
+                    <span className="font-bold text-[#f6d16f]">{destination}</span>
+                    <span className="text-[#c69429]">|</span>
+                    <span>{routes.length} {lang === 'bn' ? 'টি বিকল্প রুট পাওয়া গেছে' : 'routes found'}</span>
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsResultsOpen(false)}
+                className="p-2 sm:p-2.5 rounded-xl bg-[#292019] hover:bg-[#b83a2e] text-[#f6d16f] hover:text-white border border-[#c69429]/40 transition-colors cursor-pointer"
+                aria-label="Close route results"
+              >
+                <X className="w-5 h-5 sm:w-6 sm:h-6" />
+              </button>
+            </div>
+
+            {/* Modal Scrollable Body */}
+            <div className="flex-1 overflow-y-auto px-4 sm:px-7 py-2 bg-[#120e0b]">
+              <RouteResults
+                routes={routes}
+                origin={origin}
+                destination={destination}
+                passengerType={passengerType}
+                lang={lang}
+                selectedRouteId={selectedRoute?.id}
+                onSelectRoute={(r) => setSelectedRoute(r)}
+                onOpenFareBreakdown={(r) => setFareModalRoute(r)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

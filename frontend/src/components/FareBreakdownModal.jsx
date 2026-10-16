@@ -8,7 +8,7 @@ export default function FareBreakdownModal({ isOpen, onClose, route, lang = 'bn'
   if (!isOpen || !route) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0a0705]/85 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#0a0705]/85 backdrop-blur-md animate-in fade-in duration-200">
       <div className="heritage-card w-full max-w-lg p-5 sm:p-6 border-2 border-[#c69429] bg-[#1a130f] shadow-2xl relative rounded-2xl">
         {/* Header */}
         <div className="flex items-center justify-between pb-3 mb-4 border-b border-[#c69429]/30">
