@@ -234,3 +234,35 @@ export const STATIC_EMERGENCY_CONTACTS = [
   { name: "BIWTA Sadarghat Port Safety", name_bn: "বিআইডব্লিউটিএ সদরঘাট রিভার কন্ট্রোল", phone: "01715012345", desc: "Buriganga Riverways, Launch & Ghat Assistance" },
   { name: "MRT-6 Metro Helpline", name_bn: "মেট্রোরেল কন্ট্রোল রুম", phone: "16111", desc: "Train schedule, Rapid Pass issues & station assistance" }
 ];
+
+export const STATIC_RIDESHARE = [
+  {
+    id: "ride-001",
+    hub_origin: "Farmgate",
+    destination: "Dhanmondi",
+    vehicle_type: "rickshaw",
+    total_fare_bdt: 60,
+    seats_available: 1,
+    seats_taken: 1,
+    host_name: "Sadia (DU Student)",
+    contact_phone: "01711-234567",
+    departure_time: "Now (Next 10 mins)",
+    split_fare_per_person: 30,
+    notes: "Waiting near Ananda Cinema foot-overbridge. Need 1 co-rider to split rickshaw."
+  },
+  {
+    id: "ride-002",
+    hub_origin: "Agargaon",
+    destination: "Mohakhali",
+    vehicle_type: "cng",
+    total_fare_bdt: 200,
+    seats_available: 2,
+    seats_taken: 2,
+    host_name: "Fahim (Office Commuter)",
+    contact_phone: "01822-987654",
+    departure_time: "6:15 PM",
+    split_fare_per_person: 67,
+    notes: "CNG heading to Mohakhali Wireless. Metro gate 2 pickup."
+  }
+];
+

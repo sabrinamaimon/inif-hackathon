@@ -7,17 +7,18 @@ from models.schemas import RouteOption, RouteLeg
 class DhakaTransitGraph:
     """
     Multi-modal graph for Dhaka city transit.
+    Uses NetworkX MultiDiGraph to preserve Metro, Bus, Leguna, and Rickshaw edges.
     Supports dynamic disruption weights, detour calculations, and multi-leg generation.
     """
 
     def __init__(self):
-        self.raw_graph = nx.DiGraph()
+        self.multi_graph = nx.MultiDiGraph()
         self.build_base_graph()
 
     def build_base_graph(self):
-        self.raw_graph.clear()
+        self.multi_graph.clear()
         for hub_name, hub_data in DHAKA_HUBS.items():
-            self.raw_graph.add_node(
+            self.multi_graph.add_node(
                 hub_name,
                 name_bn=hub_data["name_bn"],
                 lat=hub_data["lat"],
@@ -31,8 +32,9 @@ class DhakaTransitGraph:
             u, v = mrt_stops[i], mrt_stops[i+1]
             dist = self._get_edge_distance(u, v)
             # Metro is immune to street traffic/waterlogging!
-            self.raw_graph.add_edge(
+            self.multi_graph.add_edge(
                 u, v,
+                key="metro",
                 mode="metro",
                 line_name="MRT-6 Metro Rail",
                 distance_km=dist,
@@ -42,8 +44,9 @@ class DhakaTransitGraph:
                 student_allowed=False,
                 elevated=True
             )
-            self.raw_graph.add_edge(
+            self.multi_graph.add_edge(
                 v, u,
+                key="metro",
                 mode="metro",
                 line_name="MRT-6 Metro Rail",
                 distance_km=dist,
@@ -63,8 +66,9 @@ class DhakaTransitGraph:
                 u, v = stops[i], stops[i+1]
                 dist = self._get_edge_distance(u, v)
                 base_time = self._get_edge_time(u, v)
-                self.raw_graph.add_edge(
+                self.multi_graph.add_edge(
                     u, v,
+                    key=f"bus_{route['name']}",
                     mode="bus",
                     line_name=route["name"],
                     distance_km=dist,
@@ -74,8 +78,9 @@ class DhakaTransitGraph:
                     student_allowed=True,
                     elevated=False
                 )
-                self.raw_graph.add_edge(
+                self.multi_graph.add_edge(
                     v, u,
+                    key=f"bus_{route['name']}",
                     mode="bus",
                     line_name=route["name"],
                     distance_km=dist,
@@ -95,8 +100,9 @@ class DhakaTransitGraph:
                 u, v = stops[i], stops[i+1]
                 dist = self._get_edge_distance(u, v)
                 base_time = max(5, int(dist * 3.5))
-                self.raw_graph.add_edge(
+                self.multi_graph.add_edge(
                     u, v,
+                    key=f"leguna_{route['name']}",
                     mode="leguna",
                     line_name=route["name"],
                     distance_km=dist,
@@ -106,8 +112,9 @@ class DhakaTransitGraph:
                     student_allowed=False,
                     elevated=False
                 )
-                self.raw_graph.add_edge(
+                self.multi_graph.add_edge(
                     v, u,
+                    key=f"leguna_{route['name']}",
                     mode="leguna",
                     line_name=route["name"],
                     distance_km=dist,
@@ -122,8 +129,9 @@ class DhakaTransitGraph:
         for (u, v), edge_info in TRANSIT_EDGES.items():
             dist = edge_info["distance_km"]
             base_time = edge_info["base_time_mins"]
-            self.raw_graph.add_edge(
+            self.multi_graph.add_edge(
                 u, v,
+                key="rickshaw",
                 mode="rickshaw",
                 line_name="Connector Rickshaw",
                 distance_km=dist,
@@ -133,8 +141,9 @@ class DhakaTransitGraph:
                 student_allowed=False,
                 elevated=False
             )
-            self.raw_graph.add_edge(
+            self.multi_graph.add_edge(
                 v, u,
+                key="rickshaw",
                 mode="rickshaw",
                 line_name="Connector Rickshaw",
                 distance_km=dist,
@@ -173,9 +182,6 @@ class DhakaTransitGraph:
         if origin not in DHAKA_HUBS or destination not in DHAKA_HUBS:
             return []
 
-        # Build dynamic working graph with disruption penalties
-        working_graph = self.raw_graph.copy()
-
         # Identify blocked or disrupted hubs
         blocked_set = set(avoid_hubs)
         waterlogged_set = set()
@@ -186,35 +192,16 @@ class DhakaTransitGraph:
             hub = alert.get("hub")
             alert_type = alert.get("type")
             if alert_type in ["blockade", "protest"]:
-                # Blockade stops surface transport (bus, rickshaw, leguna)
-                # Elevated Metro Rail still runs through!
-                for u, v, data in list(working_graph.edges(data=True)):
-                    if (u == hub or v == hub) and not data.get("elevated", False):
-                        working_graph[u][v]["weight"] = 99999
+                blocked_set.add(hub)
             elif alert_type == "waterlogging":
                 waterlogged_set.add(hub)
-                for u, v, data in list(working_graph.edges(data=True)):
-                    if (u == hub or v == hub) and not data.get("elevated", False):
-                        # Severe delay / penalty
-                        working_graph[u][v]["weight"] = data.get("base_time_mins", 10) * 4
-            elif alert_type == "gridlock":
-                for u, v, data in list(working_graph.edges(data=True)):
-                    if (u == hub or v == hub) and not data.get("elevated", False):
-                        working_graph[u][v]["weight"] = data.get("base_time_mins", 10) * 2.5
-
-        # Explicit avoid hubs
-        for h in blocked_set:
-            if h in working_graph and h not in [origin, destination]:
-                for u, v in list(working_graph.edges()):
-                    if u == h or v == h:
-                        working_graph[u][v]["weight"] = 99999
 
         # Generate up to 3 diverse route paths
         routes: List[RouteOption] = []
 
         # 1. Metro / Fastest Priority
         fast_option = self._generate_path(
-            working_graph, origin, destination,
+            origin, destination,
             priority="fastest",
             weather=weather,
             is_rush_hour=is_rush_hour,
@@ -231,35 +218,43 @@ class DhakaTransitGraph:
 
         # 2. Student / Cheapest Priority (Bus focus)
         bus_option = self._generate_path(
-            working_graph, origin, destination,
+            origin, destination,
             priority="cheapest_bus",
             weather=weather,
             is_rush_hour=is_rush_hour,
             waterlogged_hubs=waterlogged_set,
             blocked_hubs=blocked_set
         )
-        if bus_option and (not routes or bus_option.total_regular_fare != routes[0].total_regular_fare or bus_option.transfers != routes[0].transfers):
-            bus_option.id = "opt-cheapest"
-            bus_option.type_badge = "Student & Budget Pick"
-            bus_option.title = f"Economy Bus Route ({origin} -> {destination})"
-            bus_option.title_bn = f"সাশ্রয়ী ও হাফ-পাস রুট ({DHAKA_HUBS[origin]['name_bn']} -> {DHAKA_HUBS[destination]['name_bn']})"
-            routes.append(bus_option)
+        if bus_option:
+            # Only add if distinct from fastest
+            is_distinct = (
+                not routes or
+                bus_option.total_regular_fare != routes[0].total_regular_fare or
+                bus_option.transfers != routes[0].transfers or
+                [l.mode for l in bus_option.legs] != [l.mode for l in routes[0].legs]
+            )
+            if is_distinct:
+                bus_option.id = "opt-cheapest"
+                bus_option.type_badge = "Student & Budget Pick"
+                bus_option.title = f"Economy Bus Route ({origin} -> {destination})"
+                bus_option.title_bn = f"সাশ্রয়ী ও হাফ-পাস রুট ({DHAKA_HUBS[origin]['name_bn']} -> {DHAKA_HUBS[destination]['name_bn']})"
+                routes.append(bus_option)
 
         # 3. Resilient Detour Route if disruptions active
         if waterlogged_set or blocked_set:
             detour_option = self._generate_path(
-                working_graph, origin, destination,
+                origin, destination,
                 priority="detour",
                 weather=weather,
                 is_rush_hour=is_rush_hour,
                 waterlogged_hubs=waterlogged_set,
                 blocked_hubs=blocked_set
             )
-            if detour_option and not any(r.id == detour_option.id for r in routes):
+            if detour_option and not any(r.legs == detour_option.legs for r in routes):
                 detour_option.id = "opt-detour"
                 detour_option.type_badge = "Safe Detour"
-                detour_option.title = f"Disruption Bypass Detour"
-                detour_option.title_bn = f"জলজট ও ব্যারিকেড এড়িয়ে বিকল্প পথ"
+                detour_option.title = "Disruption Bypass Detour"
+                detour_option.title_bn = "জলজট ও ব্যারিকেড এড়িয়ে বিকল্প পথ"
                 detour_option.is_detour = True
                 detour_option.disruption_warning = "Bypassing waterlogged/blocked intersections automatically."
                 routes.append(detour_option)
@@ -274,7 +269,6 @@ class DhakaTransitGraph:
 
     def _generate_path(
         self,
-        graph: nx.DiGraph,
         origin: str,
         destination: str,
         priority: str,
@@ -283,30 +277,68 @@ class DhakaTransitGraph:
         waterlogged_hubs: set,
         blocked_hubs: set
     ) -> Optional[RouteOption]:
-        """Finds path and computes exact multi-modal leg data"""
-        try:
-            # Set custom edge weights based on priority
-            g = graph.copy()
-            for u, v, d in g.edges(data=True):
-                weight = d.get("weight", d.get("base_time_mins", 10))
-                mode = d.get("mode", "bus")
+        """Projects MultiDiGraph into a weighted DiGraph for specific priority and runs shortest path"""
+        g = nx.DiGraph()
+        for node, data in self.multi_graph.nodes(data=True):
+            g.add_node(node, **data)
+
+        # Project multi-edges into single best edge between (u, v) based on priority
+        for u, v in self.multi_graph.edges():
+            edge_dict = self.multi_graph[u][v]
+            best_candidate = None
+            best_weight = float('inf')
+
+            for key, data in edge_dict.items():
+                mode = data.get("mode", "bus")
+                elevated = data.get("elevated", False)
+                base_time = data.get("base_time_mins", 10)
+
+                # If hub is blocked:
+                # Surface transport cannot pass, but elevated Metro CAN pass
+                if (u in blocked_hubs or v in blocked_hubs) and not elevated:
+                    continue
+
+                weight = base_time
+
+                # Priority adjustments
                 if priority == "fastest":
                     if mode == "metro":
-                        weight *= 0.5  # Heavy preference for rapid transit
+                        weight = base_time * 0.4  # Rapid transit highest preference
+                    elif mode == "bus":
+                        weight = base_time * 1.0
                     elif mode == "rickshaw":
-                        weight *= 1.4
+                        weight = base_time * 1.8
                 elif priority == "cheapest_bus":
                     if mode == "bus":
-                        weight *= 0.6  # Heavy preference for student discountable buses
+                        weight = base_time * 0.5  # Student half-pass bus preferred
                     elif mode == "metro":
-                        weight *= 1.2
+                        weight = base_time * 1.1
                     elif mode == "rickshaw":
-                        weight *= 2.0
+                        weight = base_time * 2.5
                 elif priority == "detour":
-                    if u in waterlogged_hubs or v in waterlogged_hubs or u in blocked_hubs or v in blocked_hubs:
-                        weight = 99999
-                g[u][v]["calc_weight"] = weight
+                    if (u in waterlogged_hubs or v in waterlogged_hubs) and not elevated:
+                        weight = base_time * 5.0  # Avoid flooded streets
+                    elif elevated:
+                        weight = base_time * 0.3  # Prefer elevated metro for detour
 
+                # Penalties for weather on surface
+                if not elevated:
+                    if (u in waterlogged_hubs or v in waterlogged_hubs):
+                        weight += 15
+                    if weather in ["rain", "heavy_monsoon"]:
+                        weight *= 1.4
+                    if is_rush_hour:
+                        weight *= 1.3
+
+                if weight < best_weight:
+                    best_weight = weight
+                    best_candidate = dict(data)
+                    best_candidate["calc_weight"] = weight
+
+            if best_candidate:
+                g.add_edge(u, v, **best_candidate)
+
+        try:
             node_path = nx.shortest_path(g, source=origin, target=destination, weight="calc_weight")
         except (nx.NetworkXNoPath, nx.NodeNotFound):
             return None
@@ -350,7 +382,6 @@ class DhakaTransitGraph:
                     u, v, dist, weather=weather, is_rush_hour=is_rush_hour
                 )
 
-            # Landmark instructions
             instructions = self._get_landmark_instruction(u, v, mode, line_name)
 
             leg = RouteLeg(

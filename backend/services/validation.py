@@ -1,5 +1,5 @@
 import time
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
 from data.dhaka_transit_data import DHAKA_HUBS, TRANSIT_ROUTES
 
 class TransitValidator:
@@ -61,7 +61,7 @@ class TransitValidator:
         return updated
 
     @classmethod
-    def sanity_check_report(cls, hub: str, alert_type: str, severity: int) -> Tuple_Validation:
+    def sanity_check_report(cls, hub: str, alert_type: str, severity: int) -> Tuple[bool, str]:
         """Sanity filters for spam or contradictory user alerts"""
         if hub not in DHAKA_HUBS:
             return False, f"Invalid hub: '{hub}'. Must be one of the 14 major Dhaka hubs."
