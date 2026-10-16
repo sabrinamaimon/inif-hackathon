@@ -11,10 +11,10 @@ export default function EmergencyHelpline({ lang = 'bn', isHome = true }) {
   if (!isHome) {
     // Clean, minimal copyright strip on all inner tabs
     return (
-      <footer className="w-full py-8 mt-14 border-t border-slate-800 text-center text-sm text-slate-400">
-        <p>© 2026 DhakaPath — INIF National IT Fest Smart City Hackathon. All rights reserved.</p>
-        <p className="text-xs text-slate-500 mt-1">
-          Open Tech Stack: Next.js 14, FastAPI, NetworkX, Leaflet (OpenStreetMap Free), Google Gemini AI.
+      <footer className="w-full py-8 mt-12 border-t border-slate-800 text-center text-sm text-slate-400">
+        <p className="font-bold text-slate-300">© 2026 DhakaPath (ঢাকা পথ) — Smart Urban Transit & Crisis Intelligence Platform</p>
+        <p className="text-xs text-emerald-400 mt-1 font-semibold">
+          National IT Fest 2026 (INIF) • Smart City Hackathon Innovation
         </p>
       </footer>
     );
@@ -22,7 +22,7 @@ export default function EmergencyHelpline({ lang = 'bn', isHome = true }) {
 
   // Dedicated emergency contact/helpline strip with 1-tap phone dialer exclusively on Homepage
   return (
-    <div className="w-full my-10">
+    <div className="w-full my-8">
       <div className="glass-panel p-6 sm:p-7 border border-rose-500/40 bg-slate-900/90 shadow-2xl">
         <div className="flex items-center gap-3.5 mb-5 pb-3 border-b border-slate-800">
           <div className="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold">
@@ -61,7 +61,10 @@ export default function EmergencyHelpline({ lang = 'bn', isHome = true }) {
       </div>
 
       <footer className="w-full py-8 mt-8 border-t border-slate-800 text-center text-sm text-slate-400">
-        <p>© 2026 DhakaPath — Live Urban Transit & Route Intelligence. INIF 2026 Smart City Hackathon.</p>
+        <p className="font-bold text-slate-300">© 2026 DhakaPath (ঢাকা পথ) — Smart Urban Transit & Crisis Intelligence Platform</p>
+        <p className="text-xs text-emerald-400 mt-1 font-semibold">
+          National IT Fest 2026 (INIF) • Smart City Hackathon Innovation
+        </p>
       </footer>
     </div>
   );

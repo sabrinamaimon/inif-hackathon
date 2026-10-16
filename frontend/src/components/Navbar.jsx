@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Menu, Navigation, AlertTriangle, Cpu, Users, Bus, Globe, MapPin, Sun, Moon } from 'lucide-react';
+import { Menu, Navigation, AlertTriangle, Cpu, Users, Bus, Globe, MapPin, Sun, Moon, Sparkles, MessageSquare } from 'lucide-react';
 import { I18N, toBnDigits } from '../utils/localization';
 
 export default function Navbar({ 
@@ -12,7 +12,9 @@ export default function Navbar({
   theme,
   setTheme,
   setIsDrawerOpen, 
-  activeAlertCount = 3 
+  activeAlertCount = 3,
+  onOpenScanner,
+  onOpenChat
 }) {
   const t = I18N[lang] || I18N.bn;
 
@@ -79,9 +81,33 @@ export default function Navbar({
         </nav>
 
         {/* Location, Theme & Language Switchers */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
+          {/* Quick Bonus 1: OCR Signboard Scanner Button */}
+          {onOpenScanner && (
+            <button
+              onClick={onOpenScanner}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900 text-emerald-300 text-xs font-black border border-emerald-500/40 shadow-sm active:scale-95 transition-all"
+              title="Digitize Bus Signboard / Fare Chart"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="hidden xl:inline">{lang === 'bn' ? 'সাইন স্ক্যান (OCR)' : 'Signboard OCR'}</span>
+            </button>
+          )}
+
+          {/* Quick AI Transit Assistant Button */}
+          {onOpenChat && (
+            <button
+              onClick={onOpenChat}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-950/60 hover:bg-blue-900 text-blue-300 text-xs font-black border border-blue-500/40 shadow-sm active:scale-95 transition-all"
+              title="Open DhakaPath AI Assistant"
+            >
+              <MessageSquare className="w-3.5 h-3.5 text-blue-400" />
+              <span className="hidden xl:inline">{lang === 'bn' ? 'এআই সহায়ক' : 'AI Transit Bot'}</span>
+            </button>
+          )}
+
           {/* Live City Status Pill */}
-          <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-300 font-semibold">
+          <div className="hidden lg:flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-300 font-semibold">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
             <span>{t.cityStatus}</span>
           </div>

@@ -318,6 +318,8 @@ export default function Home() {
         setTheme={setTheme}
         setIsDrawerOpen={setIsDrawerOpen}
         activeAlertCount={alerts.length}
+        onOpenScanner={() => setIsScannerOpen(true)}
+        onOpenChat={() => setIsChatOpen(true)}
       />
 
       {/* Mobile Slide-Out Drawer */}

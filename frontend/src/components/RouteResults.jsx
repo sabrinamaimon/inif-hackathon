@@ -88,6 +88,11 @@ export default function RouteResults({
                   <h4 className="text-base sm:text-xl font-black text-white">
                     {lang === 'bn' ? route.title_bn : route.title}
                   </h4>
+                  {passengerType === 'student' && (
+                    <span className="text-xs px-2.5 py-1 rounded-lg bg-blue-500/20 text-blue-300 border border-blue-500/40 font-black">
+                      {lang === 'bn' ? '৫০% হাফ-পাস (১০৳ ফ্লোর)' : '50% Half-Pass (10 BDT Floor)'}
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-4 text-sm">
