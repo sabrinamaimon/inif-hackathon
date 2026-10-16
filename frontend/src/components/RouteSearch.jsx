@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, Mic, CloudRain, Clock, GraduationCap, User, ArrowRightLeft, Sparkles, MapPin, AlertCircle } from 'lucide-react';
+import { Search, Mic, Camera, CloudRain, Clock, GraduationCap, User, ArrowRightLeft, MapPin, AlertCircle } from 'lucide-react';
 import { I18N } from '../utils/localization';
 import { STATIC_HUBS } from '../data/staticData';
 import { startSpeechRecognition } from '../utils/speech';
@@ -20,7 +20,8 @@ export default function RouteSearch({
   onSearch,
   onNlpSearch,
   isLoading,
-  lang
+  lang,
+  onOpenScanner
 }) {
   const t = I18N[lang] || I18N.bn;
 
@@ -366,7 +367,7 @@ export default function RouteSearch({
           <button
             type="button"
             onClick={handleVoiceInput}
-            title={t.micTooltip}
+            title={t.micTooltip || (lang === 'bn' ? 'ভয়েসের মাধ্যমে সার্চ করুন' : 'Search with voice')}
             className={`p-2.5 rounded-xl transition-all ${
               isListening
                 ? 'bg-[#b83a2e] text-white animate-pulse shadow-lg'
@@ -376,13 +377,14 @@ export default function RouteSearch({
             <Mic className="w-4 h-4" />
           </button>
 
-          {/* NLP Submit */}
+          {/* Camera Notice & Schedule Scanner */}
           <button
-            type="submit"
-            className="p-2.5 rounded-xl bg-[#15453b] hover:bg-[#1f5e51] text-[#f6d16f] border border-[#2a6f62] transition-all"
-            title="Search with AI"
+            type="button"
+            onClick={() => onOpenScanner && onOpenScanner()}
+            title={lang === 'bn' ? 'ক্যামেরা দিয়ে ট্রানজিট নোটিশ বা ভাড়ার চার্ট স্ক্যান করুন' : 'Scan transit notice or fare schedule with camera'}
+            className="p-2.5 rounded-xl bg-[#292019] hover:bg-[#3d3026] text-[#f6d16f] border border-[#c69429]/40 transition-all cursor-pointer shadow-sm"
           >
-            <Sparkles className="w-4 h-4" />
+            <Camera className="w-4 h-4" />
           </button>
         </div>
       </form>

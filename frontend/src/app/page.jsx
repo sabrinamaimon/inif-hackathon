@@ -468,6 +468,7 @@ export default function Home() {
               onNlpSearch={handleNlpSearch}
               isLoading={isLoadingRoutes}
               lang={lang}
+              onOpenScanner={() => setIsScannerOpen(true)}
             />
 
             {/* View Results Button (Only after user initiates a search) */}
