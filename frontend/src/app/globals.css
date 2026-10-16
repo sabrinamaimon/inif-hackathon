@@ -275,3 +275,129 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--rickshaw-gold-400);
 }
+
+/* ==================== LIGHT THEME (PURE WHITE BACKGROUND & HIGH CONTRAST) ==================== */
+body.light-theme {
+  background-color: #ffffff !important;
+  background-image: none !important;
+  color: #0f172a !important;
+}
+
+body.light-theme main {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* All dark containers, cards and heritage panels turned to pure white (#ffffff) */
+body.light-theme .heritage-card,
+body.light-theme [class*="bg-[#18130f]"],
+body.light-theme [class*="bg-[#1a130f]"],
+body.light-theme [class*="bg-[#120c09]"],
+body.light-theme [class*="bg-[#14100c]"],
+body.light-theme [class*="bg-[#16110d]"],
+body.light-theme [class*="bg-[#17120e]"],
+body.light-theme [class*="bg-[#120e0b]"],
+body.light-theme [class*="bg-[#1c1511]"],
+body.light-theme [class*="bg-[#241713]"],
+body.light-theme [class*="bg-[#2a2019]"],
+body.light-theme [class*="bg-[#292019]"],
+body.light-theme [class*="bg-[#15453b]"],
+body.light-theme [class*="bg-slate-950"],
+body.light-theme [class*="bg-slate-900"],
+body.light-theme [class*="bg-slate-800"] {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Header in light theme */
+body.light-theme header {
+  background-color: rgba(255, 255, 255, 0.98) !important;
+  border-bottom: 1.5px solid #cbd5e1 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Navigation buttons in light theme */
+body.light-theme nav {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+body.light-theme nav button:not([class*="bg-gradient"]) {
+  color: #334155 !important;
+}
+
+body.light-theme nav button:not([class*="bg-gradient"]):hover {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+/* High-contrast dark typography in light theme */
+body.light-theme [class*="text-[#fbf8f1]"],
+body.light-theme [class*="text-[#f7f2e8]"],
+body.light-theme [class*="text-[#f5eedf]"],
+body.light-theme [class*="text-white"],
+body.light-theme [class*="text-slate-100"],
+body.light-theme [class*="text-slate-200"] {
+  color: #0f172a !important;
+}
+
+body.light-theme [class*="text-[#dfcfb2]"],
+body.light-theme [class*="text-[#9e8a76]"],
+body.light-theme [class*="text-slate-300"],
+body.light-theme [class*="text-slate-400"] {
+  color: #334155 !important;
+}
+
+body.light-theme [class*="text-[#f6d16f]"],
+body.light-theme .rickshaw-text-pop,
+body.light-theme .rickshaw-gold-pop {
+  color: #b45309 !important;
+  text-shadow: none !important;
+}
+
+/* Form inputs, textareas, selects */
+body.light-theme input,
+body.light-theme select,
+body.light-theme textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border: 1.5px solid #94a3b8 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+}
+
+body.light-theme input::placeholder,
+body.light-theme textarea::placeholder {
+  color: #64748b !important;
+}
+
+body.light-theme select option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* Leaflet map popups */
+body.light-theme .leaflet-popup-content-wrapper {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+body.light-theme .leaflet-popup-tip {
+  background: #ffffff !important;
+}
+
+/* Light Theme Scrollbars */
+body.light-theme ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+body.light-theme ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+body.light-theme ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
