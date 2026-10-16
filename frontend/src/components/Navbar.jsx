@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Menu, Navigation, AlertTriangle, Cpu, Users, Bus, Globe, MapPin, Sparkles } from 'lucide-react';
+import { Menu, Navigation, AlertTriangle, Cpu, Users, Bus, Globe, MapPin, Sparkles, Sun, Moon } from 'lucide-react';
 import { I18N, toBnDigits } from '../utils/localization';
 
 export default function Navbar({ 
@@ -9,6 +9,8 @@ export default function Navbar({
   setCurrentTab, 
   lang, 
   setLang, 
+  theme = 'dark',
+  setTheme,
   setIsDrawerOpen, 
   activeAlertCount = 3 
 }) {
@@ -26,7 +28,7 @@ export default function Navbar({
     <header className="w-full sticky top-0 z-50 bg-[#14100c]/95 backdrop-blur-md border-b border-[#c69429]/40 shadow-2xl">
 
       {/* ================= DESKTOP HEADER (>768px) ================= */}
-      <div className="hidden md:flex items-center justify-between px-6 py-3 max-w-7xl mx-auto">
+      <div className="hidden md:flex items-center justify-between px-4 sm:px-6 lg:px-8 xl:px-10 py-3 w-full max-w-[1920px] mx-auto">
         {/* Brand Logo with Rickshaw Art Styling */}
         <div 
           className="flex items-center gap-3.5 cursor-pointer select-none group"
@@ -89,6 +91,26 @@ export default function Navbar({
             <span>{lang === 'bn' ? '১৬টি হাব সচল (সদরঘাট-উত্তরা)' : '16 Active Hubs'}</span>
           </div>
 
+          {/* Theme Toggle Button (Dark / Light Mode) */}
+          <button
+            onClick={() => setTheme && setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#2a2019] hover:bg-[#3d3026] text-[#f6d16f] text-xs font-anek font-bold border border-[#c69429]/50 transition-all active:scale-95 shadow-md"
+            title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+            aria-label="Toggle Theme"
+          >
+            {theme === 'dark' ? (
+              <>
+                <Sun className="w-3.5 h-3.5 text-amber-400" />
+                <span>{lang === 'bn' ? 'লাইট মোড' : 'Light Mode'}</span>
+              </>
+            ) : (
+              <>
+                <Moon className="w-3.5 h-3.5 text-sky-400" />
+                <span>{lang === 'bn' ? 'ডার্ক মোড' : 'Dark Mode'}</span>
+              </>
+            )}
+          </button>
+
           <button
             onClick={() => setLang(lang === 'bn' ? 'en' : 'bn')}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#2a2019] hover:bg-[#3d3026] text-[#f6d16f] text-xs font-anek font-bold border border-[#c69429]/50 transition-all active:scale-95 shadow-md"
@@ -120,13 +142,29 @@ export default function Navbar({
             <span className="font-rickshaw text-xl text-[#f6d16f] rickshaw-gold-pop">{t.brandName}</span>
           </div>
 
-          <button
-            onClick={() => setLang(lang === 'bn' ? 'en' : 'bn')}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[#292019] border border-[#c69429]/50 text-[#f6d16f] text-xs font-anek font-bold active:scale-95 transition-all"
-          >
-            <Globe className="w-3.5 h-3.5 text-[#f6d16f]" />
-            <span>{lang === 'bn' ? 'ENG' : 'বাং'}</span>
-          </button>
+          <div className="flex items-center gap-1.5">
+            {/* Mobile Theme Toggle */}
+            <button
+              onClick={() => setTheme && setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="flex items-center justify-center w-8 h-8 rounded-full bg-[#292019] border border-[#c69429]/50 text-[#f6d16f] active:scale-95 transition-all"
+              title="Toggle Theme"
+              aria-label="Toggle Theme"
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-4 h-4 text-amber-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-sky-400" />
+              )}
+            </button>
+
+            <button
+              onClick={() => setLang(lang === 'bn' ? 'en' : 'bn')}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[#292019] border border-[#c69429]/50 text-[#f6d16f] text-xs font-anek font-bold active:scale-95 transition-all"
+            >
+              <Globe className="w-3.5 h-3.5 text-[#f6d16f]" />
+              <span>{lang === 'bn' ? 'ENG' : 'বাং'}</span>
+            </button>
+          </div>
         </div>
 
         {/* Row 2: Live status pill */}

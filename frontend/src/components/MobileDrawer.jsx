@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { X, Navigation, AlertTriangle, Cpu, Users, Bus, FileScan, ShieldAlert, Globe } from 'lucide-react';
+import { X, Navigation, AlertTriangle, Cpu, Users, Bus, FileScan, ShieldAlert, Globe, Sun, Moon } from 'lucide-react';
 import { I18N, toBnDigits } from '../utils/localization';
 
 export default function MobileDrawer({ 
@@ -11,6 +11,8 @@ export default function MobileDrawer({
   setCurrentTab, 
   lang, 
   setLang,
+  theme = 'dark',
+  setTheme,
   activeAlertCount = 3,
   onOpenScanner
 }) {
@@ -96,8 +98,30 @@ export default function MobileDrawer({
           </nav>
         </div>
 
-        {/* Footer info & language toggle */}
+        {/* Footer info & language/theme toggle */}
         <div className="pt-4 border-t border-slate-800 space-y-3">
+          {/* Theme Selector */}
+          <div className="flex items-center justify-between px-2 text-xs text-slate-400">
+            <span>{lang === 'bn' ? 'থিম নির্বাচন' : 'Theme Mode'}</span>
+            <button
+              onClick={() => setTheme && setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 text-[#f6d16f] font-bold border border-slate-700 active:scale-95 transition-all"
+            >
+              {theme === 'dark' ? (
+                <>
+                  <Sun className="w-3.5 h-3.5 text-amber-400" />
+                  <span>{lang === 'bn' ? 'লাইট মোড' : 'Light'}</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-3.5 h-3.5 text-sky-400" />
+                  <span>{lang === 'bn' ? 'ডার্ক মোড' : 'Dark'}</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* Language Selector */}
           <div className="flex items-center justify-between px-2 text-xs text-slate-400">
             <span>{lang === 'bn' ? 'ভাষা নির্বাচন' : 'Language'}</span>
             <button

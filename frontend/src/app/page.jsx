@@ -21,8 +21,17 @@ import { STATIC_HUBS, STATIC_ALERTS } from '../data/staticData';
 
 export default function Home() {
   const [lang, setLang] = useState('bn');
+  const [theme, setTheme] = useState('dark');
   const [currentTab, setCurrentTab] = useState('home');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  // Synchronize light/dark theme class on document body
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.body.classList.remove('light-theme', 'dark-theme');
+      document.body.classList.add(theme === 'light' ? 'light-theme' : 'dark-theme');
+    }
+  }, [theme]);
 
   // Search parameters
   const [origin, setOrigin] = useState('Mirpur 10');
@@ -344,6 +353,8 @@ export default function Home() {
         setCurrentTab={setCurrentTab}
         lang={lang}
         setLang={setLang}
+        theme={theme}
+        setTheme={setTheme}
         setIsDrawerOpen={setIsDrawerOpen}
         activeAlertCount={alerts.length}
       />
@@ -356,66 +367,77 @@ export default function Home() {
         setCurrentTab={setCurrentTab}
         lang={lang}
         setLang={setLang}
+        theme={theme}
+        setTheme={setTheme}
         activeAlertCount={alerts.length}
         onOpenScanner={() => setIsScannerOpen(true)}
       />
 
-      {/* Main Content Area */}
-      <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6">
+      {/* Full-Width Laptop Screen Container */}
+      <div className="flex-1 w-full max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-8 xl:px-10">
 
         {/* TAB 1: HOME (Search + Results + Map + Heritage Showcase + Simulator) */}
         {currentTab === 'home' && (
-          <div>
-            {/* Route Search Engine */}
-            <RouteSearch
-              origin={origin}
-              setOrigin={setOrigin}
-              destination={destination}
-              setDestination={setDestination}
-              passengerType={passengerType}
-              setPassengerType={setPassengerType}
-              weather={weather}
-              setWeather={setWeather}
-              isRushHour={isRushHour}
-              setIsRushHour={setIsRushHour}
-              onSearch={handleManualSearch}
-              onNlpSearch={handleNlpSearch}
-              isLoading={isLoadingRoutes}
-              lang={lang}
-            />
+          <div className="w-full">
+            {/* Desktop 2-Column Split: Search/Results/Simulator (Left) & Sticky Live Map/Heritage (Right) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start my-4">
+              {/* Left Column: Smart Route Engine, Itineraries & Simulator */}
+              <div className="lg:col-span-5 xl:col-span-5 flex flex-col gap-6">
+                {/* Route Search Engine */}
+                <RouteSearch
+                  origin={origin}
+                  setOrigin={setOrigin}
+                  destination={destination}
+                  setDestination={setDestination}
+                  passengerType={passengerType}
+                  setPassengerType={setPassengerType}
+                  weather={weather}
+                  setWeather={setWeather}
+                  isRushHour={isRushHour}
+                  setIsRushHour={setIsRushHour}
+                  onSearch={handleManualSearch}
+                  onNlpSearch={handleNlpSearch}
+                  isLoading={isLoadingRoutes}
+                  lang={lang}
+                />
 
-            {/* Route Results: Focused Large-Print Bangladesh Postcard Commute Cards */}
-            <RouteResults
-              routes={routes}
-              origin={origin}
-              destination={destination}
-              passengerType={passengerType}
-              lang={lang}
-              selectedRouteId={selectedRoute?.id}
-              onSelectRoute={(r) => setSelectedRoute(r)}
-              onOpenFareBreakdown={(r) => setFareModalRoute(r)}
-            />
+                {/* Route Results: Focused Large-Print Bangladesh Postcard Commute Cards */}
+                <RouteResults
+                  routes={routes}
+                  origin={origin}
+                  destination={destination}
+                  passengerType={passengerType}
+                  lang={lang}
+                  selectedRouteId={selectedRoute?.id}
+                  onSelectRoute={(r) => setSelectedRoute(r)}
+                  onOpenFareBreakdown={(r) => setFareModalRoute(r)}
+                />
 
-            {/* Interactive Leaflet Map View */}
-            <MapView
-              hubs={hubs}
-              activeAlerts={alerts}
-              activeRoute={selectedRoute}
-              lang={lang}
-              onSelectHub={(hubName) => {
-                if (hubName !== origin) setDestination(hubName);
-              }}
-            />
+                {/* Quick Scenario Simulator Shortcut */}
+                <ScenarioSimulator
+                  simulationState={simulationState}
+                  onTriggerScenario={handleTriggerScenario}
+                  lang={lang}
+                />
+              </div>
 
-            {/* Dhaka Cultural Heritage & Commute Showcase */}
-            <DhakaCommuteHeritageShowcase lang={lang} />
+              {/* Right Column: Full Interactive Leaflet Map (Sticky on Desktop) & Heritage Showcase */}
+              <div className="lg:col-span-7 xl:col-span-7 lg:sticky lg:top-20 flex flex-col gap-6">
+                {/* Interactive Leaflet Map View */}
+                <MapView
+                  hubs={hubs}
+                  activeAlerts={alerts}
+                  activeRoute={selectedRoute}
+                  lang={lang}
+                  onSelectHub={(hubName) => {
+                    if (hubName !== origin) setDestination(hubName);
+                  }}
+                />
 
-            {/* Quick Scenario Simulator Shortcut */}
-            <ScenarioSimulator
-              simulationState={simulationState}
-              onTriggerScenario={handleTriggerScenario}
-              lang={lang}
-            />
+                {/* Dhaka Cultural Heritage & Commute Showcase */}
+                <DhakaCommuteHeritageShowcase lang={lang} />
+              </div>
+            </div>
 
             {/* Emergency Helpline Strip (Exclusively on Home) */}
             <EmergencyHelpline lang={lang} isHome={true} />
