@@ -407,25 +407,92 @@ body.light-theme [class*="bg-[#120e0b]"]:not(button) {
   color: #0f172a !important;
 }
 
-/* ================= CRITICAL: DARK / COLORED BUTTONS & BADGES MUST KEEP CRISP WHITE TEXT ================= */
+/* ================= STATUS BADGES IN LIGHT THEME: HIGH CONTRAST ================= */
+body.light-theme [class*="bg-sky-100"],
+body.light-theme [class*="bg-[#1c4568]/40"],
+body.light-theme [class*="bg-sky-950"] {
+  background-color: #e0f2fe !important;
+  color: #0369a1 !important;
+  border-color: #7dd3fc !important;
+}
+body.light-theme [class*="bg-sky-100"] *,
+body.light-theme [class*="bg-[#1c4568]/40"] *,
+body.light-theme [class*="bg-sky-950"] * {
+  color: #0369a1 !important;
+}
+
+body.light-theme [class*="bg-rose-100"],
+body.light-theme [class*="bg-[#b83a2e]/40"],
+body.light-theme [class*="bg-rose-950"] {
+  background-color: #ffe4e6 !important;
+  color: #be123c !important;
+  border-color: #fca5a5 !important;
+}
+body.light-theme [class*="bg-rose-100"] *,
+body.light-theme [class*="bg-[#b83a2e]/40"] *,
+body.light-theme [class*="bg-rose-950"] * {
+  color: #be123c !important;
+}
+
+body.light-theme [class*="bg-amber-100"],
+body.light-theme [class*="bg-[#e2b448]/20"],
+body.light-theme [class*="bg-amber-950"] {
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+  border-color: #fcd34d !important;
+}
+body.light-theme [class*="bg-amber-100"] *,
+body.light-theme [class*="bg-[#e2b448]/20"] *,
+body.light-theme [class*="bg-amber-950"] * {
+  color: #92400e !important;
+}
+
+body.light-theme [class*="bg-emerald-100"],
+body.light-theme [class*="bg-[#15453b]/40"],
+body.light-theme [class*="bg-emerald-950"] {
+  background-color: #d1fae5 !important;
+  color: #065f46 !important;
+  border-color: #6ee7b7 !important;
+}
+body.light-theme [class*="bg-emerald-100"] *,
+body.light-theme [class*="bg-[#15453b]/40"] *,
+body.light-theme [class*="bg-emerald-950"] * {
+  color: #065f46 !important;
+}
+
+/* Light text conversion on cards */
+body.light-theme [class*="text-[#6ee7b7]"]:not(button) {
+  color: #047857 !important;
+}
+body.light-theme [class*="text-[#7dd3fc]"]:not(button) {
+  color: #0369a1 !important;
+}
+
+/* ================= CRITICAL: SOLID COLORED BUTTONS KEEP CRISP WHITE TEXT ================= */
 body.light-theme button[class*="from-"],
 body.light-theme button[class*="from-"] *,
 body.light-theme button[class*="bg-[#b83a2e]"],
 body.light-theme button[class*="bg-[#b83a2e]"] *,
+body.light-theme button[class*="bg-[#0e6e41]"],
+body.light-theme button[class*="bg-[#0e6e41]"] *,
 body.light-theme button[class*="bg-[#15453b]"],
 body.light-theme button[class*="bg-[#15453b]"] *,
 body.light-theme button[class*="bg-[#1c4568]"],
-body.light-theme button[class*="bg-[#1c4568]"] *,
-body.light-theme [class*="bg-[#b83a2e]"]:not(.heritage-card) [class*="text-white"],
-body.light-theme [class*="bg-[#b83a2e]"]:not(.heritage-card) [class*="text-[#fbf8f1]"],
-body.light-theme [class*="bg-[#b83a2e]"]:not(.heritage-card) span,
-body.light-theme [class*="bg-[#0e6e41]"] [class*="text-white"],
-body.light-theme [class*="bg-[#0e6e41]"] [class*="text-[#fbf8f1]"],
-body.light-theme [class*="bg-[#0e6e41]"] span,
-body.light-theme [class*="bg-[#15453b]"]:not(.heritage-card) [class*="text-[#fbf8f1]"],
-body.light-theme [class*="bg-[#15453b]"]:not(.heritage-card) span {
+body.light-theme button[class*="bg-[#1c4568]"] * {
   color: #ffffff !important;
   text-shadow: none !important;
+}
+
+/* Secondary & Resolve buttons in light theme */
+body.light-theme button[class*="bg-slate-100"],
+body.light-theme button[class*="bg-[#292019]"] {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+body.light-theme button[class*="bg-slate-100"] span,
+body.light-theme button[class*="bg-[#292019]"] span {
+  color: #0f172a !important;
 }
 
 /* Emergency Helpline Phone Badge */
