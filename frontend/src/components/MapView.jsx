@@ -109,18 +109,18 @@ export default function MapView({
           : (lang === 'bn' ? 'সচল ট্রানজিট করিডোর' : 'Normal Transit Corridor');
 
         marker.bindPopup(`
-          <div style="padding: 6px; font-family: 'Hind Siliguri', sans-serif;">
-            <div style="font-weight: 800; font-size: 15px; color: #f6d16f; margin-bottom: 2px;">
+          <div class="hub-popup-content p-1.5 font-anek text-slate-900">
+            <div class="font-extrabold text-base text-[#b83a2e] mb-0.5">
               ${lang === 'bn' ? (data.name_bn || data.name) : data.name}
             </div>
-            <div style="font-size: 11px; color: #dfcfb2; margin-bottom: 6px;">
+            <div class="text-xs text-slate-600 font-semibold mb-1">
               ${data.zone}
             </div>
-            <div style="font-size: 12px; font-weight: 700; color: #fbf8f1; margin-bottom: 6px;">
+            <div class="text-xs font-bold text-[#15453b] mb-1.5 bg-slate-100 p-1.5 rounded-lg border border-slate-200">
               ${statusText}
             </div>
-            <div style="font-size: 11px; color: #cbb692;">
-              <strong>${lang === 'bn' ? 'ল্যান্ডমার্ক:' : 'Landmarks:'}</strong> ${data.landmarks ? data.landmarks.join(', ') : 'Main Road'}
+            <div class="text-xs text-slate-700 font-medium">
+              <strong class="text-slate-900">${lang === 'bn' ? 'ল্যান্ডমার্ক:' : 'Landmarks:'}</strong> ${data.landmarks ? data.landmarks.join(', ') : 'Main Road'}
             </div>
           </div>
         `);

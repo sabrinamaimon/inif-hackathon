@@ -386,11 +386,11 @@ export default function Home() {
       />
 
       {/* Full-Width Laptop Screen Container */}
-      <div className="flex-1 w-full max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-8 xl:px-10">
+      <div className="flex-1 w-full max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-8 xl:px-12">
 
         {/* TAB 1: HOME (Focused Smart Transit Search & Postcard Itineraries) */}
         {currentTab === 'home' && (
-          <div className="space-y-8 my-4 max-w-6xl mx-auto">
+          <div className="space-y-8 my-4 w-full">
             {/* Route Query Engine */}
             <RouteSearch
               origin={origin}
@@ -420,29 +420,6 @@ export default function Home() {
               onSelectRoute={(r) => setSelectedRoute(r)}
               onOpenFareBreakdown={(r) => setFareModalRoute(r)}
             />
-
-            {/* Quick Simulation & Live Map Shortcut Callout */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-[#18130f] border-2 border-[#c69429]/40 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
-              <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-xl bg-[#b83a2e]/30 border border-[#b83a2e] flex items-center justify-center text-2xl shrink-0">
-                  🗺️
-                </div>
-                <div>
-                  <h4 className="font-rickshaw text-base sm:text-lg font-bold text-[#f6d16f]">
-                    {lang === 'bn' ? 'লাইভ ইন্টারঅ্যাক্টিভ ম্যাপ ও ক্রাইসিস সিমুলেটর' : 'Live Interactive Map & Crisis Simulator'}
-                  </h4>
-                  <p className="font-anek text-xs sm:text-sm text-[#dfcfb2]">
-                    {lang === 'bn' ? 'বৃষ্টি, জলজট, জ্যাম বা অবরোধে বিকল্প রুট ও রিয়েল-টাইম ডিট্যুর ম্যাপে দেখুন' : 'Explore alternative detours, rain choke-points, and rerouting on the full interactive map'}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => setCurrentTab('simulator')}
-                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#b83a2e] to-[#891e17] text-[#fbf8f1] font-anek font-bold text-xs sm:text-sm border border-[#f6d16f] shrink-0 hover:scale-105 active:scale-95 transition-all shadow-md"
-              >
-                {lang === 'bn' ? 'সিমুলেটর ও ম্যাপ খুলুন ➔' : 'Open Simulator & Map ➔'}
-              </button>
-            </div>
 
             {/* Dhaka Cultural Heritage & Commute Lifelines Showcase */}
             <DhakaCommuteHeritageShowcase lang={lang} />

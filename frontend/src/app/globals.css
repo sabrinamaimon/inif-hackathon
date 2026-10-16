@@ -288,28 +288,43 @@ body.light-theme main {
   color: #0f172a !important;
 }
 
-/* All dark containers, cards and heritage panels turned to pure white (#ffffff) */
+/* All dark containers, cards, and heritage panels turned to pure white (#ffffff) */
 body.light-theme .heritage-card,
-body.light-theme [class*="bg-[#18130f]"],
-body.light-theme [class*="bg-[#1a130f]"],
+body.light-theme [class*="bg-[#0a0705]"],
 body.light-theme [class*="bg-[#120c09]"],
+body.light-theme [class*="bg-[#120e0b]"]:not(button),
+body.light-theme [class*="bg-[#140e0b]"],
 body.light-theme [class*="bg-[#14100c]"],
 body.light-theme [class*="bg-[#16110d]"],
 body.light-theme [class*="bg-[#17120e]"],
-body.light-theme [class*="bg-[#120e0b]"],
-body.light-theme [class*="bg-[#1c1511]"],
+body.light-theme [class*="bg-[#18130f]"],
+body.light-theme [class*="bg-[#1a130f]"],
+body.light-theme [class*="bg-[#1a1410]"],
+body.light-theme [class*="bg-[#1c1511]"]:not(button),
+body.light-theme [class*="bg-[#1e1712]"]:not(button),
+body.light-theme [class*="bg-[#201712]"],
 body.light-theme [class*="bg-[#241713]"],
-body.light-theme [class*="bg-[#2a2019]"],
-body.light-theme [class*="bg-[#292019]"],
-body.light-theme [class*="bg-[#15453b]"],
+body.light-theme [class*="bg-[#2a1e17]"],
+body.light-theme [class*="bg-[#2a2019]"]:not(button),
+body.light-theme [class*="bg-[#292019]"]:not(button),
+body.light-theme [class*="bg-[#382b22]"],
 body.light-theme [class*="bg-slate-950"],
-body.light-theme [class*="bg-slate-900"],
-body.light-theme [class*="bg-slate-800"] {
+body.light-theme [class*="bg-slate-900"]:not(button),
+body.light-theme [class*="bg-slate-800"]:not(button) {
   background: #ffffff !important;
   background-color: #ffffff !important;
   color: #0f172a !important;
   border-color: #cbd5e1 !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Semi-transparent dark layers turned clean & light */
+body.light-theme [class*="bg-[#14100c]/90"],
+body.light-theme [class*="bg-[#16110d]/95"],
+body.light-theme [class*="bg-[#1c1511]/90"],
+body.light-theme [class*="bg-[#18130f]/"] {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
 }
 
 /* Header in light theme */
@@ -319,43 +334,114 @@ body.light-theme header {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
 }
 
-/* Navigation buttons in light theme */
+/* Navigation bar in light theme */
 body.light-theme nav {
   background-color: #f1f5f9 !important;
   border: 1px solid #cbd5e1 !important;
 }
 
-body.light-theme nav button:not([class*="bg-gradient"]) {
+body.light-theme nav button:not([class*="from-"]):not([class*="bg-[#b83a2e]"]) {
   color: #334155 !important;
 }
 
-body.light-theme nav button:not([class*="bg-gradient"]):hover {
+body.light-theme nav button:not([class*="from-"]):not([class*="bg-[#b83a2e]"]):hover {
   background-color: #e2e8f0 !important;
   color: #0f172a !important;
 }
 
-/* High-contrast dark typography in light theme */
-body.light-theme [class*="text-[#fbf8f1]"],
+/* All headings across the application in light theme: pitch-dark & sharp */
+body.light-theme h1,
+body.light-theme h2,
+body.light-theme h3,
+body.light-theme h4,
+body.light-theme h5,
+body.light-theme h6,
+body.light-theme .rickshaw-text-pop,
+body.light-theme .rickshaw-gold-pop {
+  color: #0f172a !important;
+  text-shadow: none !important;
+}
+
+/* Typography on white cards & pages: crisp high-contrast dark text */
+body.light-theme [class*="text-[#fbf8f1]"]:not(button):not([class*="bg-[#b83a2e]"]):not([class*="bg-[#15453b]"]):not([class*="bg-[#0e6e41]"]):not([class*="bg-[#1c4568]"]):not([class*="from-"]):not([class*="bg-red-"]):not([class*="bg-emerald-"]):not([class*="bg-blue-"]),
 body.light-theme [class*="text-[#f7f2e8]"],
 body.light-theme [class*="text-[#f5eedf]"],
-body.light-theme [class*="text-white"],
-body.light-theme [class*="text-slate-100"],
-body.light-theme [class*="text-slate-200"] {
+body.light-theme [class*="text-slate-100"]:not(button):not([class*="bg-[#b83a2e]"]),
+body.light-theme [class*="text-slate-200"]:not(button):not([class*="bg-[#b83a2e]"]) {
   color: #0f172a !important;
 }
 
 body.light-theme [class*="text-[#dfcfb2]"],
 body.light-theme [class*="text-[#9e8a76]"],
+body.light-theme [class*="text-[#8a7258]"],
+body.light-theme [class*="text-[#a89078]"],
 body.light-theme [class*="text-slate-300"],
 body.light-theme [class*="text-slate-400"] {
   color: #334155 !important;
 }
 
-body.light-theme [class*="text-[#f6d16f]"],
-body.light-theme .rickshaw-text-pop,
-body.light-theme .rickshaw-gold-pop {
-  color: #b45309 !important;
+/* Labels and section accents on white cards */
+body.light-theme label [class*="text-[#f6d16f]"],
+body.light-theme label,
+body.light-theme [class*="text-[#f6d16f]"]:not(button):not([class*="from-"]):not([class*="bg-[#b83a2e]"]):not([class*="bg-[#15453b]"]):not([class*="bg-[#0e6e41]"]):not([class*="bg-[#1c4568]"]):not([class*="rounded-full"]):not([class*="custom-hub-icon"]) {
+  color: #0f172a !important;
+}
+
+/* Stamp & Postcard Top Seals in Light Mode */
+body.light-theme [class*="bg-black/50"],
+body.light-theme [class*="bg-black/40"] {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+body.light-theme [class*="bg-black/50"] span,
+body.light-theme [class*="bg-black/40"] span {
+  color: #0f172a !important;
+}
+
+/* Inner pill bars & condition strips */
+body.light-theme [class*="bg-[#120e0b]"]:not(button) {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+/* ================= CRITICAL: DARK / COLORED BUTTONS & BADGES MUST KEEP CRISP WHITE TEXT ================= */
+body.light-theme button[class*="from-"],
+body.light-theme button[class*="from-"] *,
+body.light-theme button[class*="bg-[#b83a2e]"],
+body.light-theme button[class*="bg-[#b83a2e]"] *,
+body.light-theme button[class*="bg-[#15453b]"],
+body.light-theme button[class*="bg-[#15453b]"] *,
+body.light-theme button[class*="bg-[#1c4568]"],
+body.light-theme button[class*="bg-[#1c4568]"] *,
+body.light-theme [class*="bg-[#b83a2e]"]:not(.heritage-card) [class*="text-white"],
+body.light-theme [class*="bg-[#b83a2e]"]:not(.heritage-card) [class*="text-[#fbf8f1]"],
+body.light-theme [class*="bg-[#b83a2e]"]:not(.heritage-card) span,
+body.light-theme [class*="bg-[#0e6e41]"] [class*="text-white"],
+body.light-theme [class*="bg-[#0e6e41]"] [class*="text-[#fbf8f1]"],
+body.light-theme [class*="bg-[#0e6e41]"] span,
+body.light-theme [class*="bg-[#15453b]"]:not(.heritage-card) [class*="text-[#fbf8f1]"],
+body.light-theme [class*="bg-[#15453b]"]:not(.heritage-card) span {
+  color: #ffffff !important;
   text-shadow: none !important;
+}
+
+/* Emergency Helpline Phone Badge */
+body.light-theme a [class*="bg-[#b83a2e]"] {
+  background-color: #b83a2e !important;
+  color: #ffffff !important;
+}
+
+/* Audio Readout & Secondary Action Buttons in light theme */
+body.light-theme button[class*="from-[#292019]"] {
+  background: linear-gradient(to right, #1e293b, #334155) !important;
+  color: #fde047 !important;
+  border-color: #475569 !important;
+}
+body.light-theme button[class*="from-[#292019]"] * {
+  color: #fde047 !important;
 }
 
 /* Form inputs, textareas, selects */
@@ -364,7 +450,7 @@ body.light-theme select,
 body.light-theme textarea {
   background-color: #ffffff !important;
   color: #0f172a !important;
-  border: 1.5px solid #94a3b8 !important;
+  border: 1.5px solid #cbd5e1 !important;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
 }
 

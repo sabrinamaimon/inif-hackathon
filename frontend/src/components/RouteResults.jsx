@@ -102,12 +102,11 @@ export default function RouteResults({
             <div
               key={route.id}
               onClick={() => onSelectRoute && onSelectRoute(route)}
-              className={`rounded-2xl border-4 transition-all cursor-pointer relative overflow-hidden shadow-2xl ${postcardTheme.border} ${
+              className={`rounded-2xl border-4 transition-all cursor-pointer relative overflow-hidden shadow-2xl bg-[#1a1410] ${postcardTheme.border} ${
                 isSelected 
                   ? 'ring-4 ring-[#f6d16f] scale-[1.01]' 
                   : 'hover:border-[#f6d16f]'
               }`}
-              style={{ backgroundColor: '#1a1410' }}
             >
               {/* ========================================================= */}
               {/* 1. ARTWORK IN THE BACKGROUND WITH LOWERED TRANSPARENCY    */}
