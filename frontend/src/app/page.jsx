@@ -17,6 +17,7 @@ import NoticeScanner from '../components/NoticeScanner';
 import EmergencyHelpline from '../components/EmergencyHelpline';
 import DhakaCommuteHeritageShowcase from '../components/DhakaCommuteHeritageShowcase';
 import { generateOfflineRouteCard } from '../utils/offlineCard';
+import { toBnDigits } from '../utils/localization';
 import { X } from 'lucide-react';
 
 import { STATIC_HUBS, STATIC_ALERTS } from '../data/staticData';
@@ -620,11 +621,11 @@ export default function Home() {
                     {lang === 'bn' ? 'প্রস্তাবিত রুট ও ভাড়ার তালিকা' : 'Suggested Routes & Fare Details'}
                   </h3>
                   <p className="font-anek text-xs sm:text-sm text-[#dfcfb2] flex items-center gap-1.5">
-                    <span className="font-bold text-[#f6d16f]">{origin}</span>
+                    <span className="font-bold text-[#f6d16f]">{STATIC_HUBS[origin]?.name_bn && lang === 'bn' ? STATIC_HUBS[origin].name_bn : origin}</span>
                     <span>➔</span>
-                    <span className="font-bold text-[#f6d16f]">{destination}</span>
+                    <span className="font-bold text-[#f6d16f]">{STATIC_HUBS[destination]?.name_bn && lang === 'bn' ? STATIC_HUBS[destination].name_bn : destination}</span>
                     <span className="text-[#c69429]">|</span>
-                    <span>{routes.length} {lang === 'bn' ? 'টি বিকল্প রুট পাওয়া গেছে' : 'routes found'}</span>
+                    <span>{lang === 'bn' ? `${toBnDigits(routes.length)}টি বিকল্প রুট পাওয়া গেছে` : `${routes.length} route options found`}</span>
                   </p>
                 </div>
               </div>

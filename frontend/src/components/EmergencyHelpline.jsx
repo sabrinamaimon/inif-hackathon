@@ -12,7 +12,7 @@ export default function EmergencyHelpline({ lang = 'bn', isHome = true }) {
     return (
       <footer className="w-full py-8 mt-12 border-t-2 border-[#c69429]/30 text-center font-anek text-xs text-[#dfcfb2] bg-[#14100c]/80">
         <p className="font-rickshaw text-base text-[#f6d16f]">
-          © ২০২৬ ঢাকা-পাথ — আইএআইটি জাতীয় আইটি উৎসব হ্যাকাথন। সর্বস্বত্ব সংরক্ষিত।
+          {lang === 'bn' ? '© ২০২৬ ঢাকা-পাথ — আইএআইটি জাতীয় আইটি উৎসব হ্যাকাথন। সর্বস্বত্ব সংরক্ষিত।' : '© 2026 DhakaPath — IAIT National IT Fest Hackathon. All rights reserved.'}
         </p>
         <p className="text-[11px] text-[#9e8a76] mt-1 font-mono">
           IAIT National IT Fest 2026 | Theme: Smart City | DhakaPath
@@ -43,7 +43,7 @@ export default function EmergencyHelpline({ lang = 'bn', isHome = true }) {
           </div>
 
           <div className="text-[11px] font-anek font-bold text-[#f6d16f] bg-black/40 px-3 py-1 rounded-xl border border-[#c69429]/40">
-            ★ ২৪ ঘণ্টা সার্বক্ষণিক সচল
+            {lang === 'bn' ? '★ ২৪ ঘণ্টা সার্বক্ষণিক সচল' : '★ 24/7 Active Helpline'}
           </div>
         </div>
 
@@ -82,12 +82,14 @@ export default function EmergencyHelpline({ lang = 'bn', isHome = true }) {
         <div className="flex items-center justify-center gap-2 mb-2">
           <span className="text-2xl">🛺</span>
           <span className="font-rickshaw text-2xl text-[#f6d16f] rickshaw-text-pop">
-            ঢাকা-পাথ (DhakaPath)
+            {lang === 'bn' ? 'ঢাকা-পাথ (DhakaPath)' : 'DhakaPath Urban Transit'}
           </span>
           <span className="text-2xl">🛺</span>
         </div>
         <p className="text-sm text-[#dfcfb2]">
-          পুরান ঢাকার ৪০০ বছরের সাংস্কৃতিক ঐতিহ্য, রিকশা আর্ট ও আধুনিক মেট্রোরেল ট্রানজিট ইন্টেলিজেন্স।
+          {lang === 'bn' 
+            ? 'পুরান ঢাকার ৪০০ বছরের সাংস্কৃতিক ঐতিহ্য, রিকশা আর্ট ও আধুনিক মেট্রোরেল ট্রানজিট ইন্টেলিজেন্স।' 
+            : '400 years of Dhaka cultural heritage, rickshaw art, and modern metro transit intelligence.'}
         </p>
         <p className="text-xs text-[#9e8a76] mt-1 font-mono">
           IAIT National IT Fest 2026 | Theme: Smart City | DhakaPath
