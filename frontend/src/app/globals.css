@@ -526,28 +526,63 @@ body.light-theme button[class*="bg-[#1c4568]"] * {
 /* Secondary & Action buttons in light theme */
 body.light-theme button[class*="bg-slate-100"],
 body.light-theme button[class*="bg-[#292019]"],
-body.light-theme button[class*="bg-[#2a2019]"] {
+body.light-theme button[class*="bg-[#2a2019]"],
+body.light-theme button[class*="bg-[#1c1511]"],
+body.light-theme button[class*="bg-[#201813]"],
+body.light-theme button[class*="bg-[#1a1410]"],
+body.light-theme button[class*="bg-[#120e0b]"],
+body.light-theme button[class*="bg-[#140e0b]"] {
   background-color: #ffffff !important;
   color: #140e0b !important;
-  border-color: rgba(198, 148, 41, 0.45) !important;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+  border-color: #c69429 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
 }
 body.light-theme button[class*="bg-slate-100"] span,
 body.light-theme button[class*="bg-[#292019]"] span,
-body.light-theme button[class*="bg-[#2a2019]"] span {
+body.light-theme button[class*="bg-[#2a2019]"] span,
+body.light-theme button[class*="bg-[#1c1511]"] span,
+body.light-theme button[class*="bg-[#201813]"] span,
+body.light-theme button[class*="bg-[#1a1410]"] span,
+body.light-theme button[class*="bg-[#120e0b]"] span,
+body.light-theme button[class*="bg-[#140e0b]"] span {
   color: #140e0b !important;
-  font-weight: 700 !important;
+  font-weight: 800 !important;
 }
 body.light-theme button[class*="bg-slate-100"] svg,
 body.light-theme button[class*="bg-[#292019]"] svg:not(.text-amber-400):not(.text-indigo-600),
-body.light-theme button[class*="bg-[#2a2019]"] svg:not(.text-amber-400):not(.text-indigo-600) {
+body.light-theme button[class*="bg-[#2a2019]"] svg:not(.text-amber-400):not(.text-indigo-600),
+body.light-theme button[class*="bg-[#1c1511]"] svg,
+body.light-theme button[class*="bg-[#201813]"] svg,
+body.light-theme button[class*="bg-[#1a1410]"] svg,
+body.light-theme button[class*="bg-[#120e0b]"] svg,
+body.light-theme button[class*="bg-[#140e0b]"] svg {
   color: #b83a2e !important;
 }
 body.light-theme button[class*="bg-slate-100"]:hover,
 body.light-theme button[class*="bg-[#292019]"]:hover,
-body.light-theme button[class*="bg-[#2a2019]"]:hover {
+body.light-theme button[class*="bg-[#2a2019]"]:hover,
+body.light-theme button[class*="bg-[#1c1511]"]:hover,
+body.light-theme button[class*="bg-[#201813]"]:hover,
+body.light-theme button[class*="bg-[#1a1410]"]:hover,
+body.light-theme button[class*="bg-[#120e0b]"]:hover,
+body.light-theme button[class*="bg-[#140e0b]"]:hover {
   background-color: #fcf9f2 !important;
   border-color: #c69429 !important;
+}
+
+/* Secondary & Action buttons in dark theme: crisp bright text */
+body.dark-theme button[class*="bg-[#292019]"] span,
+body.dark-theme button[class*="bg-[#2a2019]"] span,
+body.dark-theme button[class*="bg-[#1c1511]"] span,
+body.dark-theme button[class*="bg-[#201813]"] span {
+  color: #fbf8f1 !important;
+  font-weight: 700 !important;
+}
+body.dark-theme button[class*="bg-[#292019]"] svg,
+body.dark-theme button[class*="bg-[#2a2019]"] svg,
+body.dark-theme button[class*="bg-[#1c1511]"] svg,
+body.dark-theme button[class*="bg-[#201813]"] svg {
+  color: #f6d16f !important;
 }
 
 /* Emergency Helpline Phone Badge */

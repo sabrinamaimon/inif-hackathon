@@ -476,9 +476,9 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={() => setIsResultsOpen(true)}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#1c1511] hover:bg-[#292019] text-[#f6d16f] border border-[#c69429]/60 hover:border-[#f6d16f] font-anek font-bold text-sm shadow-md hover:scale-[1.02] transition-all cursor-pointer"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#292019] hover:bg-[#3d3026] text-[#fbf8f1] border-2 border-[#c69429]/60 hover:border-[#f6d16f] font-anek font-extrabold text-sm shadow-md hover:scale-[1.02] transition-all cursor-pointer"
                 >
-                  <span>🧭</span>
+                  <span className="text-base">🧭</span>
                   <span>{lang === 'bn' ? `খোঁজা রুটগুলো দেখুন (${routes.length}টি অপশন)` : `View Search Results (${routes.length} options)`}</span>
                 </button>
               </div>

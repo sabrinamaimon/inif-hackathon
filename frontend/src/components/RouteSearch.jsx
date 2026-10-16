@@ -325,13 +325,13 @@ export default function RouteSearch({
           <button
             type="button"
             onClick={() => setWeather(weather === 'rain' ? 'normal' : 'rain')}
-            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-anek font-bold transition-all border ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-anek font-extrabold transition-all border ${
               weather === 'rain'
-                ? 'bg-[#1c4568] text-[#fbf8f1] border-[#346894] shadow-md shadow-[#1c4568]/40 animate-pulse'
-                : 'bg-[#1c1511] text-[#dfcfb2] border-[#c69429]/30 hover:border-[#c69429]'
+                ? 'bg-[#1c4568] text-white border-[#346894] shadow-md shadow-[#1c4568]/40 animate-pulse'
+                : 'bg-[#292019] text-[#fbf8f1] border-[#c69429]/60 hover:border-[#f6d16f]'
             }`}
           >
-            <CloudRain className={`w-4 h-4 ${weather === 'rain' ? 'text-[#7dd3fc]' : 'text-[#dfcfb2]'}`} />
+            <CloudRain className={`w-4 h-4 ${weather === 'rain' ? 'text-[#7dd3fc]' : 'text-[#f6d16f]'}`} />
             <span>{weather === 'rain' ? (lang === 'bn' ? 'মৌসুমী ভারী বৃষ্টি (জলজট)' : 'Monsoon Rain Active') : (lang === 'bn' ? 'স্বাভাবিক আবহাওয়া' : 'Normal Weather')}</span>
           </button>
 
@@ -339,13 +339,13 @@ export default function RouteSearch({
           <button
             type="button"
             onClick={() => setIsRushHour(!isRushHour)}
-            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-anek font-bold transition-all border ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-anek font-extrabold transition-all border ${
               isRushHour
-                ? 'bg-[#b83a2e] text-[#fbf8f1] border-[#f6d16f] shadow-md shadow-[#b83a2e]/40'
-                : 'bg-[#1c1511] text-[#dfcfb2] border-[#c69429]/30 hover:border-[#c69429]'
+                ? 'bg-[#b83a2e] text-white border-[#f6d16f] shadow-md shadow-[#b83a2e]/40'
+                : 'bg-[#292019] text-[#fbf8f1] border-[#c69429]/60 hover:border-[#f6d16f]'
             }`}
           >
-            <Clock className={`w-4 h-4 ${isRushHour ? 'text-[#f6d16f]' : 'text-[#dfcfb2]'}`} />
+            <Clock className={`w-4 h-4 ${isRushHour ? 'text-[#f6d16f]' : 'text-[#f6d16f]'}`} />
             <span>{isRushHour ? (lang === 'bn' ? 'বিকেল ৫:৩০ অফিস ছুটি (পিক আওয়ার)' : 'Peak Rush Hour Active') : (lang === 'bn' ? 'অফ-পিক সময়' : 'Off-Peak Time')}</span>
           </button>
         </div>
