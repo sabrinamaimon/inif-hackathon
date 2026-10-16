@@ -52,19 +52,25 @@ export default function EmergencyHelpline({ lang = 'bn', isHome = true }) {
             <a
               key={idx}
               href={`tel:${c.phone}`}
-              className="p-4 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/30 hover:border-[#f6d16f] hover:bg-[#1a1410] transition-all flex items-center justify-between group active:scale-95 shadow-md"
+              className="p-4 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/30 hover:border-[#f6d16f] hover:bg-[#1a1410] transition-all flex flex-col justify-between gap-3.5 group active:scale-95 shadow-md overflow-hidden"
             >
-              <div>
-                <div className="font-anek text-base font-extrabold text-[#fbf8f1] group-hover:text-[#f6d16f] transition-colors">
+              <div className="min-w-0">
+                <div className="font-anek text-sm sm:text-base font-extrabold text-[#fbf8f1] group-hover:text-[#f6d16f] transition-colors leading-snug">
                   {lang === 'bn' ? c.name_bn : c.name}
                 </div>
-                <div className="font-anek text-xs text-[#dfcfb2] mt-0.5 line-clamp-1">
+                <div className="font-anek text-xs text-[#dfcfb2] mt-1 line-clamp-1">
                   {c.desc}
                 </div>
               </div>
 
-              <div className="px-3.5 py-1.5 rounded-lg bg-[#b83a2e] text-[#fbf8f1] text-sm font-mono font-black shrink-0 ml-2 group-hover:bg-[#f6d16f] group-hover:text-[#120e0b] transition-all shadow-md">
-                {c.phone}
+              <div className="flex items-center justify-between pt-2.5 border-t border-[#c69429]/20 mt-auto">
+                <span className="text-xs font-anek font-bold text-[#c69429] flex items-center gap-1.5">
+                  <Phone className="w-3.5 h-3.5 text-[#b83a2e]" />
+                  <span>{lang === 'bn' ? 'সরাসরি কল' : 'Call Now'}</span>
+                </span>
+                <div className="px-3 py-1 rounded-lg bg-[#b83a2e] text-[#fbf8f1] text-xs sm:text-sm font-mono font-bold tracking-wider group-hover:bg-[#f6d16f] group-hover:text-[#120e0b] transition-all shadow-md shrink-0">
+                  {c.phone}
+                </div>
               </div>
             </a>
           ))}
