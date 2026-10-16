@@ -202,10 +202,16 @@ export default function RouteResults({
     if (currentLang === 'bn') {
       if (leg.landmark_instructions_bn) return leg.landmark_instructions_bn;
       if (leg.landmark_instructions && /[^\x00-\x7F]/.test(leg.landmark_instructions)) {
-        return leg.landmark_instructions;
+        let text = leg.landmark_instructions;
+        Object.entries(STATIC_HUBS).forEach(([enKey, hubObj]) => {
+          if (hubObj.name_bn) {
+            text = text.replaceAll(enKey, hubObj.name_bn);
+          }
+        });
+        return text;
       }
       switch (leg.mode) {
-        case 'metro': return `${fromName} মেট্রোরেল কনকোর্স দিয়ে উঠে ${toName} প্ল্যাটফর্মে নামুন।`;
+        case 'metro': return `${fromName} মেট্রোরেল কনকোর্স দিয়ে উঠে ${toName} প্ল্যাটফর্মে নামুন। সরাসরি ট্র্যাকে যাত্রা।`;
         case 'bus': return `${fromName} বাস স্টপ থেকে সরাসরি বাসে উঠে ${toName} নামুন। বাসে ৫০% শিক্ষার্থী হাফ-পাস প্রযোজ্য।`;
         case 'cng': return `${fromName} সিএনজি স্ট্যান্ড থেকে সরাসরি ${toName}। কোনো পরিবর্তন ছাড়া দ্রুত যাতায়াত।`;
         case 'bike': return `${fromName} থেকে ওয়ান-অন-ওয়ান বাইক পিকআপ নিয়ে যানজট এড়িয়ে দ্রুত পৌঁছান।`;

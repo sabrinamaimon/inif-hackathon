@@ -75,6 +75,24 @@ export default function Home() {
     }
   }, [lang]);
 
+  // Global Escape key listener to close modals
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setIsResultsOpen(false);
+        setFareModalRoute(null);
+        setIsAddAlertOpen(false);
+        setIsScannerOpen(false);
+        setIsChatOpen(false);
+        setIsDrawerOpen(false);
+      }
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, []);
+
   // Search parameters
   const [origin, setOrigin] = useState('Mirpur 10');
   const [destination, setDestination] = useState('Motijheel');
@@ -743,7 +761,7 @@ export default function Home() {
       {/* Route Results Modal (On-Demand Popup) */}
       {isResultsOpen && routes.length > 0 && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 md:p-8 bg-black/80 backdrop-blur-sm animate-fadeIn"
+          className="fixed inset-0 z-[70] flex items-center justify-center p-3 sm:p-5 md:p-8 bg-black/80 backdrop-blur-sm animate-fadeIn"
           onClick={() => setIsResultsOpen(false)}
         >
           <div 
@@ -768,13 +786,25 @@ export default function Home() {
                 </div>
               </div>
 
+              {/* Bold, Unmistakable Close / Exit Button */}
               <button
                 type="button"
                 onClick={() => setIsResultsOpen(false)}
-                className="p-2 sm:p-2.5 rounded-xl bg-[#292019] hover:bg-[#b83a2e] text-[#f6d16f] hover:text-white border border-[#c69429]/40 transition-colors cursor-pointer"
-                aria-label="Close route results"
+                className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-xl bg-[#b83a2e] hover:bg-[#96281e] text-white border-2 border-white shadow-xl cursor-pointer active:scale-95 transition-all shrink-0 group"
+                aria-label={lang === 'bn' ? 'বন্ধ করুন (Exit)' : 'Close'}
+                title={lang === 'bn' ? 'বন্ধ করুন (Exit)' : 'Close Modal'}
               >
-                <X className="w-5 h-5 sm:w-6 sm:h-6" />
+                <svg 
+                  className="w-6 h-6 stroke-[3] group-hover:rotate-90 transition-transform duration-200" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
               </button>
             </div>
 

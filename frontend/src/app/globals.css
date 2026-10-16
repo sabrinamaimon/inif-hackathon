@@ -744,3 +744,32 @@ body.dark-theme .rickshaw-brand-typography {
   line-height: 1.35 !important;
   vertical-align: middle;
 }
+
+/* ==========================================================================
+   UNIVERSAL MODAL EXIT / CLOSE BUTTONS (ALWAYS CRISP RED WITH WHITE CROSS)
+   ========================================================================== */
+button[class*="bg-[#b83a2e]"],
+button[class*="bg-rose-600"],
+body.light-theme button[class*="bg-[#b83a2e]"],
+body.light-theme button[class*="bg-rose-600"] {
+  background-color: #b83a2e !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+button[class*="bg-[#b83a2e]"] svg,
+button[class*="bg-rose-600"] svg,
+body.light-theme button[class*="bg-[#b83a2e]"] svg,
+body.light-theme button[class*="bg-rose-600"] svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+button[class*="bg-[#b83a2e]"]:hover,
+button[class*="bg-rose-600"]:hover,
+body.light-theme button[class*="bg-[#b83a2e]"]:hover,
+body.light-theme button[class*="bg-rose-600"]:hover {
+  background-color: #96281e !important;
+  border-color: #ffffff !important;
+}
+

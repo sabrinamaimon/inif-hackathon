@@ -147,39 +147,89 @@ export default function Navbar({
             <span>{lang === 'bn' ? '১৬টি হাব সচল' : '16 Hubs Active'}</span>
           </div>
 
-          {/* Theme Toggle Button (Dark / Light Mode - Icon Only) */}
-          <button
-            type="button"
-            onClick={() => setTheme && setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all active:scale-95 shadow-sm shrink-0 cursor-pointer ${
+          {/* Admin CMS Link */}
+          <Link
+            href="/admin"
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-anek font-bold transition-all shadow-sm shrink-0 cursor-pointer ${
               theme === 'light'
-                ? 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 shadow-sm'
-                : 'bg-[#2a2019] hover:bg-[#3d3026] text-[#f6d16f] border border-[#c69429]/50 shadow-md'
+                ? 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300'
+                : 'bg-gradient-to-r from-[#292019] to-[#1e1712] hover:bg-[#3d3026] text-[#f6d16f] border border-[#c69429]/60'
             }`}
-            title={theme === 'dark' ? (lang === 'bn' ? 'লাইট মোড' : 'Light Mode') : (lang === 'bn' ? 'ডার্ক মোড' : 'Dark Mode')}
-            aria-label="Toggle Theme"
+            title={lang === 'bn' ? 'অ্যাডমিন কন্ট্রোল প্যানেল' : 'Admin Control Panel'}
           >
-            {theme === 'dark' ? (
-              <Sun className="w-4 h-4 text-amber-400 shrink-0" />
-            ) : (
-              <Moon className="w-4 h-4 text-indigo-600 shrink-0" />
-            )}
-          </button>
+            <Shield className="w-3.5 h-3.5 text-[#f6d16f] group-hover:scale-110 transition-transform shrink-0" />
+            <span className="hidden xl:inline">{lang === 'bn' ? 'অ্যাডমিন' : 'Admin'}</span>
+          </Link>
 
-          {/* Language Switcher (Icon Only) */}
-          <button
-            type="button"
-            onClick={() => setLang(lang === 'bn' ? 'en' : 'bn')}
-            className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all active:scale-95 shadow-sm shrink-0 cursor-pointer ${
-              theme === 'light'
-                ? 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 shadow-sm'
-                : 'bg-[#2a2019] hover:bg-[#3d3026] text-[#f6d16f] border border-[#c69429]/50 shadow-md'
-            }`}
-            title={lang === 'bn' ? 'Switch to English' : 'বাংলা ভাষায় পরিবর্তন করুন'}
-            aria-label="Toggle Language"
-          >
-            <Globe className={`w-4 h-4 shrink-0 ${theme === 'light' ? 'text-[#b83a2e]' : 'text-[#f6d16f]'}`} />
-          </button>
+          {/* Explicit Theme Segmented Control: [ ☀️ লাইট | 🌙 ডার্ক ] */}
+          <div className={`flex items-center p-0.5 rounded-xl border text-xs font-anek font-bold transition-all shadow-sm shrink-0 ${
+            theme === 'light' ? 'bg-slate-100 border-slate-300' : 'bg-[#1e1712] border-[#c69429]/40'
+          }`}>
+            <button
+              type="button"
+              onClick={() => setTheme && setTheme('light')}
+              className={`flex items-center gap-1 px-2 xl:px-2.5 py-1 rounded-lg transition-all active:scale-95 cursor-pointer ${
+                theme === 'light'
+                  ? 'bg-amber-400 text-slate-950 font-black shadow-sm'
+                  : 'text-[#dfcfb2] hover:text-white hover:bg-[#2a2019]'
+              }`}
+              title={lang === 'bn' ? 'লাইট মোড সক্রিয় করুন' : 'Switch to Light Mode'}
+            >
+              <Sun className={`w-3.5 h-3.5 ${theme === 'light' ? 'text-slate-950' : 'text-amber-400'}`} />
+              <span className="hidden sm:inline">{lang === 'bn' ? 'লাইট' : 'Light'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setTheme && setTheme('dark')}
+              className={`flex items-center gap-1 px-2 xl:px-2.5 py-1 rounded-lg transition-all active:scale-95 cursor-pointer ${
+                theme === 'dark'
+                  ? 'bg-[#b83a2e] text-[#fbf8f1] font-black border border-[#f6d16f] shadow-sm'
+                  : 'text-slate-600 hover:text-slate-950 hover:bg-slate-200'
+              }`}
+              title={lang === 'bn' ? 'ডার্ক মোড সক্রিয় করুন' : 'Switch to Dark Mode'}
+            >
+              <Moon className={`w-3.5 h-3.5 ${theme === 'dark' ? 'text-[#f6d16f]' : 'text-slate-600'}`} />
+              <span className="hidden sm:inline">{lang === 'bn' ? 'ডার্ক' : 'Dark'}</span>
+            </button>
+          </div>
+
+          {/* Explicit Language Segmented Control: [ বাং | ENG ] */}
+          <div className={`flex items-center p-0.5 rounded-xl border text-xs font-anek font-bold transition-all shadow-sm shrink-0 ${
+            theme === 'light' ? 'bg-slate-100 border-slate-300' : 'bg-[#1e1712] border-[#c69429]/40'
+          }`}>
+            <button
+              type="button"
+              onClick={() => setLang('bn')}
+              className={`px-2 xl:px-2.5 py-1 rounded-lg transition-all active:scale-95 cursor-pointer ${
+                lang === 'bn'
+                  ? (theme === 'light' 
+                      ? 'bg-[#b83a2e] text-white font-black shadow-sm' 
+                      : 'bg-[#b83a2e] text-[#fbf8f1] font-black border border-[#f6d16f] shadow-sm')
+                  : (theme === 'light' 
+                      ? 'text-slate-600 hover:text-slate-950 hover:bg-slate-200' 
+                      : 'text-[#dfcfb2] hover:text-white hover:bg-[#2a2019]')
+              }`}
+              title="বাংলা ভাষায় ব্যবহার করুন"
+            >
+              বাং
+            </button>
+            <button
+              type="button"
+              onClick={() => setLang('en')}
+              className={`px-2 xl:px-2.5 py-1 rounded-lg transition-all active:scale-95 cursor-pointer ${
+                lang === 'en'
+                  ? (theme === 'light' 
+                      ? 'bg-[#15453b] text-white font-black shadow-sm' 
+                      : 'bg-[#15453b] text-[#fbf8f1] font-black border border-[#34d399] shadow-sm')
+                  : (theme === 'light' 
+                      ? 'text-slate-600 hover:text-slate-950 hover:bg-slate-200' 
+                      : 'text-[#dfcfb2] hover:text-white hover:bg-[#2a2019]')
+              }`}
+              title="Switch to English"
+            >
+              ENG
+            </button>
+          </div>
         </div>
       </div>
 
@@ -216,7 +266,7 @@ export default function Navbar({
           {/* Mobile Admin Link */}
           <Link
             href="/admin"
-            className={`flex items-center justify-center w-8 h-8 rounded-full border active:scale-95 transition-all shadow-md ${
+            className={`flex items-center justify-center w-8 h-8 rounded-lg border active:scale-95 transition-all shadow-sm ${
               theme === 'light' ? 'bg-slate-100 border-slate-300 text-slate-800' : 'bg-[#292019] border-[#c69429]/60 text-[#f6d16f]'
             }`}
             title="Admin CMS"
@@ -225,39 +275,59 @@ export default function Navbar({
             <Shield className="w-4 h-4" />
           </Link>
 
-          {/* Mobile Theme Toggle */}
-          <button
-            type="button"
-            onClick={() => setTheme && setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className={`flex items-center justify-center w-8 h-8 rounded-full active:scale-95 transition-all cursor-pointer ${
-              theme === 'light'
-                ? 'bg-amber-100 border border-amber-300 text-amber-800 shadow-sm'
-                : 'bg-[#292019] border border-[#c69429]/50 text-[#f6d16f]'
-            }`}
-            title="Toggle Theme"
-            aria-label="Toggle Theme"
-          >
-            {theme === 'dark' ? (
-              <Sun className="w-4 h-4 text-amber-400" />
-            ) : (
-              <Moon className="w-4 h-4 text-indigo-600" />
-            )}
-          </button>
+          {/* Mobile Theme Segmented Toggle */}
+          <div className={`flex items-center p-0.5 rounded-lg border text-xs font-anek font-bold ${
+            theme === 'light' ? 'bg-slate-100 border-slate-300' : 'bg-[#1e1712] border-[#c69429]/40'
+          }`}>
+            <button
+              type="button"
+              onClick={() => setTheme && setTheme('light')}
+              className={`p-1 rounded-md transition-all active:scale-95 cursor-pointer ${
+                theme === 'light' ? 'bg-amber-400 text-slate-950 shadow-sm' : 'text-[#dfcfb2]'
+              }`}
+              title="Light Mode"
+            >
+              <Sun className="w-3.5 h-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setTheme && setTheme('dark')}
+              className={`p-1 rounded-md transition-all active:scale-95 cursor-pointer ${
+                theme === 'dark' ? 'bg-[#b83a2e] text-[#fbf8f1] shadow-sm' : 'text-slate-600'
+              }`}
+              title="Dark Mode"
+            >
+              <Moon className="w-3.5 h-3.5" />
+            </button>
+          </div>
 
-          {/* Mobile Language Toggle (Icon Only) */}
-          <button
-            type="button"
-            onClick={() => setLang(lang === 'bn' ? 'en' : 'bn')}
-            className={`flex items-center justify-center w-8 h-8 rounded-full active:scale-95 transition-all cursor-pointer ${
-              theme === 'light'
-                ? 'bg-slate-100 border border-slate-300 text-slate-800 shadow-sm'
-                : 'bg-[#292019] border border-[#c69429]/50 text-[#f6d16f]'
-            }`}
-            title={lang === 'bn' ? 'English' : 'বাংলা'}
-            aria-label="Toggle Language"
-          >
-            <Globe className={`w-4 h-4 ${theme === 'light' ? 'text-[#b83a2e]' : 'text-[#f6d16f]'}`} />
-          </button>
+          {/* Mobile Language Segmented Toggle */}
+          <div className={`flex items-center p-0.5 rounded-lg border text-xs font-anek font-bold ${
+            theme === 'light' ? 'bg-slate-100 border-slate-300' : 'bg-[#1e1712] border-[#c69429]/40'
+          }`}>
+            <button
+              type="button"
+              onClick={() => setLang('bn')}
+              className={`px-1.5 py-0.5 rounded-md transition-all cursor-pointer ${
+                lang === 'bn'
+                  ? (theme === 'light' ? 'bg-[#b83a2e] text-white font-black' : 'bg-[#b83a2e] text-[#fbf8f1] font-black')
+                  : (theme === 'light' ? 'text-slate-600' : 'text-[#dfcfb2]')
+              }`}
+            >
+              বাং
+            </button>
+            <button
+              type="button"
+              onClick={() => setLang('en')}
+              className={`px-1.5 py-0.5 rounded-md transition-all cursor-pointer ${
+                lang === 'en'
+                  ? (theme === 'light' ? 'bg-[#15453b] text-white font-black' : 'bg-[#15453b] text-[#fbf8f1] font-black')
+                  : (theme === 'light' ? 'text-slate-600' : 'text-[#dfcfb2]')
+              }`}
+            >
+              EN
+            </button>
+          </div>
         </div>
       </div>
     </header>
