@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Menu, Navigation, AlertTriangle, Cpu, Users, Bus, Globe, Sparkles, Sun, Moon, Download } from 'lucide-react';
+import { Menu, Navigation, AlertTriangle, Cpu, Users, Bus, Globe, Sparkles, Sun, Moon, Download, Map } from 'lucide-react';
 import { I18N, toBnDigits } from '../utils/localization';
 
 export default function Navbar({ 
@@ -20,7 +20,7 @@ export default function Navbar({
   const navLinks = [
     { id: 'home', label: lang === 'bn' ? 'রুট প্ল্যানার' : 'Route Planner', icon: Navigation },
     { id: 'alerts', label: lang === 'bn' ? 'সড়ক বিঘ্ন' : 'Street Alerts', icon: AlertTriangle, badge: activeAlertCount },
-    { id: 'simulator', label: lang === 'bn' ? 'সিমুলেটর' : 'Simulator', icon: Cpu },
+    { id: 'simulator', label: lang === 'bn' ? 'ম্যাপ ও সিমুলেটর' : 'Map & Simulator', icon: Map },
     { id: 'cms', label: lang === 'bn' ? 'ডিরেক্টরি' : 'Directory', icon: Bus },
     { id: 'rideshare', label: lang === 'bn' ? 'রাইড শেয়ার' : 'Ride Share', icon: Users },
   ];
