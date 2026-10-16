@@ -200,25 +200,24 @@ export default function TransitCMS({ lang = 'bn', onSelectBusRoute }) {
     <div className="heritage-card p-4 sm:p-7 border-2 border-[#c69429]/50 my-6 shadow-2xl bg-[#18130f]">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 mb-6 border-b border-[#c69429]/30">
-        <div>
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#b83a2e] to-[#e2b448] flex items-center justify-center text-xl shadow-md">
-              🚌
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#b83a2e] to-[#e2b448] flex items-center justify-center text-xl shadow-md shrink-0">
+            🚌
+          </div>
+          <div>
+            <div className="flex items-center gap-2.5">
+              <h3 className="font-rickshaw text-2xl sm:text-3xl font-bold text-[#f6d16f] rickshaw-text-pop tracking-wide">
+                {lang === 'bn' ? 'ঢাকা বাস ও ট্রানজিট রুট ডিরেক্টরি' : 'Dhaka Transit & Bus Directory'}
+              </h3>
+              <span className="text-xs px-2.5 py-1 rounded-full bg-[#15453b] text-[#7dd3fc] font-anek font-bold border border-[#2a6f62] shadow-md hidden sm:inline-block">
+                {lang === 'bn' ? 'বিআরটিএ ও ডিএমটিসিএল অনুমোদিত' : 'Verified BRTA & DMTCL'}
+              </span>
             </div>
-            <div>
-              <div className="flex items-center gap-2.5">
-                <h3 className="font-rickshaw text-2xl sm:text-3xl font-bold text-[#f6d16f] rickshaw-text-pop tracking-wide">
-                  {lang === 'bn' ? 'ঢাকা বাস ও ট্রানজিট রুট ডিরেক্টরি' : 'Dhaka Transit & Bus Directory'}
-                </h3>
-                <span className="text-xs px-2.5 py-1 rounded-full bg-[#15453b] text-[#7dd3fc] font-anek font-bold border border-[#2a6f62] shadow-md hidden sm:inline-block">
-                  {lang === 'bn' ? 'বিআরটিএ ও ডিএমটিসিএল অনুমোদিত' : 'Verified BRTA & DMTCL'}
-                </span>
-              </div>
-              <p className="font-anek text-xs sm:text-sm text-[#dfcfb2] mt-0.5 font-medium">
-                {lang === 'bn' 
-                  ? '১৮৩+ সিটি বাস ও মেট্রোরেলের স্টপেজ, সময়সূচী এবং সরকারি গেজেট অনুযায়ী পূর্ণাঙ্গ ভাড়ার তালিকা' 
-                  : '183+ Verified City Buses and MRT-6 Metro stops with official fares and timetables'}
-              </p>
-            </div>
+            <p className="font-anek text-xs sm:text-sm text-[#dfcfb2] mt-0.5 font-medium">
+              {lang === 'bn' 
+                ? '১৮৩+ সিটি বাস ও মেট্রোরেলের স্টপেজ, সময়সূচী এবং সরকারি গেজেট অনুযায়ী পূর্ণাঙ্গ ভাড়ার তালিকা' 
+                : '183+ Verified City Buses and MRT-6 Metro stops with official fares and timetables'}
+            </p>
           </div>
         </div>
 
@@ -226,10 +225,10 @@ export default function TransitCMS({ lang = 'bn', onSelectBusRoute }) {
         <div className="flex items-center gap-2 flex-wrap">
           <div className="px-3 py-1.5 rounded-xl bg-[#15453b]/40 border border-[#2a6f62] text-xs font-anek font-bold text-[#6ee7b7] flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-[#6ee7b7] animate-pulse" />
-            <span>১৮৩+ বাস রুট অন্তর্ভুক্ত</span>
+            <span>{lang === 'bn' ? '১৮৩+ বাস রুট অন্তর্ভুক্ত' : '183+ Bus Routes'}</span>
           </div>
           <div className="px-3 py-1.5 rounded-xl bg-[#c69429]/20 border border-[#c69429]/50 text-xs font-anek font-bold text-[#f6d16f]">
-            🎓 ৫০% শিক্ষার্থী হাফ-পাস
+            {lang === 'bn' ? '🎓 ৫০% শিক্ষার্থী হাফ-পাস' : '🎓 50% Student Half-Pass'}
           </div>
         </div>
       </div>
