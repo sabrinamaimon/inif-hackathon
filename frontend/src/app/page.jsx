@@ -21,6 +21,7 @@ import { toBnDigits } from '../utils/localization';
 import { X } from 'lucide-react';
 
 import { STATIC_HUBS, STATIC_ALERTS } from '../data/staticData';
+import { parseCommuteQuery } from '../utils/nlpParser';
 
 export default function Home() {
   const [lang, setLang] = useState('bn');
@@ -104,12 +105,34 @@ export default function Home() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isResultsOpen, setIsResultsOpen] = useState(false);
   const [hasUserSearched, setHasUserSearched] = useState(false);
+  const [liveWeather, setLiveWeather] = useState(null);
 
-  // Fetch initial alerts & run default search on mount
+  // Fetch initial alerts, live real weather & run default search on mount
   useEffect(() => {
     fetchAlerts();
-    performSearch('Mirpur 10', 'Motijheel', 'general', 'normal', false);
+    fetchLiveWeather().then((autoWeather) => {
+      performSearch('Mirpur 10', 'Motijheel', 'general', autoWeather || 'normal', false);
+    });
+
+    const weatherTimer = setInterval(fetchLiveWeather, 180000); // 3 mins auto refresh
+    return () => clearInterval(weatherTimer);
   }, []);
+
+  const fetchLiveWeather = async () => {
+    try {
+      const res = await fetch('/api/weather');
+      if (res.ok) {
+        const data = await res.json();
+        setLiveWeather(data);
+        const autoWeather = (data.is_raining || simulationState.rain_active) ? 'rain' : 'normal';
+        setWeather(autoWeather);
+        return autoWeather;
+      }
+    } catch (e) {
+      console.warn('Real weather API offline');
+    }
+    return 'normal';
+  };
 
   const fetchAlerts = async () => {
     try {
@@ -288,47 +311,69 @@ export default function Home() {
     setHasUserSearched(true);
     setIsResultsOpen(true);
     setIsLoadingRoutes(true);
+
+    let localParsed = null;
+    try {
+      localParsed = parseCommuteQuery(queryText, origin, destination);
+    } catch (e) {
+      console.warn('Local parse error:', e);
+    }
+
     try {
       const res = await fetch('/api/search/nlp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: queryText })
+        body: JSON.stringify({ 
+          query: queryText,
+          fallbackOrigin: origin,
+          fallbackDest: destination
+        })
       });
 
       if (res.ok) {
         const data = await res.json();
-        if (data.origin) setOrigin(data.origin);
-        if (data.destination) setDestination(data.destination);
-        if (data.passenger_type) setPassengerType(data.passenger_type);
+        const nextOrigin = data.origin || (localParsed && localParsed.origin) || origin;
+        const nextDest = data.destination || (localParsed && localParsed.destination) || destination;
+        const nextPass = data.passenger_type || (localParsed && localParsed.passenger_type) || passengerType;
+        const nextWeather = data.weather_condition === 'rain' ? 'rain' : weather;
+        const nextRush = data.is_rush_hour || isRushHour;
+
+        setOrigin(nextOrigin);
+        setDestination(nextDest);
+        setPassengerType(nextPass);
+        if (nextWeather === 'rain') setWeather('rain');
+        if (nextRush) setIsRushHour(true);
 
         performSearch(
-          data.origin || origin,
-          data.destination || destination,
-          data.passenger_type || passengerType,
-          weather,
-          isRushHour
+          nextOrigin,
+          nextDest,
+          nextPass,
+          nextWeather,
+          nextRush
         );
         return;
       }
     } catch (e) {
-      console.warn('NLP route extraction offline, using fallback');
+      console.warn('NLP route extraction API offline, using local parser');
     }
 
-    // Local parser fallback for Banglish/Bengali
-    const lower = queryText.toLowerCase();
-    let detectedOrigin = origin;
-    let detectedDest = destination;
-
-    if (lower.includes('mirpur') || lower.includes('মিরপুর')) detectedOrigin = 'Mirpur 10';
-    if (lower.includes('motijheel') || lower.includes('মতিঝিল')) detectedDest = 'Motijheel';
-    if (lower.includes('farmgate') || lower.includes('ফার্মগেট')) detectedOrigin = 'Farmgate';
-    if (lower.includes('dhanmondi') || lower.includes('ধানমন্ডি')) detectedDest = 'Dhanmondi';
-    if (lower.includes('uttara') || lower.includes('উত্তরা')) detectedOrigin = 'Uttara';
-    if (lower.includes('student') || lower.includes('ছাত্র') || lower.includes('হাফ')) setPassengerType('student');
-
-    setOrigin(detectedOrigin);
-    setDestination(detectedDest);
-    performSearch(detectedOrigin, detectedDest, passengerType, weather, isRushHour);
+    // High reliability local parser fallback for Banglish/Bengali
+    if (localParsed) {
+      setOrigin(localParsed.origin);
+      setDestination(localParsed.destination);
+      setPassengerType(localParsed.passenger_type);
+      if (localParsed.weather_condition === 'rain') setWeather('rain');
+      if (localParsed.is_rush_hour) setIsRushHour(true);
+      performSearch(
+        localParsed.origin,
+        localParsed.destination,
+        localParsed.passenger_type,
+        localParsed.weather_condition === 'rain' ? 'rain' : weather,
+        localParsed.is_rush_hour || isRushHour
+      );
+    } else {
+      performSearch(origin, destination, passengerType, weather, isRushHour);
+    }
   };
 
   const handleVoteAlert = async (alertId, voteType) => {
@@ -508,6 +553,47 @@ export default function Home() {
         {/* TAB 1: HOME (Focused Smart Transit Search & Itineraries) */}
         {currentTab === 'home' && (
           <div className="space-y-8 my-4 w-full">
+            {/* Live Weather Intelligence & Regional Fare Surge Strip */}
+            {liveWeather && (
+              <div className={`p-4 rounded-2xl border-2 shadow-xl transition-all ${
+                (liveWeather.is_raining || weather === 'rain')
+                  ? 'bg-gradient-to-r from-[#1c2438] via-[#1a2d42] to-[#15453b] border-[#60a5fa] text-white'
+                  : 'bg-gradient-to-r from-[#1c1511] via-[#241a14] to-[#2d2119] border-[#c69429]/50 text-[#fbf8f1]'
+              }`}>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-3.5">
+                    <span className="text-3xl shrink-0">{liveWeather.icon || (weather === 'rain' ? '🌧️' : '☀️')}</span>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-rickshaw text-lg sm:text-xl font-bold text-[#f6d16f] tracking-wide">
+                          {lang === 'bn' ? 'ঢাকা লাইভ আবহাওয়া ও এলাকাভিত্তিক ভাড়া সমন্বয়' : 'Dhaka Live Weather & Regional Fare Intelligence'}
+                        </span>
+                        <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#0e6e41] text-white font-anek font-extrabold border border-[#6ee7b7]/50 shadow-xs">
+                          {lang === 'bn' ? 'স্বয়ংক্রিয় লাইভ' : 'Live Auto'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2.5 sm:gap-4 text-xs sm:text-sm font-anek text-[#dfcfb2] mt-1 flex-wrap">
+                        <span className="font-bold text-white">🌡️ {lang === 'bn' ? `তাপমাত্রা: ${toBnDigits(liveWeather.temperature)}° সে.` : `Temp: ${liveWeather.temperature}°C`}</span>
+                        <span>💧 {lang === 'bn' ? `আর্দ্রতা: ${toBnDigits(liveWeather.humidity)}%` : `Humidity: ${liveWeather.humidity}%`}</span>
+                        <span>🌧️ {lang === 'bn' ? `বৃষ্টিপাত: ${toBnDigits(liveWeather.precipitation_mm)} মিমি` : `Rain: ${liveWeather.precipitation_mm}mm`}</span>
+                        <span className="font-black text-[#f6d16f] bg-black/40 px-2.5 py-0.5 rounded-md border border-[#c69429]/40">
+                          {lang === 'bn' ? liveWeather.condition_bn : liveWeather.condition}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="text-left sm:text-right text-xs sm:text-sm font-anek font-semibold max-w-lg text-[#dfcfb2] leading-snug">
+                    <p>
+                      {lang === 'bn'
+                        ? liveWeather.area_impacts?.impact_summary_bn
+                        : 'Real-time weather analysis automatically regulates regional transit fares.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Route Query Engine */}
             <RouteSearch
               origin={origin}

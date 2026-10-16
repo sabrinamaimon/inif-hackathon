@@ -141,25 +141,11 @@ export default function Navbar({
             </button>
           )}
 
-          {/* Shapla Chattar Enamel Badge (Only visible on ultra-wide 2xl screens) */}
-          <div className="hidden 2xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#15453b]/40 border border-[#2a6f62] text-xs text-[#f6d16f] font-anek font-semibold shrink-0">
+          {/* Shapla Chattar Enamel Badge */}
+          <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#15453b]/40 border border-[#2a6f62] text-xs text-[#f6d16f] font-anek font-semibold shrink-0">
             <span className="w-2 h-2 rounded-full bg-[#f6d16f] animate-pulse" />
             <span>{lang === 'bn' ? '১৬টি হাব সচল' : '16 Hubs Active'}</span>
           </div>
-
-          {/* Admin CMS Link */}
-          <Link
-            href="/admin"
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-anek font-bold transition-all shadow-sm shrink-0 cursor-pointer ${
-              theme === 'light'
-                ? 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300'
-                : 'bg-gradient-to-r from-[#292019] to-[#1e1712] hover:bg-[#3d3026] text-[#f6d16f] border border-[#c69429]/60'
-            }`}
-            title={lang === 'bn' ? 'অ্যাডমিন কন্ট্রোল প্যানেল' : 'Admin Control Panel'}
-          >
-            <Shield className="w-3.5 h-3.5 text-[#f6d16f] group-hover:scale-110 transition-transform shrink-0" />
-            <span className="hidden xl:inline">{lang === 'bn' ? 'অ্যাডমিন' : 'Admin'}</span>
-          </Link>
 
           {/* Theme Toggle Button (Dark / Light Mode - Icon Only) */}
           <button
