@@ -27,7 +27,7 @@ export default function Navbar({
   return (
     <header className="w-full sticky top-0 z-50 bg-[#16110d]/95 backdrop-blur-md border-b border-[#c69429]/40 shadow-xl">
       {/* ================= DESKTOP HEADER (>768px) ================= */}
-      <div className="hidden md:flex items-center justify-between px-6 py-3 max-w-7xl mx-auto">
+      <div className="hidden md:flex items-center justify-between px-4 sm:px-6 lg:px-8 xl:px-10 py-3 w-full max-w-[1920px] mx-auto">
         {/* Clean, High-End Brand Logo */}
         <div 
           className="flex items-center gap-3 cursor-pointer select-none group"

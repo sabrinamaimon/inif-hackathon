@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import MobileDrawer from '../components/MobileDrawer';
-import StatsBar from '../components/StatsBar';
 import MapView from '../components/MapView';
 import RouteSearch from '../components/RouteSearch';
 import RouteResults from '../components/RouteResults';
@@ -359,7 +358,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col bg-[#120c09] text-[#fbf8f1] font-anek selection:bg-[#c69429] selection:text-[#120c09]">
+    <main className="min-h-screen flex flex-col bg-slate-950 text-slate-100 font-anek">
       {/* Top Navigation */}
       <Navbar
         currentTab={currentTab}
@@ -386,10 +385,8 @@ export default function Home() {
         onOpenScanner={() => setIsScannerOpen(true)}
       />
 
-      {/* Main Content Area */}
-      <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6">
-        {/* Living Stats Bar (1-Line Sleek Live Ticker) */}
-        <StatsBar lang={lang} />
+      {/* Full-Width Laptop Screen Container */}
+      <div className="flex-1 w-full max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-8 xl:px-10">
 
         {/* TAB 1: HOME (Clean 2-Column Commute Workspace + Heritage Showcase) */}
         {currentTab === 'home' && (
