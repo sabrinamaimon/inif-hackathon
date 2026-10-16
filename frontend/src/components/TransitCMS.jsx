@@ -98,7 +98,10 @@ export default function TransitCMS({ lang = 'bn' }) {
             <h3 className="font-rickshaw text-2xl sm:text-3xl font-bold text-[#f6d16f] rickshaw-text-pop tracking-wide">
               {lang === 'bn' ? 'ঢাকা ট্রানজিট নেটওয়ার্ক ডিরেক্টরি' : 'Dhaka Transit Network Directory'}
             </h3>
-            <span className="text-xs px-2.5 py-1 rounded-full bg-[#15453b] text-[#7dd3fc] font-anek font-bold border border-[#2a6f62] shadow-md">
+            <span 
+              className="transit-verified-badge text-xs px-3 py-1 rounded-full bg-[#15453b] font-anek font-extrabold border border-[#2a6f62] shadow-md tracking-wide"
+              style={{ color: '#a5f3fc' }}
+            >
               {lang === 'bn' ? 'BRTA ও DMTCL অনুমোদিত' : 'Verified BRTA & DMTCL'}
             </span>
           </div>
@@ -162,13 +165,22 @@ export default function TransitCMS({ lang = 'bn' }) {
                 </h4>
               </div>
 
-              <span className={`text-[11px] font-bold px-2.5 py-1 rounded-lg uppercase border ${
-                route.type === 'metro'
-                  ? 'bg-[#15453b] text-[#7dd3fc] border-[#2a6f62]'
-                  : route.type === 'bus'
-                  ? 'bg-[#292019] text-[#f6d16f] border-[#c69429]/40'
-                  : 'bg-[#b83a2e]/30 text-[#fbf8f1] border-[#b83a2e]'
-              }`}>
+              <span 
+                className={`text-[11px] font-black px-2.5 py-1 rounded-lg uppercase border tracking-wider ${
+                  route.type === 'metro'
+                    ? 'transit-metro-badge bg-[#15453b] border-[#2a6f62]'
+                    : route.type === 'bus'
+                    ? 'bg-[#292019] text-[#f6d16f] border-[#c69429]/40'
+                    : 'transit-leguna-badge bg-[#ffe4e6] border-[#b83a2e]'
+                }`}
+                style={
+                  route.type === 'metro' 
+                    ? { color: '#a5f3fc' } 
+                    : route.type === 'leguna' 
+                    ? { color: '#7f1d1d' } 
+                    : undefined
+                }
+              >
                 {route.type}
               </span>
             </div>

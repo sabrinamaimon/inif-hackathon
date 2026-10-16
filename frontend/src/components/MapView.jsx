@@ -624,32 +624,46 @@ export default function MapView({
       />
 
       {/* Bottom Map Legend & Metro Pass Info */}
-      <div className="flex flex-wrap items-center justify-between gap-3 mt-3 pt-2.5 border-t border-[#c69429]/20 text-xs font-anek text-[#dfcfb2]">
+      <div className="flex flex-wrap items-center justify-between gap-3 mt-3 pt-2.5 border-t border-[#c69429]/20 text-xs font-anek text-[#1e293b] dark:text-[#dfcfb2]">
         <div className="flex flex-wrap items-center gap-3">
-          <span className="flex items-center gap-1.5 text-[#34d399] font-bold">
+          <span className="flex items-center gap-1.5 text-[#047857] dark:text-[#34d399] font-bold">
             <span className="w-3 h-3 rounded-full bg-[#059669] border border-[#34d399]" />
-            <span>🚇 এমআরটি-৬ মেট্রোরেল (১৭টি স্টেশন • ৬২৮ পয়েন্ট)</span>
+            <span>🚇 {lang === 'bn' ? 'এমআরটি-৬ মেট্রোরেল (১৭টি স্টেশন • ৬২৮ পয়েন্ট)' : 'MRT-6 Metro (17 Stations • 628 pts)'}</span>
           </span>
-          <span className="flex items-center gap-1.5 text-[#60a5fa] font-bold">
+          <span className="flex items-center gap-1.5 text-[#1d4ed8] dark:text-[#60a5fa] font-bold">
             <span className="w-3 h-3 rounded-full bg-[#2563eb] border border-[#60a5fa]" />
-            <span>🚌 বিকল্প বাস (১৮ স্টপ • ৬০৪ পয়েন্ট)</span>
+            <span>🚌 {lang === 'bn' ? 'বিকল্প বাস (১৮ স্টপ • ৬০৪ পয়েন্ট)' : 'Bikolpo Bus (18 Stops • 604 pts)'}</span>
           </span>
-          <span className="flex items-center gap-1.5 text-[#fb923c] font-bold">
+          <span className="flex items-center gap-1.5 text-[#c2410c] dark:text-[#fb923c] font-bold">
             <span className="w-3 h-3 rounded-full bg-[#ea580c] border border-[#fb923c]" />
-            <span>🚌 উত্তরা বাস (২০ স্টপ • ৩৫৩ পয়েন্ট)</span>
+            <span>🚌 {lang === 'bn' ? 'উত্তরা বাস (২০ স্টপ • ৩৫৩ পয়েন্ট)' : 'Uttara Bus (20 Stops • 353 pts)'}</span>
           </span>
-          <span className="flex items-center gap-1.5 text-[#f6d16f] font-bold">
+          <span className="flex items-center gap-1.5 text-[#78350f] dark:text-[#f6d16f] font-bold">
             <span className="w-3 h-3 rounded-full bg-[#292019] border border-[#f6d16f]" />
-            <span>🛺 রোড বাস / রিকশা নোড</span>
+            <span>🛺 {lang === 'bn' ? 'রোড বাস / রিকশা নোড' : 'Road Bus / Rickshaw Hub'}</span>
           </span>
-          <span className="flex items-center gap-1.5 text-[#fca5a5] font-bold">
+          <span className="flex items-center gap-1.5 text-[#b91c1c] dark:text-[#fca5a5] font-bold">
             <span className="w-3 h-3 rounded-full bg-[#b83a2e] border border-[#fca5a5]" />
-            <span>💧 জলজট / ব্যারিকেড</span>
+            <span>💧 {lang === 'bn' ? 'জলজট / ব্যারিকেড' : 'Disruptions / Barricades'}</span>
           </span>
         </div>
 
-        <div className="text-[11px] font-mono text-[#a7f3d0] bg-[#064e3b]/40 px-3 py-1 rounded-lg border border-[#10b981]/30">
-          ✦ ডিএমটিসিএল প্রজ্ঞাপন: সর্বনিম্ন ২০ ৳ • Rapid Pass-এ ১০% ছাড় • ১০০ মিনিট বৈধ
+        <div 
+          className="metro-notice-banner flex items-center gap-1.5 text-[11px] sm:text-xs font-anek font-semibold px-3.5 py-1.5 rounded-xl border-2 shadow-sm transition-all"
+          style={{
+            backgroundColor: '#064e3b',
+            borderColor: '#10b981',
+            color: '#ffffff'
+          }}
+        >
+          <span className="font-extrabold tracking-wide text-white" style={{ color: '#ffffff' }}>
+            {lang === 'bn' ? 'ডিএমটিসিএল প্রজ্ঞাপন:' : 'DMTCL Notice:'}
+          </span>
+          <span className="font-medium text-white" style={{ color: '#ffffff' }}>
+            {lang === 'bn' 
+              ? 'সর্বনিম্ন ২০ ৳ • Rapid Pass-এ ১০% ছাড় • ১০০ মিনিট বৈধ' 
+              : 'Min 20 ৳ • 10% off on Rapid Pass • Valid 100 mins'}
+          </span>
         </div>
       </div>
     </div>

@@ -501,10 +501,10 @@ body.light-theme [class*="bg-emerald-950"] * {
 }
 
 /* Light text conversion on cards */
-body.light-theme [class*="text-[#6ee7b7]"]:not(button) {
+body.light-theme [class*="text-[#6ee7b7]"]:not(button):not([class*="bg-[#15453b]"]) {
   color: #047857 !important;
 }
-body.light-theme [class*="text-[#7dd3fc]"]:not(button) {
+body.light-theme [class*="text-[#7dd3fc]"]:not(button):not([class*="bg-[#15453b]"]) {
   color: #0369a1 !important;
 }
 
@@ -643,4 +643,86 @@ body.light-theme ::-webkit-scrollbar-thumb {
 body.light-theme ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* ================= HIGH-CONTRAST METRO NOTICE & SIMULATOR CARDS ================= */
+.metro-notice-banner,
+body.light-theme .metro-notice-banner {
+  background-color: #064e3b !important;
+  border: 1.5px solid #10b981 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(6, 78, 59, 0.25) !important;
+}
+
+/* Simulator Warning Signs: Red inside white when inactive */
+.sim-warning-icon-inactive,
+body.light-theme .sim-warning-icon-inactive {
+  background-color: #ffffff !important;
+  border: 2px solid #b83a2e !important;
+  color: #b83a2e !important;
+  box-shadow: 0 1px 4px rgba(184, 58, 46, 0.15) !important;
+}
+
+.sim-warning-icon-inactive svg,
+body.light-theme .sim-warning-icon-inactive svg {
+  color: #b83a2e !important;
+  stroke: #b83a2e !important;
+}
+
+/* Activated Scenario Simulator Cards: Text MUST always be crisp white in light and dark modes */
+.sim-card-active,
+body.light-theme .sim-card-active {
+  color: #ffffff !important;
+}
+
+.sim-card-active h4,
+.sim-card-active p,
+.sim-card-active span:not([class*="bg-"]):not([class*="text-"]):not(.sim-keep-color),
+body.light-theme .sim-card-active h4,
+body.light-theme .sim-card-active p,
+body.light-theme .sim-card-active span:not([class*="bg-"]):not([class*="text-"]):not(.sim-keep-color) {
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.light-theme .sim-card-active p {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Transit Directory CMS Badges: Light crisp text on dark teal */
+.transit-verified-badge,
+body.light-theme .transit-verified-badge {
+  background-color: #15453b !important;
+  border-color: #2a6f62 !important;
+  color: #a5f3fc !important;
+}
+.transit-verified-badge *,
+body.light-theme .transit-verified-badge * {
+  color: #a5f3fc !important;
+}
+
+.transit-metro-badge,
+body.light-theme .transit-metro-badge {
+  background-color: #15453b !important;
+  border-color: #2a6f62 !important;
+  color: #a5f3fc !important;
+}
+.transit-metro-badge *,
+body.light-theme .transit-metro-badge * {
+  color: #a5f3fc !important;
+}
+
+/* Transit CMS Leguna Badge: Dark crimson red text on soft rose background */
+.transit-leguna-badge,
+body.light-theme .transit-leguna-badge {
+  background-color: #ffe4e6 !important;
+  border-color: #b83a2e !important;
+  color: #7f1d1d !important;
+}
+.transit-leguna-badge *,
+body.light-theme .transit-leguna-badge * {
+  color: #7f1d1d !important;
+}
+
+
+
 
