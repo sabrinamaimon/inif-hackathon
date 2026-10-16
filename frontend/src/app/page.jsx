@@ -552,7 +552,19 @@ export default function Home() {
         {/* TAB 4: TRANSIT CMS DIRECTORY */}
         {currentTab === 'cms' && (
           <div>
-            <TransitCMS lang={lang} />
+            <TransitCMS 
+              lang={lang} 
+              onSelectBusRoute={(fromStop, toStop) => {
+                if (fromStop && toStop) {
+                  setOrigin(fromStop);
+                  setDestination(toStop);
+                  setCurrentTab('home');
+                  performSearch(fromStop, toStop, passengerType, weather, isRushHour);
+                  setHasUserSearched(true);
+                  setIsResultsOpen(true);
+                }
+              }}
+            />
             <EmergencyHelpline lang={lang} isHome={false} />
           </div>
         )}

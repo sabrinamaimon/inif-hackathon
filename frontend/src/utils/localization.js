@@ -5,11 +5,18 @@ export function toBnDigits(value) {
   return String(value).replace(/[0-9]/g, (digit) => bnDigits[parseInt(digit, 10)]);
 }
 
+export function roundToNearest5(value, minimum = 0) {
+  const num = Number(value) || 0;
+  const rounded5 = Math.round(num / 5) * 5;
+  return Math.max(minimum, rounded5);
+}
+
 export function formatFare(amount, lang = 'bn') {
+  const rounded = roundToNearest5(amount, 0);
   if (lang === 'bn') {
-    return `${toBnDigits(amount)} ৳`;
+    return `${toBnDigits(rounded)} ৳`;
   }
-  return `${amount} BDT`;
+  return `${rounded} BDT`;
 }
 
 export function formatDuration(mins, lang = 'bn') {

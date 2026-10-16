@@ -9,6 +9,27 @@
  */
 
 import { STATIC_HUBS } from '../data/staticData.js';
+import { ALL_LOCAL_BUSES } from '../data/allLocalBusesData.js';
+
+// Helper to round fare strictly to multiples of 5 or 10 in integer round figure
+export function roundTo5(val, min = 10) {
+  const rounded = Math.round(Number(val) / 5) * 5;
+  return Math.max(min, rounded);
+}
+
+// Find actual running buses on the corridor
+export function findMatchingBuses(fromHub, toHub) {
+  if (!fromHub || !toHub) return [];
+  const fromLower = fromHub.toLowerCase().trim();
+  const toLower = toHub.toLowerCase().trim();
+
+  return ALL_LOCAL_BUSES.filter(b => {
+    const stopsLower = (b.stops || []).map(s => s.toLowerCase());
+    const hasFrom = stopsLower.some(s => s.includes(fromLower) || fromLower.includes(s));
+    const hasTo = stopsLower.some(s => s.includes(toLower) || toLower.includes(s));
+    return hasFrom && hasTo;
+  });
+}
 
 export const METRO_FARE_CHART = {
   // Official DMTCL 17x17 Matrix Key Station Fares
@@ -137,40 +158,39 @@ export function calculateFare(mode, from, to, distanceKm, weather = "normal", is
   if (mode === "metro") {
     const key1 = `${from}-${to}`;
     const key2 = `${to}-${from}`;
-    const fare = METRO_FARE_CHART[key1] || METRO_FARE_CHART[key2] || 30;
+    const fare = METRO_FARE_CHART[key1] || METRO_FARE_CHART[key2] || Math.min(100, Math.max(20, Math.round(distanceKm * 4.5 / 10) * 10));
     // Metro strictly does not accept student pass
     return { regular: fare, student: fare, surge: 1.0 };
   }
 
   if (mode === "bus") {
-    const raw = distanceKm * 2.5;
-    const regular = Math.max(10, Math.ceil(raw));
-    // 50% discount with 10 BDT statutory floor
-    const student = Math.max(10, Math.ceil(regular * 0.5));
+    const regular = roundTo5(distanceKm * 2.50, 10);
+    // 50% discount with 10 BDT statutory floor rounded to multiple of 5
+    const student = roundTo5(regular * 0.50, 10);
     return { regular, student, surge: 1.0 };
   }
 
   if (mode === "cng") {
-    let base = distanceKm <= 2.0 ? 40 : 40 + Math.ceil((distanceKm - 2.0) * 12);
+    let base = distanceKm <= 2.0 ? 40 : 40 + (distanceKm - 2.0) * 12;
     base = Math.max(100, base);
     let surge = 1.0;
     if (weather === "rain") surge += 0.3;
     if (isRushHour) surge += 0.25;
-    const regular = Math.ceil(base * surge);
+    const regular = roundTo5(base * surge, 100);
     return { regular, student: regular, surge: Math.round(surge * 100) / 100 };
   }
 
   if (mode === "leguna") {
-    const fare = Math.max(15, Math.min(30, Math.round(distanceKm * 4.5)));
-    return { regular: fare, student: fare, surge: 1.0 };
+    const regular = roundTo5(distanceKm * 4.5, 15);
+    return { regular, student: regular, surge: 1.0 };
   }
 
   // Rickshaw (Non-metered with surge)
-  let base = Math.max(30, Math.round(distanceKm * 20));
+  let base = Math.max(30, distanceKm * 22);
   let surge = 1.0;
   if (weather === "rain") surge += 0.5; // +50%
   if (isRushHour) surge += 0.25;        // +25%
-  const regular = Math.ceil(base * surge);
+  const regular = roundTo5(base * surge, 30);
   return { regular, student: regular, surge: Math.round(surge * 100) / 100 };
 }
 
@@ -357,7 +377,9 @@ export function runDijkstraRouting({
   const hasMetroLeg = legs.some(l => l.mode === 'metro');
   const metroDist = roundedDist;
   const metroTime = hasMetroLeg ? totalTime : Math.max(16, Math.round(baseDist * 1.5));
-  const metroFare = Math.min(100, Math.max(20, Math.round(baseDist * 4.5)));
+  const metroKey1 = `${origin}-${destination}`;
+  const metroKey2 = `${destination}-${origin}`;
+  const metroFare = METRO_FARE_CHART[metroKey1] || METRO_FARE_CHART[metroKey2] || Math.min(100, Math.max(20, Math.round(baseDist * 4.5 / 10) * 10));
 
   const metroRoute = {
     id: "opt-metro",
@@ -397,8 +419,14 @@ export function runDijkstraRouting({
   if (isRushHour) busTime = Math.round(busTime * 1.35);
   if (weather === "rain") busTime = Math.round(busTime * 1.3);
 
-  const busRegularFare = Math.max(20, Math.round(baseDist * 2.5));
-  const busStudentFare = Math.max(10, Math.round(busRegularFare * 0.5)); // 50% statutory student pass
+  // Official BRTA Gazette Rate: 2.50 BDT/km rounded to multiple of 5, min 10
+  const busRegularFare = roundTo5(baseDist * 2.50, 10);
+  const busStudentFare = roundTo5(busRegularFare * 0.50, 10); // 50% statutory student pass
+  const matchedBuses = findMatchingBuses(origin, destination);
+  const busLineName = matchedBuses.length > 0 
+    ? matchedBuses.slice(0, 3).map(b => b.name_bn || b.name).join(' / ')
+    : "ঢাকা অনুমোদিত সিটি বাস (বিকল্প / বিআরটিসি / স্বাধীন)";
+
   const busObstacles = weather === "rain"
     ? "🔴 সড়কে ভারী বৃষ্টির জলজট ও ধীরগতি"
     : (isRushHour ? "🟡 বিকেল ৫:৩০ অফিস ছুটি পিক-আওয়ার ট্রাফিক" : "🟡 সাধারণ সড়ক ট্রাফিক");
@@ -407,7 +435,7 @@ export function runDijkstraRouting({
     id: "opt-bus",
     mode: "bus",
     title: `Direct / Local Bus Transit (${origin} ➔ ${destination})`,
-    title_bn: `লোকাল ও ডাইরেক্ট বাস সার্ভিস`,
+    title_bn: `সিটি বাস: ${busLineName}`,
     type_badge: "সবচেয়ে সাশ্রয়ী ও হাফ-পাস",
     total_duration_mins: busTime,
     total_regular_fare: busRegularFare,
@@ -423,7 +451,7 @@ export function runDijkstraRouting({
       {
         leg_number: 1,
         mode: "bus",
-        line_name: "Dhaka City Bus (বিকল্প / বিআরটিসি / স্বাধীন)",
+        line_name: busLineName,
         from_hub: origin,
         to_hub: destination,
         distance_km: Math.round(baseDist * 1.05 * 10) / 10,
@@ -437,12 +465,12 @@ export function runDijkstraRouting({
   };
 
   // 3. CNG AUTO-RICKSHAW (Direct BRTA Metered Auto)
-  let cngBase = baseDist <= 2.0 ? 40 : 40 + Math.ceil((baseDist - 2.0) * 12);
+  let cngBase = baseDist <= 2.0 ? 40 : 40 + (baseDist - 2.0) * 12;
   cngBase = Math.max(100, cngBase);
   let cngSurge = 1.0;
   if (weather === "rain") cngSurge += 0.3;
   if (isRushHour) cngSurge += 0.25;
-  const cngFare = Math.ceil(cngBase * cngSurge);
+  const cngFare = roundTo5(cngBase * cngSurge, 100);
   let cngTime = Math.max(14, Math.round(baseDist * 2.3));
   if (isRushHour) cngTime = Math.round(cngTime * 1.25);
   if (weather === "rain") cngTime = Math.round(cngTime * 1.2);
@@ -482,7 +510,8 @@ export function runDijkstraRouting({
   // 4. RIDE-SHARE BIKE / MOTORCYCLE (Fastest Surface Road Transit)
   let bikeTime = Math.max(9, Math.round(baseDist * 1.6));
   if (isRushHour) bikeTime = Math.round(bikeTime * 1.15);
-  const bikeBase = Math.max(35, Math.round(30 + (baseDist - 1) * 12 * (weather === "rain" ? 1.2 : 1.0)));
+  const rawBike = 30 + (baseDist - 1) * 12 * (weather === "rain" ? 1.2 : 1.0);
+  const bikeBase = roundTo5(rawBike, 35);
   const bikeObstacles = weather === "rain"
     ? "🌧️ বৃষ্টিতে পিচ্ছিল সড়ক ও সতর্ক রাইড"
     : "🟢 জ্যামের ফাঁক দিয়ে দ্রুত বের হওয়ার সুযোগ";
@@ -523,7 +552,8 @@ export function runDijkstraRouting({
   let carTime = Math.max(16, Math.round(baseDist * 2.6));
   if (isRushHour) carTime = Math.round(carTime * 1.4);
   if (weather === "rain") carTime = Math.round(carTime * 1.25);
-  const carBase = Math.max(140, Math.round(100 + (baseDist - 1) * 24 * (isRushHour ? 1.2 : 1.0)));
+  const rawCar = 100 + (baseDist - 1) * 24 * (isRushHour ? 1.2 : 1.0);
+  const carBase = Math.max(140, Math.round(rawCar / 10) * 10);
   const carObstacles = isRushHour
     ? "🔴 পিক-আওয়ারে প্রধান সড়কে যানজটের সম্ভাবনা"
     : "🟡 স্বাভাবিক সড়ক ট্রাফিক (এসি ও আরামদায়ক)";
@@ -564,7 +594,8 @@ export function runDijkstraRouting({
   const resultRoutes = [metroRoute, busRoute, cngRoute, bikeRoute, carRoute];
 
   if (baseDist <= 6.5) {
-    const rickshawFare = Math.max(30, Math.round(baseDist * 22 * (weather === "rain" ? 1.4 : 1.0)));
+    const rawRickshaw = baseDist * 22 * (weather === "rain" ? 1.4 : 1.0);
+    const rickshawFare = roundTo5(rawRickshaw, 30);
     const rickshawTime = Math.max(10, Math.round(baseDist * 5.2));
     const rickshawRoute = {
       id: "opt-rickshaw",

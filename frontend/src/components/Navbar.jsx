@@ -21,7 +21,7 @@ export default function Navbar({
     { id: 'home', label: lang === 'bn' ? 'রুট প্ল্যানার' : 'Route Planner', icon: Navigation },
     { id: 'alerts', label: lang === 'bn' ? 'সড়ক বিঘ্ন' : 'Street Alerts', icon: AlertTriangle, badge: activeAlertCount },
     { id: 'simulator', label: lang === 'bn' ? 'ম্যাপ ও সিমুলেটর' : 'Map & Simulator', icon: Map },
-    { id: 'cms', label: lang === 'bn' ? 'ডিরেক্টরি' : 'Directory', icon: Bus },
+    { id: 'cms', label: lang === 'bn' ? 'বাস রুট ডিরেক্টরি' : 'Bus Directory', icon: Bus, badge: 183 },
     { id: 'rideshare', label: lang === 'bn' ? 'রাইড শেয়ার' : 'Ride Share', icon: Users },
   ];
 

@@ -235,10 +235,12 @@ class DhakaFareEngine:
 
         if regular is None:
             raw_fare = distance_km * cls.BUS_PER_KM_RATE
-            regular = max(cls.MINIMUM_BUS_FARE, int(math.ceil(raw_fare)))
+            regular = max(cls.MINIMUM_BUS_FARE, int(round(raw_fare / 5.0) * 5))
+        else:
+            regular = max(cls.MINIMUM_BUS_FARE, int(round(regular / 5.0) * 5))
 
-        # 50% half-pass discount with statutory 10 BDT floor
-        student = max(cls.MINIMUM_BUS_FARE, int(math.ceil(regular * 0.50)))
+        # 50% half-pass discount with statutory 10 BDT floor, rounded to multiple of 5
+        student = max(cls.MINIMUM_BUS_FARE, int(round((regular * 0.50) / 5.0) * 5))
         return regular, student
 
     @classmethod
@@ -303,7 +305,7 @@ class DhakaFareEngine:
         if is_rush_hour:
             surge += 0.25  # +25%
 
-        final_fare = int(math.ceil(base_rate * surge))
+        final_fare = max(30, int(round((base_rate * surge) / 5.0) * 5))
         # Rickshaws do not give student half-pass discounts
         return final_fare, final_fare, round(surge, 2)
 
@@ -337,7 +339,7 @@ class DhakaFareEngine:
         if is_rush_hour:
             surge += 0.25
 
-        final_fare = int(math.ceil(base * surge))
+        final_fare = max(100, int(round((base * surge) / 5.0) * 5))
         # CNG does not have student concession
         return final_fare, final_fare, round(surge, 2)
 
