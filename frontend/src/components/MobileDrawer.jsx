@@ -134,13 +134,16 @@ export default function MobileDrawer({
         {/* Footer info & language/theme toggle */}
         <div className="pt-4 border-t border-[#c69429]/30 space-y-3">
           {/* Theme Selector */}
-          <div className="flex items-center justify-between px-1 text-xs text-[#dfcfb2]">
-            <span className={theme === 'light' ? 'text-[#140e0b] font-bold' : ''}>{lang === 'bn' ? 'থিম নির্বাচন' : 'Theme Mode'}</span>
+          <div className="flex items-center justify-between px-1 text-xs">
+            <span className={theme === 'light' ? 'text-slate-700 font-bold' : 'text-[#dfcfb2]'}>
+              {lang === 'bn' ? 'থিম নির্বাচন' : 'Theme Mode'}
+            </span>
             <button
+              type="button"
               onClick={() => setTheme && setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold border transition-all active:scale-95 ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold border transition-all active:scale-95 cursor-pointer ${
                 theme === 'light'
-                  ? 'bg-white text-[#140e0b] border-[#c69429]/40 shadow-sm'
+                  ? 'bg-amber-100 text-amber-900 border-amber-300 shadow-sm'
                   : 'bg-[#292019] text-[#f6d16f] border-[#c69429]/40'
               }`}
             >
@@ -152,26 +155,43 @@ export default function MobileDrawer({
               ) : (
                 <>
                   <Moon className="w-3.5 h-3.5 text-indigo-600" />
-                  <span className={theme === 'light' ? 'text-[#140e0b]' : ''}>{lang === 'bn' ? 'ডার্ক' : 'Dark'}</span>
+                  <span className="font-extrabold">{lang === 'bn' ? 'ডার্ক' : 'Dark'}</span>
                 </>
               )}
             </button>
           </div>
 
           {/* Language Selector */}
-          <div className="flex items-center justify-between px-1 text-xs text-[#dfcfb2]">
-            <span className={theme === 'light' ? 'text-[#140e0b] font-bold' : ''}>{lang === 'bn' ? 'ভাষা নির্বাচন' : 'Language'}</span>
-            <button
-              onClick={() => setLang(lang === 'bn' ? 'en' : 'bn')}
-              className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-bold border ${
-                theme === 'light'
-                  ? 'bg-white text-[#140e0b] border-[#c69429]/40 shadow-sm'
-                  : 'bg-[#292019] text-[#f6d16f] border-[#c69429]/40'
-              }`}
-            >
-              <Globe className={`w-3.5 h-3.5 ${theme === 'light' ? 'text-[#b83a2e]' : 'text-[#f6d16f]'}`} />
-              <span className={theme === 'light' ? 'text-[#140e0b]' : ''}>{lang === 'bn' ? 'English' : 'বাংলা'}</span>
-            </button>
+          <div className="flex items-center justify-between px-1 text-xs">
+            <span className={theme === 'light' ? 'text-slate-700 font-bold' : 'text-[#dfcfb2]'}>
+              {lang === 'bn' ? 'ভাষা নির্বাচন' : 'Language'}
+            </span>
+            <div className={`flex items-center p-0.5 rounded-lg border text-xs font-anek font-bold ${
+              theme === 'light' ? 'bg-slate-100 border-slate-300' : 'bg-[#1e1712] border-[#c69429]/40'
+            }`}>
+              <button
+                type="button"
+                onClick={() => setLang('bn')}
+                className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                  lang === 'bn'
+                    ? (theme === 'light' ? 'bg-white text-[#b83a2e] shadow-sm font-black' : 'bg-[#b83a2e] text-white shadow-md font-black')
+                    : (theme === 'light' ? 'text-slate-600' : 'text-[#dfcfb2]')
+                }`}
+              >
+                বাংলা
+              </button>
+              <button
+                type="button"
+                onClick={() => setLang('en')}
+                className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                  lang === 'en'
+                    ? (theme === 'light' ? 'bg-white text-[#b83a2e] shadow-sm font-black' : 'bg-[#b83a2e] text-white shadow-md font-black')
+                    : (theme === 'light' ? 'text-slate-600' : 'text-[#dfcfb2]')
+                }`}
+              >
+                English
+              </button>
+            </div>
           </div>
 
           <div className="text-[11px] text-[#8a7258] px-1 flex items-center gap-1.5 font-mono">
