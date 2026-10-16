@@ -43,10 +43,16 @@ export default function MobileDrawer({
       />
 
       {/* Slide-out Drawer */}
-      <div className="relative w-4/5 max-w-xs bg-[#18130f] border-r-2 border-[#c69429]/50 p-5 flex flex-col justify-between shadow-2xl h-full z-10 animate-in slide-in-from-left duration-300 font-anek">
+      <div className={`relative w-4/5 max-w-xs p-5 flex flex-col justify-between shadow-2xl h-full z-10 animate-in slide-in-from-left duration-300 font-anek ${
+        theme === 'light'
+          ? 'bg-white border-r-2 border-slate-200 text-slate-800'
+          : 'bg-[#18130f] border-r-2 border-[#c69429]/50 text-[#dfcfb2]'
+      }`}>
         <div>
           {/* Header */}
-          <div className="flex items-center justify-between pb-4 border-b border-[#c69429]/30">
+          <div className={`flex items-center justify-between pb-4 border-b ${
+            theme === 'light' ? 'border-slate-200' : 'border-[#c69429]/30'
+          }`}>
             <div className="flex items-center gap-2.5">
               <div className="w-10 h-10 rounded-xl overflow-hidden border border-[#f6d16f] shadow-md shrink-0">
                 <img 
@@ -59,7 +65,9 @@ export default function MobileDrawer({
             </div>
             <button 
               onClick={onClose}
-              className="p-1.5 rounded-lg bg-[#292019] text-[#dfcfb2] hover:text-white border border-[#c69429]/30"
+              className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+                theme === 'light' ? 'bg-slate-100 text-slate-700 hover:text-black border-slate-300' : 'bg-[#292019] text-[#dfcfb2] hover:text-white border-[#c69429]/30'
+              }`}
             >
               <X className="w-5 h-5" />
             </button>
@@ -74,14 +82,14 @@ export default function MobileDrawer({
                 <button
                   key={item.id}
                   onClick={() => handleSelectTab(item.id)}
-                  className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold transition-all ${
+                  className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
                     isActive 
                       ? 'bg-gradient-to-r from-[#b83a2e] to-[#891e17] text-[#fbf8f1] font-bold border border-[#f6d16f] shadow-md shadow-[#b83a2e]/30' 
-                      : 'text-[#dfcfb2] hover:bg-[#292019] border border-transparent'
+                      : (theme === 'light' ? 'text-slate-700 hover:bg-slate-100 border border-transparent' : 'text-[#dfcfb2] hover:bg-[#292019] border border-transparent')
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className={`w-4 h-4 ${isActive ? 'text-[#f6d16f]' : 'text-[#c69429]'}`} />
+                    <Icon className={`w-4 h-4 ${isActive ? (theme === 'light' ? 'text-white' : 'text-[#f6d16f]') : (theme === 'light' ? 'text-slate-500' : 'text-[#c69429]')}`} />
                     <span>{item.label}</span>
                   </div>
                   {item.badge !== undefined && item.badge > 0 && (
@@ -108,18 +116,22 @@ export default function MobileDrawer({
             {/* Bonus Signboard OCR Button */}
             <button
               onClick={() => { onClose(); onOpenScanner(); }}
-              className="w-full mt-2 flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold bg-[#201712] border border-[#c69429]/40 text-[#f6d16f] hover:bg-[#2a1e17]"
+              className={`w-full mt-2 flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold cursor-pointer ${
+                theme === 'light' 
+                  ? 'bg-amber-50 border border-amber-200 text-slate-900 hover:bg-amber-100' 
+                  : 'bg-[#201712] border border-[#c69429]/40 text-[#f6d16f] hover:bg-[#2a1e17]'
+              }`}
             >
-              <FileScan className="w-4 h-4 text-[#f6d16f]" />
+              <FileScan className={`w-4 h-4 ${theme === 'light' ? 'text-amber-700' : 'text-[#f6d16f]'}`} />
               <span>{lang === 'bn' ? 'বাসের সাইনবোর্ড ও ভাড়ার তালিকা স্ক্যান' : 'Scan Bus Signboard OCR'}</span>
             </button>
-
-
           </nav>
         </div>
 
         {/* Footer info & language/theme toggle */}
-        <div className="pt-4 border-t border-[#c69429]/30 space-y-3">
+        <div className={`pt-4 border-t space-y-3 ${
+          theme === 'light' ? 'border-slate-200' : 'border-[#c69429]/30'
+        }`}>
           {/* Theme Selector */}
           <div className="flex items-center justify-between px-1 text-xs">
             <span className={theme === 'light' ? 'text-slate-700 font-bold' : 'text-[#dfcfb2]'}>

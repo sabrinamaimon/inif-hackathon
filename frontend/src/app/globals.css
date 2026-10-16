@@ -779,3 +779,121 @@ body.light-theme button[class*="bg-rose-600"]:hover {
   border-color: #ffffff !important;
 }
 
+/* ==========================================================================
+   DHAKA LIVE WEATHER & REGIONAL FARE INTELLIGENCE BANNER
+   Adaptive High-Contrast Styling for both Light & Dark themes
+   ========================================================================== */
+.dhaka-weather-card {
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Light Theme: Pure crisp white card, golden amber border, high-contrast dark text */
+body.light-theme .dhaka-weather-card {
+  background: #ffffff !important;
+  border-color: #f59e0b !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+body.light-theme .dhaka-weather-card.is-raining {
+  background: linear-gradient(to right, #f0fdf4, #ffffff, #e0f2fe) !important;
+  border-color: #38bdf8 !important;
+}
+body.light-theme .dhaka-weather-icon-box {
+  background-color: #fef3c7 !important;
+  border-color: #fde68a !important;
+}
+body.light-theme .dhaka-weather-title {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+}
+body.light-theme .dhaka-weather-badge {
+  background-color: #059669 !important;
+  color: #ffffff !important;
+  border-color: #10b981 !important;
+}
+body.light-theme .dhaka-weather-metric {
+  color: #334155 !important;
+}
+body.light-theme .dhaka-weather-metric strong {
+  color: #0f172a !important;
+}
+body.light-theme .dhaka-weather-temp-badge {
+  background-color: #fef3c7 !important;
+  color: #78350f !important;
+  border-color: #fde68a !important;
+}
+body.light-theme .dhaka-weather-humidity-badge {
+  background-color: #e0f2fe !important;
+  color: #0369a1 !important;
+  border-color: #bae6fd !important;
+}
+body.light-theme .dhaka-weather-rain-badge {
+  background-color: #f1f5f9 !important;
+  color: #334155 !important;
+  border-color: #cbd5e1 !important;
+}
+body.light-theme .dhaka-weather-condition-pill {
+  background-color: #ecfdf5 !important;
+  color: #065f46 !important;
+  border-color: #6ee7b7 !important;
+  font-weight: 800 !important;
+}
+body.light-theme .dhaka-weather-summary {
+  color: #334155 !important;
+  font-weight: 600 !important;
+}
+
+/* Dark Theme: Rickshaw Art dark brown gradient, luminous gold text */
+body.dark-theme .dhaka-weather-card {
+  background: linear-gradient(to right, #1c1511, #241a14, #2d2119) !important;
+  border-color: rgba(198, 148, 41, 0.55) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45) !important;
+}
+body.dark-theme .dhaka-weather-card.is-raining {
+  background: linear-gradient(to right, #1c2438, #1a2d42, #15453b) !important;
+  border-color: #60a5fa !important;
+}
+body.dark-theme .dhaka-weather-icon-box {
+  background-color: #241a14 !important;
+  border-color: rgba(198, 148, 41, 0.4) !important;
+}
+body.dark-theme .dhaka-weather-title {
+  color: #f6d16f !important;
+}
+body.dark-theme .dhaka-weather-badge {
+  background-color: #0e6e41 !important;
+  color: #ffffff !important;
+  border-color: rgba(110, 231, 183, 0.5) !important;
+}
+body.dark-theme .dhaka-weather-metric {
+  color: #dfcfb2 !important;
+}
+body.dark-theme .dhaka-weather-metric strong {
+  color: #ffffff !important;
+}
+body.dark-theme .dhaka-weather-temp-badge {
+  background-color: rgba(24, 19, 15, 0.85) !important;
+  color: #ffffff !important;
+  border-color: rgba(198, 148, 41, 0.45) !important;
+}
+body.dark-theme .dhaka-weather-humidity-badge {
+  background-color: rgba(24, 19, 15, 0.85) !important;
+  color: #7dd3fc !important;
+  border-color: rgba(198, 148, 41, 0.45) !important;
+}
+body.dark-theme .dhaka-weather-rain-badge {
+  background-color: rgba(24, 19, 15, 0.85) !important;
+  color: #dfcfb2 !important;
+  border-color: rgba(198, 148, 41, 0.45) !important;
+}
+body.dark-theme .dhaka-weather-condition-pill {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  color: #f6d16f !important;
+  border-color: rgba(198, 148, 41, 0.5) !important;
+  font-weight: 900 !important;
+}
+body.dark-theme .dhaka-weather-summary {
+  color: #dfcfb2 !important;
+  font-weight: 600 !important;
+}
+
+

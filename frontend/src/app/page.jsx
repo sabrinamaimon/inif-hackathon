@@ -130,7 +130,10 @@ export default function Home() {
     condition: 'clear',
     condition_bn: 'পরিষ্কার রোদ ও স্বাভাবিক আবহাওয়া',
     is_raining: false,
-    icon: '☀️'
+    icon: '☀️',
+    area_impacts: {
+      impact_summary_bn: 'বর্তমানে ঢাকায় পরিষ্কার রোদ ও স্বাভাবিক আবহাওয়া বিরাজ করছে। তাপমাত্রা ৩২.৫° সেলসিয়াস। কোনো সড়ক জলজট নেই; বাস, রিকশা ও মেট্রোরেল স্বাভাবিক ভাড়ায় চলাচল করছে।'
+    }
   });
 
   // Fetch initial alerts, live real weather & run default search on mount
@@ -579,86 +582,82 @@ export default function Home() {
         {/* TAB 1: HOME (Focused Smart Transit Search & Itineraries) */}
         {currentTab === 'home' && (
           <div className="space-y-6 my-4 w-full">
-            {/* Clean & Modern Live Weather & Fare Status Bar (Adapts to Light & Dark Themes) */}
+            {/* Live Weather Intelligence & Regional Fare Surge Strip (Original restored & cleaned for both Light & Dark themes) */}
             {liveWeather && (
-              <div className={`p-3 sm:py-3 sm:px-5 rounded-2xl border transition-all duration-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-2.5 sm:gap-4 ${
+              <div className={`dhaka-weather-card p-3.5 sm:p-4 rounded-2xl border-2 transition-all shadow-md ${
+                (liveWeather.is_raining || weather === 'rain') ? 'is-raining' : ''
+              } ${
                 theme === 'light'
-                  ? 'bg-white border-amber-200/90 text-slate-800 shadow-xs'
-                  : 'bg-[#18130f] border-[#c69429]/40 text-[#dfcfb2] shadow-md'
+                  ? 'bg-white border-amber-300 text-slate-900 shadow-sm'
+                  : 'bg-gradient-to-r from-[#1c1511] via-[#241a14] to-[#2d2119] border-[#c69429]/60 text-[#fbf8f1] shadow-xl'
               }`}>
-                {/* Left Side: Icon + Title + Live Dot + Metrics */}
-                <div className="flex items-center gap-3 flex-wrap">
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-xl shrink-0 shadow-xs ${
-                    theme === 'light' ? 'bg-amber-100/70 border border-amber-200' : 'bg-[#241a14] border border-[#c69429]/30'
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 lg:gap-6">
+                  {/* Left: Weather Icon, Title, Live Badge, and Key Metrics */}
+                  <div className="flex items-start sm:items-center gap-3 sm:gap-3.5">
+                    <div className={`dhaka-weather-icon-box w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center text-2xl sm:text-3xl shrink-0 border shadow-xs ${
+                      theme === 'light' ? 'bg-amber-100/90 border-amber-200' : 'bg-[#241a14] border-[#c69429]/40'
+                    }`}>
+                      {liveWeather.icon || (weather === 'rain' ? '🌧️' : '☀️')}
+                    </div>
+
+                    <div>
+                      {/* Title + Live Auto Badge */}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={`dhaka-weather-title font-rickshaw text-base sm:text-lg lg:text-xl font-bold tracking-wide ${
+                          theme === 'light' ? 'text-slate-900' : 'text-[#f6d16f]'
+                        }`}>
+                          {lang === 'bn' ? 'ঢাকা লাইভ আবহাওয়া ও এলাকাভিত্তিক ভাড়া সমন্বয়' : 'Dhaka Live Weather & Regional Fare Intelligence'}
+                        </span>
+                        <span className={`dhaka-weather-badge text-[11px] px-2.5 py-0.5 rounded-full font-anek font-extrabold flex items-center gap-1.5 shadow-xs ${
+                          theme === 'light' 
+                            ? 'bg-emerald-600 text-white border border-emerald-500' 
+                            : 'bg-[#0e6e41] text-white border border-[#6ee7b7]/50'
+                        }`}>
+                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                          {lang === 'bn' ? 'স্বয়ংক্রিয় লাইভ' : 'Live Auto'}
+                        </span>
+                      </div>
+
+                      {/* Metrics: Temperature, Humidity, Rain, and Condition Pill */}
+                      <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm font-anek mt-1.5 flex-wrap">
+                        <span className={`dhaka-weather-temp-badge px-2 py-0.5 rounded-md border font-bold ${
+                          theme === 'light' ? 'bg-amber-50 text-slate-900 border-amber-200' : 'bg-[#18130f]/80 text-white border-[#c69429]/40'
+                        }`}>
+                          🌡️ {lang === 'bn' ? `তাপমাত্রা: ${toBnDigits(liveWeather.temperature)}° সে.` : `Temp: ${liveWeather.temperature}°C`}
+                        </span>
+                        <span className={`dhaka-weather-humidity-badge px-2 py-0.5 rounded-md border font-medium ${
+                          theme === 'light' ? 'bg-sky-50 text-sky-900 border-sky-200' : 'bg-[#18130f]/80 text-[#7dd3fc] border-[#c69429]/40'
+                        }`}>
+                          💧 {lang === 'bn' ? `আর্দ্রতা: ${toBnDigits(liveWeather.humidity)}%` : `Humidity: ${liveWeather.humidity}%`}
+                        </span>
+                        <span className={`dhaka-weather-rain-badge px-2 py-0.5 rounded-md border font-medium ${
+                          theme === 'light' ? 'bg-slate-50 text-slate-800 border-slate-200' : 'bg-[#18130f]/80 text-[#dfcfb2] border-[#c69429]/40'
+                        }`}>
+                          🌧️ {lang === 'bn' ? `বৃষ্টিপাত: ${toBnDigits(liveWeather.precipitation_mm)} মিমি` : `Rain: ${liveWeather.precipitation_mm}mm`}
+                        </span>
+                        <span className={`dhaka-weather-condition-pill px-2.5 py-0.5 rounded-md border font-black ${
+                          theme === 'light' ? 'bg-emerald-50 text-emerald-900 border-emerald-300' : 'bg-black/60 text-[#f6d16f] border-[#c69429]/50'
+                        }`}>
+                          {lang === 'bn' ? (liveWeather.condition_bn || 'পরিষ্কার রোদ ও স্বাভাবিক আবহাওয়া') : (liveWeather.condition || 'Clear Weather')}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right: Area Transit Impact Analysis Text */}
+                  <div className={`dhaka-weather-summary text-left lg:text-right text-xs sm:text-sm font-anek font-semibold max-w-xl leading-relaxed shrink-0 ${
+                    theme === 'light' ? 'text-slate-700' : 'text-[#dfcfb2]'
                   }`}>
-                    {liveWeather.icon || (weather === 'rain' ? '🌧️' : '☀️')}
+                    <p>
+                      {lang === 'bn'
+                        ? (liveWeather.area_impacts?.impact_summary_bn || ((liveWeather.is_raining || weather === 'rain') 
+                            ? 'বর্তমানে ঢাকায় ভারি বৃষ্টিপাত ও জলজট ঝুঁকি চলছে। নিচু অঞ্চলগুলোতে (যেমন: মালিবাগ ও কাজীপাড়া) রাস্তায় পানি জমার ঝুঁকি থাকায় রিকশা ও সিএনজি ভাড়ায় এলাকাভিত্তিক সার্ফ (+৫০%) প্রযোজ্য। তবে এমআরটি-৬ মেট্রোরেল সম্পূর্ণ স্বাভাবিক ভাড়ায় ও সিগন্যালমুক্তভাবে চলছে।' 
+                            : 'বর্তমানে ঢাকায় পরিষ্কার রোদ ও স্বাভাবিক আবহাওয়া বিরাজ করছে। তাপমাত্রা ৩২.৫° সেলসিয়াস। কোনো সড়ক জলজট নেই; বাস, রিকশা ও মেট্রোরেল স্বাভাবিক ভাড়ায় চলাচল করছে।'))
+                        : ((liveWeather.is_raining || weather === 'rain')
+                            ? 'Heavy rainfall and waterlogging detected in low-lying zones (Malibagh, Kazipara). Rickshaws & CNG subject to regional surge (+50%). MRT-6 Metro Rail operating normally.'
+                            : 'Clear sunny weather currently prevails across Dhaka. Temperature 32.5°C. No waterlogging reported; buses, rickshaws, and MRT-6 Metro Rail operating at regular official fares.')}
+                    </p>
                   </div>
-
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className={`font-anek font-bold text-sm sm:text-base ${
-                      theme === 'light' ? 'text-slate-900 font-extrabold' : 'text-[#f6d16f]'
-                    }`}>
-                      {lang === 'bn' ? 'ঢাকা ট্রানজিট আবহাওয়া' : 'Dhaka Transit Weather'}
-                    </span>
-
-                    {/* Live Indicator Pill */}
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-500/15 text-emerald-600 border border-emerald-500/30">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      {lang === 'bn' ? 'লাইভ' : 'LIVE'}
-                    </span>
-                  </div>
-
-                  {/* Clean Metrics Badges */}
-                  <div className="flex items-center gap-1.5 sm:gap-2 text-xs font-anek font-bold flex-wrap">
-                    <span className={`px-2 py-0.5 rounded-lg border ${
-                      theme === 'light' 
-                        ? 'bg-amber-50 text-amber-900 border-amber-200' 
-                        : 'bg-[#241a14] text-[#fbf8f1] border-[#c69429]/30'
-                    }`}>
-                      🌡️ {lang === 'bn' ? `${toBnDigits(liveWeather.temperature)}° সে.` : `${liveWeather.temperature}°C`}
-                    </span>
-                    <span className={`px-2 py-0.5 rounded-lg border ${
-                      theme === 'light' 
-                        ? 'bg-sky-50 text-sky-900 border-sky-200' 
-                        : 'bg-[#241a14] text-[#7dd3fc] border-[#c69429]/30'
-                    }`}>
-                      💧 {lang === 'bn' ? `${toBnDigits(liveWeather.humidity)}%` : `${liveWeather.humidity}%`}
-                    </span>
-                    <span className={`px-2 py-0.5 rounded-lg border ${
-                      theme === 'light' 
-                        ? 'bg-slate-50 text-slate-800 border-slate-200' 
-                        : 'bg-[#241a14] text-[#dfcfb2] border-[#c69429]/30'
-                    }`}>
-                      🌧️ {lang === 'bn' ? `${toBnDigits(liveWeather.precipitation_mm)} মিমি` : `${liveWeather.precipitation_mm}mm`}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Right Side: Clean Transit Impact Status Notice */}
-                <div className="flex items-center gap-2 md:justify-end text-xs font-anek">
-                  {(liveWeather.is_raining || weather === 'rain') ? (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-rose-500/15 text-rose-600 border border-rose-500/30 font-bold">
-                      <span>⚠️</span>
-                      <span>
-                        {lang === 'bn' 
-                          ? 'বৃষ্টি ও জলজট ঝুঁকি • রিকশায় সার্ফ (+৫০%), মেট্রোরেলে সাধারণ ভাড়া' 
-                          : 'Rain & Waterlogging Risk • Rickshaws +50% surge, Metro normal'}
-                      </span>
-                    </span>
-                  ) : (
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl border font-semibold ${
-                      theme === 'light' 
-                        ? 'bg-emerald-50/80 text-emerald-800 border-emerald-200' 
-                        : 'bg-[#15453b]/30 text-[#6ee7b7] border-[#2a6f62]'
-                    }`}>
-                      <span className="text-emerald-500 font-bold">✓</span>
-                      <span>
-                        {lang === 'bn' 
-                          ? 'স্বাভাবিক আবহাওয়া • বাস, রিকশা ও মেট্রোরেল নিয়মিত ভাড়ায় সচল' 
-                          : 'Clear Weather • Buses, rickshaws & metro running at normal fares'}
-                      </span>
-                    </span>
-                  )}
                 </div>
               </div>
             )}
