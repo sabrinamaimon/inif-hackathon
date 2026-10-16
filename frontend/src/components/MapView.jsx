@@ -40,10 +40,11 @@ export default function MapView({
           attributionControl: false
         });
 
-        // CartoDB Voyager (free, no API key required, vintage cartography aesthetic)
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        // OpenStreetMap Standard Free Tiles (100% Free, No API Key Required)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
-          subdomains: 'abcd',
+          subdomains: ['a', 'b', 'c'],
+          attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
         mapInstanceRef.current = map;
