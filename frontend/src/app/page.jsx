@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import MobileDrawer from '../components/MobileDrawer';
-import StatsBar from '../components/StatsBar';
 import MapView from '../components/MapView';
 import RouteSearch from '../components/RouteSearch';
 import RouteResults from '../components/RouteResults';
@@ -363,8 +362,6 @@ export default function Home() {
 
       {/* Main Content Area */}
       <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6">
-        {/* Living Stats Bar */}
-        <StatsBar lang={lang} />
 
         {/* TAB 1: HOME (Search + Results + Map + Heritage Showcase + Simulator) */}
         {currentTab === 'home' && (
