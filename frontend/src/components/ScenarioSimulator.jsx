@@ -16,32 +16,32 @@ export default function ScenarioSimulator({
   const isShahbaghBlocked = simulationState.blocked_hubs.includes('Shahbagh');
 
   return (
-    <div className="glass-panel p-6 sm:p-7 border border-emerald-500/30 my-8 shadow-2xl">
+    <div className="glass-panel p-5 sm:p-6 border border-emerald-500/30 my-0 shadow-2xl">
       {/* Title */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 mb-5 border-b border-slate-800">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 mb-4 border-b border-slate-800">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
             <Cpu className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-xl sm:text-2xl font-black text-white">{t.simulatorTitle}</h3>
-            <p className="text-sm text-slate-300 font-medium">
-              {lang === 'bn' ? 'আকস্মিক ট্রাফিক বিপর্যয় বা আবহাওয়া পরিবর্তনে রুট ডিট্যুর পরীক্ষা করুন' : 'Test dynamic graph rerouting against sudden urban disruptions'}
+            <h3 className="text-lg sm:text-xl font-black text-white">{t.simulatorTitle}</h3>
+            <p className="text-xs sm:text-sm text-slate-300 font-medium">
+              {lang === 'bn' ? 'আকস্মিক ট্রাফিক বিপর্যয়ে লাইভ ডিট্যুর পরীক্ষা করুন' : 'Test dynamic graph rerouting against disruptions'}
             </p>
           </div>
         </div>
 
         <button
           onClick={() => onTriggerScenario({ action: 'reset' })}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-bold border border-slate-700 transition-all active:scale-95 shadow-md"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs sm:text-sm font-bold border border-slate-700 transition-all active:scale-95 shadow-md"
         >
-          <RotateCcw className="w-4 h-4 text-emerald-400" />
+          <RotateCcw className="w-3.5 h-3.5 text-emerald-400" />
           <span>{t.resetSim}</span>
         </button>
       </div>
 
       {/* Grid of Simulation Triggers */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
         {/* Scenario 1: Heavy Monsoon Rain & Malibagh Waterlogging */}
         <div 
           onClick={() => onTriggerScenario({ action: 'toggle_rain' })}

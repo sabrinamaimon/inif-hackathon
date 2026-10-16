@@ -333,60 +333,68 @@ export default function Home() {
       />
 
       {/* Full-Width Laptop Screen Container */}
-      <div className="flex-1 w-full max-w-[1700px] mx-auto px-4 sm:px-8 lg:px-10">
+      <div className="flex-1 w-full max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-8 xl:px-10">
         {/* Living High-Impact Stats Bar */}
         <StatsBar lang={lang} />
 
         {/* TAB 1: HOME (Map + Search + Results) */}
         {currentTab === 'home' && (
-          <div>
-            {/* Interactive Full-Width Leaflet Map */}
-            <MapView
-              hubs={hubs}
-              activeAlerts={alerts}
-              activeRoute={selectedRoute}
-              lang={lang}
-              onSelectHub={(hubName) => {
-                if (hubName !== origin) setDestination(hubName);
-              }}
-            />
+          <div className="w-full">
+            {/* Desktop 2-Column Split: Search/Results (Left) & Sticky Live Map (Right) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start my-4">
+              {/* Left Column: Smart Route Engine, Itineraries & Simulator */}
+              <div className="lg:col-span-5 xl:col-span-5 flex flex-col gap-6">
+                {/* Smart Route Search Engine */}
+                <RouteSearch
+                  origin={origin}
+                  setOrigin={setOrigin}
+                  destination={destination}
+                  setDestination={setDestination}
+                  passengerType={passengerType}
+                  setPassengerType={setPassengerType}
+                  weather={weather}
+                  setWeather={setWeather}
+                  isRushHour={isRushHour}
+                  setIsRushHour={setIsRushHour}
+                  onSearch={handleManualSearch}
+                  onNlpSearch={handleNlpSearch}
+                  isLoading={isLoadingRoutes}
+                  lang={lang}
+                />
 
-            {/* Smart Route Search Engine */}
-            <RouteSearch
-              origin={origin}
-              setOrigin={setOrigin}
-              destination={destination}
-              setDestination={setDestination}
-              passengerType={passengerType}
-              setPassengerType={setPassengerType}
-              weather={weather}
-              setWeather={setWeather}
-              isRushHour={isRushHour}
-              setIsRushHour={setIsRushHour}
-              onSearch={handleManualSearch}
-              onNlpSearch={handleNlpSearch}
-              isLoading={isLoadingRoutes}
-              lang={lang}
-            />
+                {/* Route Results & Detour Showcase */}
+                <RouteResults
+                  routes={routes}
+                  origin={origin}
+                  destination={destination}
+                  passengerType={passengerType}
+                  lang={lang}
+                  selectedRouteId={selectedRoute?.id}
+                  onSelectRoute={(r) => setSelectedRoute(r)}
+                  onOpenFareBreakdown={(r) => setFareModalRoute(r)}
+                />
 
-            {/* Route Results & Detour Showcase */}
-            <RouteResults
-              routes={routes}
-              origin={origin}
-              destination={destination}
-              passengerType={passengerType}
-              lang={lang}
-              selectedRouteId={selectedRoute?.id}
-              onSelectRoute={(r) => setSelectedRoute(r)}
-              onOpenFareBreakdown={(r) => setFareModalRoute(r)}
-            />
+                {/* Urban Disruption Scenario Simulator */}
+                <ScenarioSimulator
+                  simulationState={simulationState}
+                  onTriggerScenario={handleTriggerScenario}
+                  lang={lang}
+                />
+              </div>
 
-            {/* Urban Disruption Scenario Simulator */}
-            <ScenarioSimulator
-              simulationState={simulationState}
-              onTriggerScenario={handleTriggerScenario}
-              lang={lang}
-            />
+              {/* Right Column: Full Interactive Leaflet Map (Sticky on Desktop) */}
+              <div className="lg:col-span-7 xl:col-span-7 lg:sticky lg:top-20 flex flex-col gap-4">
+                <MapView
+                  hubs={hubs}
+                  activeAlerts={alerts}
+                  activeRoute={selectedRoute}
+                  lang={lang}
+                  onSelectHub={(hubName) => {
+                    if (hubName !== origin) setDestination(hubName);
+                  }}
+                />
+              </div>
+            </div>
 
             {/* Emergency Helpline Strip (Exclusively on Home) */}
             <EmergencyHelpline lang={lang} isHome={true} />

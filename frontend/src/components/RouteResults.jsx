@@ -44,7 +44,7 @@ export default function RouteResults({
   };
 
   return (
-    <div className="my-8 space-y-5">
+    <div className="my-0 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className="text-xl sm:text-2xl font-black text-white flex items-center gap-3">

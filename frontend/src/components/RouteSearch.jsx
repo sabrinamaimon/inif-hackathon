@@ -58,7 +58,7 @@ export default function RouteSearch({
   };
 
   return (
-    <div className="glass-panel p-6 sm:p-7 border border-emerald-500/30 shadow-2xl my-6">
+    <div className="glass-panel p-6 sm:p-7 border border-emerald-500/30 shadow-2xl my-0">
       {/* Title & Category Row */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-5 pb-3 border-b border-slate-800">
         <div className="flex items-center gap-3">

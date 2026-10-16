@@ -47,9 +47,11 @@ export default function MapView({
         }).addTo(map);
 
         mapInstanceRef.current = map;
+        setTimeout(() => map.invalidateSize(), 250);
       }
 
       const map = mapInstanceRef.current;
+      setTimeout(() => map.invalidateSize(), 200);
 
       // Clear existing markers
       Object.values(markersRef.current).forEach((m) => m.remove());
@@ -153,7 +155,7 @@ export default function MapView({
   }, [isClient, hubs, activeAlerts, activeRoute, lang]);
 
   return (
-    <div className="relative w-full h-[440px] sm:h-[540px] lg:h-[620px] glass-panel overflow-hidden border border-emerald-500/30 my-6 shadow-2xl">
+    <div className="relative w-full h-[450px] sm:h-[550px] lg:h-[calc(100vh-170px)] min-h-[580px] glass-panel overflow-hidden border border-emerald-500/30 shadow-2xl">
       {/* Map Header Strip */}
       <div className="absolute top-4 left-4 z-[400] flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-slate-900/95 backdrop-blur-md border border-slate-700 text-sm text-white shadow-xl">
         <Navigation className="w-4 h-4 text-emerald-400" />
