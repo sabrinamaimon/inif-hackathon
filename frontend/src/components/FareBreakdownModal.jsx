@@ -69,6 +69,14 @@ export default function FareBreakdownModal({ isOpen, onClose, route, lang = 'bn'
                   </p>
                 )}
 
+                {leg.mode === 'cng' && (
+                  <p className="text-[11px] text-[#fbbf24] pt-1.5 border-t border-[#c69429]/20 font-medium">
+                    {lang === 'bn'
+                      ? '🚕 বিআরটিএ সিএনজি মিটার রেট (প্রথম ২ কিমি ৪০ ৳, পরবর্তী প্রতি কিমি ১২ ৳) ও সর্বনিম্ন চুক্তি ১০০ ৳।'
+                      : '🚕 BRTA CNG meter rate (first 2 km 40 BDT, subsequent 12 BDT/km) with 100 BDT minimum contract floor.'}
+                  </p>
+                )}
+
                 {leg.mode === 'rickshaw' && leg.surge_multiplier > 1.0 && (
                   <p className="text-[11px] text-[#f87171] pt-1.5 border-t border-[#c69429]/20 font-medium">
                     {lang === 'bn'

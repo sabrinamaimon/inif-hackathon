@@ -191,7 +191,7 @@ class DhakaTransitGraph:
         active_alerts: List[Dict[str, Any]] = []
     ) -> List[RouteOption]:
         """Generates ranked multimodal routes with disruption rerouting"""
-        if origin not in DHAKA_HUBS or destination not in DHAKA_HUBS:
+        if origin not in DHAKA_HUBS or destination not in DHAKA_HUBS or origin == destination:
             return []
 
         # Identify blocked or disrupted hubs
@@ -208,7 +208,7 @@ class DhakaTransitGraph:
             elif alert_type == "waterlogging":
                 waterlogged_set.add(hub)
 
-        # Generate up to 3 diverse route paths
+        # Generate up to 4 diverse route paths
         routes: List[RouteOption] = []
 
         # 1. Metro / Fastest Priority
@@ -249,7 +249,7 @@ class DhakaTransitGraph:
                 bus_option.id = "opt-cheapest"
                 bus_option.type_badge = "Student & Budget Pick"
                 bus_option.title = f"Economy Bus Route ({origin} -> {destination})"
-                bus_option.title_bn = f"সাশ্রয়ী ও হাফ-পাস রুট ({DHAKA_HUBS[origin]['name_bn']} -> {DHAKA_HUBS[destination]['name_bn']})"
+                bus_option.title_bn = f"সাশ্রয়ী ও হাফ-পাস বাস রুট ({DHAKA_HUBS[origin]['name_bn']} -> {DHAKA_HUBS[destination]['name_bn']})"
                 routes.append(bus_option)
 
         # 3. Resilient Detour Route if disruptions active
@@ -276,6 +276,49 @@ class DhakaTransitGraph:
             direct_fallback = self._generate_direct_fallback(origin, destination, weather, is_rush_hour)
             if direct_fallback:
                 routes.append(direct_fallback)
+
+        # 4. Direct CNG Auto-Rickshaw Option (Always available door-to-door)
+        est_distance = 5.0
+        if routes and routes[0].legs:
+            est_distance = sum(leg.distance_km for leg in routes[0].legs)
+        else:
+            est_distance = self._get_edge_distance(origin, destination)
+
+        cng_fare, _, cng_surge = DhakaFareEngine.calculate_cng_fare(est_distance, weather=weather, is_rush_hour=is_rush_hour)
+        cng_time = max(12, int(round(est_distance * 2.4)))
+        if is_rush_hour:
+            cng_time = int(cng_time * 1.3)
+        if weather in ["rain", "heavy_monsoon"]:
+            cng_time = int(cng_time * 1.25)
+
+        cng_route = RouteOption(
+            id="opt-cng",
+            title=f"Direct CNG Auto-Rickshaw ({origin} -> {destination})",
+            title_bn=f"সরাসরি সিএনজি অটোরিকশা ({DHAKA_HUBS[origin]['name_bn']} -> {DHAKA_HUBS[destination]['name_bn']})",
+            type_badge="Direct & Private",
+            total_duration_mins=cng_time,
+            total_regular_fare=cng_fare,
+            total_student_fare=cng_fare,
+            transfers=0,
+            is_recommended=False,
+            is_detour=False,
+            legs=[
+                RouteLeg(
+                    leg_number=1,
+                    mode="cng",
+                    line_name="CNG Auto-Rickshaw (মিটার / চুক্তি)",
+                    from_hub=origin,
+                    to_hub=destination,
+                    distance_km=round(est_distance, 1),
+                    duration_mins=cng_time,
+                    regular_fare_bdt=cng_fare,
+                    student_fare_bdt=cng_fare,
+                    surge_multiplier=cng_surge,
+                    landmark_instructions=f"{origin} সিএনজি স্ট্যান্ড থেকে সরাসরি {destination}। কোনো পরিবর্তন ছাড়া দ্রুত যাতায়াত।"
+                )
+            ]
+        )
+        routes.append(cng_route)
 
         return routes
 
@@ -353,6 +396,9 @@ class DhakaTransitGraph:
         try:
             node_path = nx.shortest_path(g, source=origin, target=destination, weight="calc_weight")
         except (nx.NetworkXNoPath, nx.NodeNotFound):
+            return None
+
+        if not node_path or len(node_path) < 2:
             return None
 
         # Build RouteLeg list - Consolidate continuous legs of same transit line
@@ -457,10 +503,13 @@ class DhakaTransitGraph:
             total_regular += reg_fare
             total_student += stud_fare
 
+        title_via = node_path[1] if len(node_path) > 2 else 'Direct'
+        title_bn_via = f"রুট: {DHAKA_HUBS.get(node_path[1], {}).get('name_bn', '')} হয়ে" if len(node_path) > 2 else "সরাসরি ট্রানজিট রুট"
+
         return RouteOption(
             id=f"opt-{priority}",
-            title=f"Route via {node_path[1] if len(node_path) > 2 else 'Direct'}",
-            title_bn=f"রুট: {DHAKA_HUBS.get(node_path[1], {}).get('name_bn', '')} হয়ে",
+            title=f"Route via {title_via}",
+            title_bn=title_bn_via,
             type_badge="Standard",
             total_duration_mins=total_time,
             total_regular_fare=total_regular,

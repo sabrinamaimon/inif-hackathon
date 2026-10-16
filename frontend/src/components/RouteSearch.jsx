@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, Mic, CloudRain, Clock, GraduationCap, User, ArrowRightLeft, Sparkles, MapPin } from 'lucide-react';
+import { Search, Mic, CloudRain, Clock, GraduationCap, User, ArrowRightLeft, Sparkles, MapPin, AlertCircle } from 'lucide-react';
 import { I18N } from '../utils/localization';
 import { STATIC_HUBS } from '../data/staticData';
 import { startSpeechRecognition } from '../utils/speech';
@@ -23,17 +23,53 @@ export default function RouteSearch({
   lang
 }) {
   const t = I18N[lang] || I18N.bn;
+
+  // Metro Stations (Sorted M-01 to M-17)
   const metroStations = Object.keys(STATIC_HUBS)
     .filter(name => STATIC_HUBS[name]?.is_metro_station && name !== 'Uttara')
     .sort((a, b) => (STATIC_HUBS[a]?.station_order || 99) - (STATIC_HUBS[b]?.station_order || 99));
 
-  const roadHubs = Object.keys(STATIC_HUBS)
-    .filter(name => !STATIC_HUBS[name]?.is_metro_station || name === 'Uttara');
+  // Major Bus Hubs & Stops
+  const busStopsAndHubs = [
+    "Mirpur 1", "Mirpur 10", "Mirpur 11", "Mirpur 12", "Pallabi",
+    "Kalyanpur", "Shyamoli", "Asad Gate", "Dhanmondi 27", "Kalabagan",
+    "Science Lab", "New Market", "Farmgate", "Karwan Bazar", "Shahbagh",
+    "Dhaka University", "Kakrail", "Bangladesh Secretariat", "Gulisthan",
+    "Motijheel", "Mohakhali", "Banani", "Kuril", "Khilkhet", "Uttara"
+  ].filter(name => STATIC_HUBS[name]);
+
+  // Major Residential / CNG / Rickshaw Connector Hubs
+  const connectorZones = [
+    "Dhanmondi", "Mohammadpur", "Banasree", "Badda", "Malibagh",
+    "Jatrabari", "Sadarghat", "Lalbagh"
+  ].filter(name => STATIC_HUBS[name]);
 
   const [naturalQuery, setNaturalQuery] = useState('');
   const [isListening, setIsListening] = useState(false);
 
+  // Prevention check: Never travel from self to self
+  const isSameLocation = origin && destination && origin === destination;
+
+  const handleOriginChange = (val) => {
+    setOrigin(val);
+    if (val === destination) {
+      // Pick a safe fallback destination
+      const fallback = val === 'Motijheel' ? 'Mirpur 10' : 'Motijheel';
+      setDestination(fallback);
+    }
+  };
+
+  const handleDestinationChange = (val) => {
+    setDestination(val);
+    if (val === origin) {
+      // Pick a safe fallback origin
+      const fallback = val === 'Mirpur 10' ? 'Motijheel' : 'Mirpur 10';
+      setOrigin(fallback);
+    }
+  };
+
   const handleSwap = () => {
+    if (isSameLocation) return;
     const temp = origin;
     setOrigin(destination);
     setDestination(temp);
@@ -78,8 +114,8 @@ export default function RouteSearch({
             </h2>
             <p className="font-anek text-sm sm:text-base text-[#dfcfb2] mt-0.5">
               {lang === 'bn' 
-                ? 'মেট্রোরেল, মুড়ির টিন ও লোকাল বাস, লেগুনা এবং কানেক্টর রিকশা ভাড়া বিশ্লেষণ' 
-                : 'Metro Rail, Local Bus, Leguna & Connector Rickshaw Fare Intelligence'}
+                ? 'মেট্রোরেল, লোকাল বাস, সিএনজি অটোরিকশা ও রিকশা ভাড়া এবং দ্রুততম রুট' 
+                : 'Metro Rail, Local Bus, CNG Auto-Rickshaw & Multi-Modal Transit'}
             </p>
           </div>
         </div>
@@ -115,7 +151,8 @@ export default function RouteSearch({
       </div>
 
       {/* Origin & Destination Selectors with Swap Button */}
-      <div className="grid grid-cols-1 sm:grid-cols-[1fr,auto,1fr] gap-3 items-center mb-5">
+      <div className="grid grid-cols-1 sm:grid-cols-[1fr,auto,1fr] gap-3 items-center mb-4">
+        {/* Origin Selector */}
         <div>
           <label className="block font-anek text-sm font-bold text-[#f6d16f] mb-1.5 flex items-center gap-1.5">
             <MapPin className="w-4 h-4 text-[#b83a2e]" />
@@ -123,23 +160,59 @@ export default function RouteSearch({
           </label>
           <select
             value={origin}
-            onChange={(e) => setOrigin(e.target.value)}
+            onChange={(e) => handleOriginChange(e.target.value)}
             className="w-full px-4 py-3.5 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/40 text-[#fbf8f1] text-base font-anek font-bold focus:border-[#f6d16f] focus:outline-none transition-all shadow-inner"
           >
-            <optgroup label={lang === 'bn' ? '🚇 এমআরটি-৬ মেট্রোরেল (১৭টি স্টেশন ক্রমানুসারে)' : '🚇 MRT-6 Metro Rail (17 Stations in Order)'} className="bg-[#14100c] text-[#34d399] font-bold">
-              {metroStations.map((name) => (
-                <option key={name} value={name} className="bg-[#1a1410] text-[#fbf8f1]">
-                  {STATIC_HUBS[name]?.station_order ? `[M-${String(STATIC_HUBS[name].station_order).padStart(2, '0')}] ` : ''}
-                  {STATIC_HUBS[name]?.name_bn ? `${STATIC_HUBS[name].name_bn} (${name})` : name}
-                </option>
-              ))}
+            <optgroup label={lang === 'bn' ? '🚇 এমআরটি-৬ মেট্রোরেল (১৭টি স্টেশন)' : '🚇 MRT-6 Metro Rail (17 Stations)'} className="bg-[#14100c] text-[#34d399] font-bold">
+              {metroStations.map((name) => {
+                const isSelectedAsDest = name === destination;
+                return (
+                  <option 
+                    key={name} 
+                    value={name} 
+                    disabled={isSelectedAsDest}
+                    className={isSelectedAsDest ? "bg-[#1a1410] text-[#7a6654] italic" : "bg-[#1a1410] text-[#fbf8f1]"}
+                  >
+                    {isSelectedAsDest ? '🚫 [গন্তব্যে নির্বাচিত] ' : ''}
+                    {STATIC_HUBS[name]?.station_order ? `[M-${String(STATIC_HUBS[name].station_order).padStart(2, '0')}] ` : ''}
+                    {STATIC_HUBS[name]?.name_bn ? `${STATIC_HUBS[name].name_bn} (${name})` : name}
+                  </option>
+                );
+              })}
             </optgroup>
-            <optgroup label={lang === 'bn' ? '🛺 রোড বাস ও ট্রানজিট হাব' : '🛺 Road Bus & Transit Hubs'} className="bg-[#14100c] text-[#f6d16f] font-bold">
-              {roadHubs.map((name) => (
-                <option key={name} value={name} className="bg-[#1a1410] text-[#fbf8f1]">
-                  {STATIC_HUBS[name]?.name_bn ? `${STATIC_HUBS[name].name_bn} (${name})` : name}
-                </option>
-              ))}
+
+            <optgroup label={lang === 'bn' ? '🚌 প্রধান বাস রুট ও স্টপেজ' : '🚌 Major Bus Routes & Stops'} className="bg-[#14100c] text-[#60a5fa] font-bold">
+              {busStopsAndHubs.map((name) => {
+                const isSelectedAsDest = name === destination;
+                return (
+                  <option 
+                    key={`bus-${name}`} 
+                    value={name} 
+                    disabled={isSelectedAsDest}
+                    className={isSelectedAsDest ? "bg-[#1a1410] text-[#7a6654] italic" : "bg-[#1a1410] text-[#fbf8f1]"}
+                  >
+                    {isSelectedAsDest ? '🚫 [গন্তব্যে নির্বাচিত] ' : ''}
+                    🚌 {STATIC_HUBS[name]?.name_bn ? `${STATIC_HUBS[name].name_bn} (${name})` : name}
+                  </option>
+                );
+              })}
+            </optgroup>
+
+            <optgroup label={lang === 'bn' ? '🚕 সিএনজি ও 🛺 রিকশা কানেক্টর জোন' : '🚕 CNG & 🛺 Rickshaw Connector Zones'} className="bg-[#14100c] text-[#f6d16f] font-bold">
+              {connectorZones.map((name) => {
+                const isSelectedAsDest = name === destination;
+                return (
+                  <option 
+                    key={`conn-${name}`} 
+                    value={name} 
+                    disabled={isSelectedAsDest}
+                    className={isSelectedAsDest ? "bg-[#1a1410] text-[#7a6654] italic" : "bg-[#1a1410] text-[#fbf8f1]"}
+                  >
+                    {isSelectedAsDest ? '🚫 [গন্তব্যে নির্বাচিত] ' : ''}
+                    🛺 {STATIC_HUBS[name]?.name_bn ? `${STATIC_HUBS[name].name_bn} (${name})` : name}
+                  </option>
+                );
+              })}
             </optgroup>
           </select>
         </div>
@@ -149,13 +222,19 @@ export default function RouteSearch({
           <button
             type="button"
             onClick={handleSwap}
-            className="w-11 h-11 rounded-full bg-[#292019] border-2 border-[#c69429] hover:border-[#f6d16f] text-[#f6d16f] hover:bg-[#3d3026] flex items-center justify-center transition-all shadow-md active:rotate-180 duration-300"
-            title="Swap Origin and Destination"
+            disabled={isSameLocation}
+            className={`w-11 h-11 rounded-full border-2 flex items-center justify-center transition-all shadow-md active:rotate-180 duration-300 ${
+              isSameLocation 
+                ? 'bg-[#1c1511] text-[#7a6654] border-[#7a6654]/40 cursor-not-allowed'
+                : 'bg-[#292019] border-[#c69429] hover:border-[#f6d16f] text-[#f6d16f] hover:bg-[#3d3026]'
+            }`}
+            title={lang === 'bn' ? 'শুরু ও গন্তব্য অদল-বদল করুন' : 'Swap Origin and Destination'}
           >
             <ArrowRightLeft className="w-4 h-4" />
           </button>
         </div>
 
+        {/* Destination Selector */}
         <div>
           <label className="block font-anek text-sm font-bold text-[#f6d16f] mb-1.5 flex items-center gap-1.5">
             <MapPin className="w-4 h-4 text-[#15453b]" />
@@ -163,27 +242,75 @@ export default function RouteSearch({
           </label>
           <select
             value={destination}
-            onChange={(e) => setDestination(e.target.value)}
+            onChange={(e) => handleDestinationChange(e.target.value)}
             className="w-full px-4 py-3.5 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/40 text-[#fbf8f1] text-base font-anek font-bold focus:border-[#f6d16f] focus:outline-none transition-all shadow-inner"
           >
-            <optgroup label={lang === 'bn' ? '🚇 এমআরটি-৬ মেট্রোরেল (১৭টি স্টেশন ক্রমানুসারে)' : '🚇 MRT-6 Metro Rail (17 Stations in Order)'} className="bg-[#14100c] text-[#34d399] font-bold">
-              {metroStations.map((name) => (
-                <option key={name} value={name} className="bg-[#1a1410] text-[#fbf8f1]">
-                  {STATIC_HUBS[name]?.station_order ? `[M-${String(STATIC_HUBS[name].station_order).padStart(2, '0')}] ` : ''}
-                  {STATIC_HUBS[name]?.name_bn ? `${STATIC_HUBS[name].name_bn} (${name})` : name}
-                </option>
-              ))}
+            <optgroup label={lang === 'bn' ? '🚇 এমআরটি-৬ মেট্রোরেল (১৭টি স্টেশন)' : '🚇 MRT-6 Metro Rail (17 Stations)'} className="bg-[#14100c] text-[#34d399] font-bold">
+              {metroStations.map((name) => {
+                const isSelectedAsOrig = name === origin;
+                return (
+                  <option 
+                    key={name} 
+                    value={name} 
+                    disabled={isSelectedAsOrig}
+                    className={isSelectedAsOrig ? "bg-[#1a1410] text-[#7a6654] italic" : "bg-[#1a1410] text-[#fbf8f1]"}
+                  >
+                    {isSelectedAsOrig ? '🚫 [শুরুতে নির্বাচিত] ' : ''}
+                    {STATIC_HUBS[name]?.station_order ? `[M-${String(STATIC_HUBS[name].station_order).padStart(2, '0')}] ` : ''}
+                    {STATIC_HUBS[name]?.name_bn ? `${STATIC_HUBS[name].name_bn} (${name})` : name}
+                  </option>
+                );
+              })}
             </optgroup>
-            <optgroup label={lang === 'bn' ? '🛺 রোড বাস ও ট্রানজিট হাব' : '🛺 Road Bus & Transit Hubs'} className="bg-[#14100c] text-[#f6d16f] font-bold">
-              {roadHubs.map((name) => (
-                <option key={name} value={name} className="bg-[#1a1410] text-[#fbf8f1]">
-                  {STATIC_HUBS[name]?.name_bn ? `${STATIC_HUBS[name].name_bn} (${name})` : name}
-                </option>
-              ))}
+
+            <optgroup label={lang === 'bn' ? '🚌 প্রধান বাস রুট ও স্টপেজ' : '🚌 Major Bus Routes & Stops'} className="bg-[#14100c] text-[#60a5fa] font-bold">
+              {busStopsAndHubs.map((name) => {
+                const isSelectedAsOrig = name === origin;
+                return (
+                  <option 
+                    key={`bus-${name}`} 
+                    value={name} 
+                    disabled={isSelectedAsOrig}
+                    className={isSelectedAsOrig ? "bg-[#1a1410] text-[#7a6654] italic" : "bg-[#1a1410] text-[#fbf8f1]"}
+                  >
+                    {isSelectedAsOrig ? '🚫 [শুরুতে নির্বাচিত] ' : ''}
+                    🚌 {STATIC_HUBS[name]?.name_bn ? `${STATIC_HUBS[name].name_bn} (${name})` : name}
+                  </option>
+                );
+              })}
+            </optgroup>
+
+            <optgroup label={lang === 'bn' ? '🚕 সিএনজি ও 🛺 রিকশা কানেক্টর জোন' : '🚕 CNG & 🛺 Rickshaw Connector Zones'} className="bg-[#14100c] text-[#f6d16f] font-bold">
+              {connectorZones.map((name) => {
+                const isSelectedAsOrig = name === origin;
+                return (
+                  <option 
+                    key={`conn-${name}`} 
+                    value={name} 
+                    disabled={isSelectedAsOrig}
+                    className={isSelectedAsOrig ? "bg-[#1a1410] text-[#7a6654] italic" : "bg-[#1a1410] text-[#fbf8f1]"}
+                  >
+                    {isSelectedAsOrig ? '🚫 [শুরুতে নির্বাচিত] ' : ''}
+                    🛺 {STATIC_HUBS[name]?.name_bn ? `${STATIC_HUBS[name].name_bn} (${name})` : name}
+                  </option>
+                );
+              })}
             </optgroup>
           </select>
         </div>
       </div>
+
+      {/* Warning Alert if Origin === Destination (Cannot travel to self) */}
+      {isSameLocation && (
+        <div className="mb-5 p-3.5 rounded-xl bg-[#b83a2e]/20 border-2 border-[#b83a2e] text-[#fca5a5] font-anek text-sm font-bold flex items-center gap-2.5 animate-pulse">
+          <AlertCircle className="w-5 h-5 text-[#f87171] shrink-0" />
+          <span>
+            {lang === 'bn' 
+              ? '⚠️ যাত্রা শুরু এবং গন্তব্য একই স্থান হতে পারে না! অনুগ্রহ করে ভিন্ন একটি গন্তব্য নির্বাচন করুন।' 
+              : '⚠️ Origin and destination cannot be identical. Please select different locations.'}
+          </span>
+        </div>
+      )}
 
       {/* Conditions Toggle Pills: Weather & Rush Hour */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-[#120e0b] border border-[#c69429]/30 mb-5">
@@ -263,12 +390,24 @@ export default function RouteSearch({
       {/* Main Action Search Button */}
       <button
         type="button"
-        onClick={onSearch}
-        disabled={isLoading}
-        className="w-full py-4 rounded-xl bg-gradient-to-r from-[#b83a2e] via-[#c69429] to-[#b83a2e] text-[#120e0b] font-anek font-black text-lg sm:text-xl border-2 border-[#f6d16f] shadow-xl shadow-[#b83a2e]/30 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2.5 tracking-wide uppercase"
+        onClick={() => {
+          if (!isSameLocation && onSearch) onSearch();
+        }}
+        disabled={isLoading || isSameLocation}
+        className={`w-full py-4 rounded-xl font-anek font-black text-lg sm:text-xl border-2 transition-all flex items-center justify-center gap-2.5 tracking-wide uppercase shadow-xl ${
+          isSameLocation 
+            ? 'bg-[#292019] text-[#7a6654] border-[#7a6654]/40 cursor-not-allowed opacity-60'
+            : 'bg-gradient-to-r from-[#b83a2e] via-[#c69429] to-[#b83a2e] text-[#120e0b] border-[#f6d16f] shadow-[#b83a2e]/30 hover:scale-[1.01] active:scale-[0.99]'
+        }`}
       >
-        <span className="text-xl">🛺</span>
-        <span>{isLoading ? (lang === 'bn' ? 'রুট যাচাই ও হিসাব হচ্ছে...' : 'Calculating Routes...') : t.searchBtn}</span>
+        <span className="text-xl">{isSameLocation ? '⚠️' : '🛺'}</span>
+        <span>
+          {isSameLocation 
+            ? (lang === 'bn' ? 'ভিন্ন গন্তব্য নির্বাচন করুন' : 'Select Different Locations')
+            : isLoading 
+            ? (lang === 'bn' ? 'রুট যাচাই ও হিসাব হচ্ছে...' : 'Calculating Routes...') 
+            : t.searchBtn}
+        </span>
       </button>
     </div>
   );

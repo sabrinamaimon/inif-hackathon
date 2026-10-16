@@ -366,6 +366,137 @@ export const STATIC_HUBS = {
     "landmarks": ["Lalbagh Fort", "Chawkbazar Shahi Masjid", "Shaista Khan Gate"],
     "is_metro_station": false,
     "zone": "Mughal Heritage / Old Dhaka"
+  },
+  // --- Major Dhaka Bus Hubs & Stops ---
+  "Mirpur 1": {
+    "id": "hub-mirpur1",
+    "name": "Mirpur 1",
+    "name_bn": "মিরপুর ১",
+    "lat": 23.795583,
+    "lng": 90.353473,
+    "landmarks": ["Muktijoddha Market", "Mirpur 1 Roundabout", "Sony Cinema Hall", "Shah Ali Mazar"],
+    "is_metro_station": false,
+    "zone": "North-West Transit Hub"
+  },
+  "Mirpur 12": {
+    "id": "hub-mirpur12",
+    "name": "Mirpur 12",
+    "name_bn": "মিরপুর ১২ (বাস টার্মিনাল)",
+    "lat": 23.828335,
+    "lng": 90.364255,
+    "landmarks": ["Mirpur 12 Bus Terminal", "Ceramics Road", "DOHS Gate", "Purobi Cinema"],
+    "is_metro_station": false,
+    "zone": "North Transit Terminal"
+  },
+  "Kalyanpur": {
+    "id": "hub-kalyanpur",
+    "name": "Kalyanpur",
+    "name_bn": "কল্যাণপুর",
+    "lat": 23.778616,
+    "lng": 90.359892,
+    "landmarks": ["Kalyanpur Bus Stand", "South Plaza", "Mizan Tower", "Penta Building"],
+    "is_metro_station": false,
+    "zone": "Mirpur-Gabtoli Highway Corridor"
+  },
+  "Shyamoli": {
+    "id": "hub-shyamoli",
+    "name": "Shyamoli",
+    "name_bn": "শ্যামলী",
+    "lat": 23.774911,
+    "lng": 90.365685,
+    "landmarks": ["Shyamoli Square", "Dhaka Shishu Hospital", "Mental Hospital Gate", "Foot-overbridge"],
+    "is_metro_station": false,
+    "zone": "Mirpur-Dhanmondi Highway Hub"
+  },
+  "Asad Gate": {
+    "id": "hub-asadgate",
+    "name": "Asad Gate",
+    "name_bn": "আসাদ গেট",
+    "lat": 23.760112,
+    "lng": 90.373094,
+    "landmarks": ["Parliament Building West Gate", "Asad Gate Bus Stand", "St. Joseph Higher Secondary School", "Town Hall Connector"],
+    "is_metro_station": false,
+    "zone": "Mohammadpur-Dhanmondi Junction"
+  },
+  "Dhanmondi 27": {
+    "id": "hub-dhanmondi27",
+    "name": "Dhanmondi 27",
+    "name_bn": "ধানমন্ডি ২৭",
+    "lat": 23.756477,
+    "lng": 90.375289,
+    "landmarks": ["Rapa Plaza", "Midas Center", "Dhanmondi Lake 27 Ghat", "Subastu Zenim"],
+    "is_metro_station": false,
+    "zone": "Dhanmondi Commercial Belt"
+  },
+  "Kalabagan": {
+    "id": "hub-kalabagan",
+    "name": "Kalabagan",
+    "name_bn": "কলাবাগান",
+    "lat": 23.747599,
+    "lng": 90.380444,
+    "landmarks": ["Kalabagan Krira Chakra Field", "Bashiruddin Road", "Dolphin Mor", "Lake Circus"],
+    "is_metro_station": false,
+    "zone": "Mirpur Road South Corridor"
+  },
+  "New Market": {
+    "id": "hub-newmarket",
+    "name": "New Market",
+    "name_bn": "নিউ মার্কেট (নীলক্ষেত)",
+    "lat": 23.732862,
+    "lng": 90.385008,
+    "landmarks": ["New Market Main Gate", "Nilkhet Book Market", "Dhaka College", "Gausia Market"],
+    "is_metro_station": false,
+    "zone": "Old Commercial / Academic Hub"
+  },
+  "Banani": {
+    "id": "hub-banani",
+    "name": "Banani",
+    "name_bn": "বনানী",
+    "lat": 23.794465,
+    "lng": 90.401034,
+    "landmarks": ["Banani Road 11", "Kakoli Bus Stand", "Chairman Bari", "Sheraton Dhaka"],
+    "is_metro_station": false,
+    "zone": "Airport Road North-Central Hub"
+  },
+  "Kuril": {
+    "id": "hub-kuril",
+    "name": "Kuril",
+    "name_bn": "কুড়িল বিশ্বরোড",
+    "lat": 23.821667,
+    "lng": 90.419038,
+    "landmarks": ["Kuril Flyover", "Jamuna Future Park Gate", "Bishwa Road Overbridge", "300 Feet Highway Entry"],
+    "is_metro_station": false,
+    "zone": "Airport-Purbachal Interchange"
+  },
+  "Khilkhet": {
+    "id": "hub-khilkhet",
+    "name": "Khilkhet",
+    "name_bn": "খিলক্ষেত",
+    "lat": 23.828786,
+    "lng": 90.419952,
+    "landmarks": ["Khilkhet Foot-overbridge", "Tanpara Road", "Airport Highway Entry", "Nikunja 2 Gate"],
+    "is_metro_station": false,
+    "zone": "Airport Corridor"
+  },
+  "Kakrail": {
+    "id": "hub-kakrail",
+    "name": "Kakrail",
+    "name_bn": "কাকরাইল",
+    "lat": 23.733836,
+    "lng": 90.403085,
+    "landmarks": ["Kakrail Mosque", "Rajmoni Cinema Mor", "Chief Justice Official Residence", "Shantinagar Corner"],
+    "is_metro_station": false,
+    "zone": "Central Administrative Zone"
+  },
+  "Gulisthan": {
+    "id": "hub-gulisthan",
+    "name": "Gulisthan",
+    "name_bn": "গুলিস্তান (জিরো পয়েন্ট)",
+    "lat": 23.7250,
+    "lng": 90.4110,
+    "landmarks": ["Zero Point", "Fulbaria Bus Stand", "Sundarban Square Market", "Baitul Mukarram National Mosque"],
+    "is_metro_station": false,
+    "zone": "Central Dhaka Bus Interchange"
   }
 };
 

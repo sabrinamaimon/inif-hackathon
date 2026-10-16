@@ -29,9 +29,31 @@ export default function RouteResults({
     switch (mode) {
       case 'metro': return Train;
       case 'bus': return Bus;
+      case 'cng': return Car;
       case 'leguna': return Car;
       case 'rickshaw': return Bike;
       default: return Navigation;
+    }
+  };
+
+  const getModeLabel = (mode, currentLang) => {
+    if (currentLang === 'bn') {
+      switch (mode) {
+        case 'metro': return '🚇 মেট্রোরেল';
+        case 'bus': return '🚌 বাস';
+        case 'cng': return '🚕 সিএনজি';
+        case 'leguna': return '🚐 লেগুনা';
+        case 'rickshaw': return '🛺 রিকশা';
+        default: return mode;
+      }
+    }
+    switch (mode) {
+      case 'metro': return '🚇 Metro';
+      case 'bus': return '🚌 Bus';
+      case 'cng': return '🚕 CNG Auto';
+      case 'leguna': return '🚐 Leguna';
+      case 'rickshaw': return '🛺 Rickshaw';
+      default: return mode;
     }
   };
 
@@ -237,8 +259,8 @@ export default function RouteResults({
                                   <span className="font-anek font-black text-lg sm:text-xl text-[#120e0b]">
                                     {leg.line_name}
                                   </span>
-                                  <span className="text-xs sm:text-sm px-3 py-0.5 rounded-md bg-[#15453b]/15 text-[#15453b] font-anek font-bold border border-[#15453b]/30 uppercase">
-                                    {leg.mode}
+                                  <span className="text-xs sm:text-sm px-3 py-0.5 rounded-md bg-[#15453b]/15 text-[#15453b] font-anek font-bold border border-[#15453b]/30">
+                                    {getModeLabel(leg.mode, lang)}
                                   </span>
                                   <span className="text-sm font-mono font-semibold text-[#7a6654]">
                                     ({leg.from_hub} ➔ {leg.to_hub})

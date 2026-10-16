@@ -18,6 +18,13 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Origin and destination are required' }, { status: 400 });
     }
 
+    if (origin === destination) {
+      return NextResponse.json({ 
+        error: 'যাত্রা শুরু ও গন্তব্য একই স্থান হতে পারে না',
+        message: 'Origin and destination cannot be identical' 
+      }, { status: 400 });
+    }
+
     const alertsToUse = active_alerts || getAlerts();
 
     const routes = runDijkstraRouting({

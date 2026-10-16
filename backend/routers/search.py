@@ -17,6 +17,12 @@ def search_transit_routes(request: SearchRequest):
     Intelligent Multi-Constraint Trip Search
     Calculates multi-leg itineraries with student discounts, weather surges, and detours.
     """
+    if request.origin == request.destination:
+        raise HTTPException(
+            status_code=400,
+            detail="যাত্রা শুরু ও গন্তব্য একই স্থান হতে পারে না। অনুগ্রহ করে ভিন্ন গন্তব্য নির্বাচন করুন।"
+        )
+
     # Fetch active alerts
     active_alerts = [
         TransitValidator.calculate_alert_decay(a)

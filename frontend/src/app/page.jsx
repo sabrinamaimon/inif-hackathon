@@ -84,6 +84,13 @@ export default function Home() {
   };
 
   const performSearch = async (orig, dest, passType, weath, rush) => {
+    if (!orig || !dest || orig === dest) {
+      setRoutes([]);
+      setSelectedRoute(null);
+      setIsLoadingRoutes(false);
+      return;
+    }
+
     setIsLoadingRoutes(true);
     try {
       const res = await fetch('/api/search/routes', {

@@ -105,7 +105,32 @@ export const BASE_TRANSIT_EDGES = [
   { u: "Uttara", v: "Mohakhali", mode: "bus", line: "Victor Classic", dist: 11.0, time: 35, elevated: false },
   { u: "Motijheel", v: "Jatrabari", mode: "bus", line: "Anabil Paribahan", dist: 3.5, time: 18, elevated: false },
   { u: "Science Lab", v: "Jatrabari", mode: "bus", line: "Shikor Paribahan", dist: 6.8, time: 35, elevated: false },
-  { u: "Agargaon", v: "Mohakhali", mode: "bus", line: "Raja City", dist: 3.6, time: 18, elevated: false }
+  { u: "Agargaon", v: "Mohakhali", mode: "bus", line: "Raja City", dist: 3.6, time: 18, elevated: false },
+
+  // Mirpur Corridor Bus Hubs
+  { u: "Mirpur 12", v: "Pallabi", mode: "bus", line: "Bikolpo Auto Service", dist: 0.8, time: 3, elevated: false },
+  { u: "Mirpur 12", v: "Mirpur 11", mode: "bus", line: "Bikolpo Auto Service", dist: 1.0, time: 3, elevated: false },
+  { u: "Mirpur 10", v: "Mirpur 1", mode: "bus", line: "Bikolpo Auto Service", dist: 1.8, time: 6, elevated: false },
+  { u: "Mirpur 1", v: "Kalyanpur", mode: "bus", line: "Bikolpo Auto Service", dist: 2.0, time: 7, elevated: false },
+  { u: "Kalyanpur", v: "Shyamoli", mode: "bus", line: "Bikolpo Auto Service", dist: 1.0, time: 4, elevated: false },
+  { u: "Shyamoli", v: "Asad Gate", mode: "bus", line: "Bikolpo Auto Service", dist: 1.8, time: 6, elevated: false },
+  { u: "Asad Gate", v: "Dhanmondi 27", mode: "bus", line: "Bikolpo Auto Service", dist: 1.0, time: 4, elevated: false },
+  { u: "Dhanmondi 27", v: "Kalabagan", mode: "bus", line: "Bikolpo Auto Service", dist: 1.1, time: 4, elevated: false },
+  { u: "Kalabagan", v: "Science Lab", mode: "bus", line: "Bikolpo Auto Service", dist: 1.0, time: 4, elevated: false },
+  { u: "Science Lab", v: "New Market", mode: "bus", line: "Bikolpo Auto Service", dist: 0.6, time: 2, elevated: false },
+  { u: "New Market", v: "Dhaka University", mode: "bus", line: "Bikolpo Auto Service", dist: 1.2, time: 5, elevated: false },
+
+  // Airport Highway & Central Bus Hubs
+  { u: "Uttara", v: "Khilkhet", mode: "bus", line: "Uttara Bus", dist: 3.5, time: 10, elevated: false },
+  { u: "Khilkhet", v: "Kuril", mode: "bus", line: "Uttara Bus", dist: 1.5, time: 5, elevated: false },
+  { u: "Kuril", v: "Banani", mode: "bus", line: "Uttara Bus", dist: 2.8, time: 9, elevated: false },
+  { u: "Banani", v: "Mohakhali", mode: "bus", line: "Uttara Bus", dist: 1.8, time: 6, elevated: false },
+  { u: "Farmgate", v: "Kakrail", mode: "bus", line: "Uttara Bus", dist: 3.2, time: 12, elevated: false },
+  { u: "Kakrail", v: "Bangladesh Secretariat", mode: "bus", line: "Uttara Bus", dist: 0.9, time: 3, elevated: false },
+  { u: "Bangladesh Secretariat", v: "Gulisthan", mode: "bus", line: "Bihanga Paribahan", dist: 0.8, time: 3, elevated: false },
+  { u: "Gulisthan", v: "Motijheel", mode: "bus", line: "Bihanga Paribahan", dist: 0.9, time: 3, elevated: false },
+  { u: "Gulisthan", v: "Sadarghat", mode: "bus", line: "Sadarghat Link", dist: 1.8, time: 8, elevated: false },
+  { u: "Gulisthan", v: "Jatrabari", mode: "bus", line: "Mayor Hanif Flyover Bus", dist: 2.8, time: 10, elevated: false }
 ];
 
 export function calculateFare(mode, from, to, distanceKm, weather = "normal", isRushHour = false) {
@@ -123,6 +148,16 @@ export function calculateFare(mode, from, to, distanceKm, weather = "normal", is
     // 50% discount with 10 BDT statutory floor
     const student = Math.max(10, Math.ceil(regular * 0.5));
     return { regular, student, surge: 1.0 };
+  }
+
+  if (mode === "cng") {
+    let base = distanceKm <= 2.0 ? 40 : 40 + Math.ceil((distanceKm - 2.0) * 12);
+    base = Math.max(100, base);
+    let surge = 1.0;
+    if (weather === "rain") surge += 0.3;
+    if (isRushHour) surge += 0.25;
+    const regular = Math.ceil(base * surge);
+    return { regular, student: regular, surge: Math.round(surge * 100) / 100 };
   }
 
   if (mode === "leguna") {
@@ -148,7 +183,7 @@ export function runDijkstraRouting({
   activeAlerts = []
 }) {
   const hubs = Object.keys(STATIC_HUBS);
-  if (!STATIC_HUBS[origin] || !STATIC_HUBS[destination]) return [];
+  if (!origin || !destination || origin === destination || !STATIC_HUBS[origin] || !STATIC_HUBS[destination]) return [];
 
   // Identify disrupted hubs
   const waterloggedHubs = new Set(
@@ -344,5 +379,45 @@ export function runDijkstraRouting({
     legs
   };
 
-  return [fastestRoute, economyRoute];
+  // Direct CNG Auto-Rickshaw alternative
+  const cngDist = Math.max(2.0, legs.reduce((acc, l) => acc + l.distance_km, 0) || 5.0);
+  let cngBase = cngDist <= 2.0 ? 40 : 40 + Math.ceil((cngDist - 2.0) * 12);
+  cngBase = Math.max(100, cngBase);
+  let cngSurge = 1.0;
+  if (weather === "rain") cngSurge += 0.3;
+  if (isRushHour) cngSurge += 0.25;
+  const cngFare = Math.ceil(cngBase * cngSurge);
+  let cngTime = Math.max(12, Math.round(cngDist * 2.3));
+  if (isRushHour) cngTime = Math.round(cngTime * 1.3);
+  if (weather === "rain") cngTime = Math.round(cngTime * 1.25);
+
+  const cngRoute = {
+    id: "opt-cng",
+    title: `Direct CNG Auto-Rickshaw (${origin} ➔ ${destination})`,
+    title_bn: `সরাসরি সিএনজি অটোরিকশা (${STATIC_HUBS[origin]?.name_bn || origin} ➔ ${STATIC_HUBS[destination]?.name_bn || destination})`,
+    type_badge: "Direct & Private",
+    total_duration_mins: cngTime,
+    total_regular_fare: cngFare,
+    total_student_fare: cngFare,
+    transfers: 0,
+    is_recommended: false,
+    is_detour: false,
+    legs: [
+      {
+        leg_number: 1,
+        mode: "cng",
+        line_name: "CNG Auto-Rickshaw (মিটার / চুক্তি)",
+        from_hub: origin,
+        to_hub: destination,
+        distance_km: Math.round(cngDist * 10) / 10,
+        duration_mins: cngTime,
+        regular_fare_bdt: cngFare,
+        student_fare_bdt: cngFare,
+        surge_multiplier: Math.round(cngSurge * 100) / 100,
+        landmark_instructions: `${origin} সিএনজি স্ট্যান্ড থেকে সরাসরি ${destination}। কোনো পরিবর্তন ছাড়া দ্রুত যাতায়াত।`
+      }
+    ]
+  };
+
+  return [fastestRoute, economyRoute, cngRoute];
 }

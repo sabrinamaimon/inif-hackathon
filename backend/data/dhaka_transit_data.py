@@ -303,6 +303,137 @@ DHAKA_HUBS = {
         "landmarks": ["Lalbagh Fort", "Chawkbazar Shahi Masjid", "Shaista Khan Gate"],
         "is_metro_station": False,
         "zone": "Mughal Heritage / Old Dhaka"
+    },
+    # --- Major Dhaka Bus Hubs & Stops ---
+    "Mirpur 1": {
+        "id": "hub-mirpur1",
+        "name": "Mirpur 1",
+        "name_bn": "মিরপুর ১",
+        "lat": 23.795583,
+        "lng": 90.353473,
+        "landmarks": ["Muktijoddha Market", "Mirpur 1 Roundabout", "Sony Cinema Hall", "Shah Ali Mazar"],
+        "is_metro_station": False,
+        "zone": "North-West Transit Hub"
+    },
+    "Mirpur 12": {
+        "id": "hub-mirpur12",
+        "name": "Mirpur 12",
+        "name_bn": "মিরপুর ১২ (বাস টার্মিনাল)",
+        "lat": 23.828335,
+        "lng": 90.364255,
+        "landmarks": ["Mirpur 12 Bus Terminal", "Ceramics Road", "DOHS Gate", "Purobi Cinema"],
+        "is_metro_station": False,
+        "zone": "North Transit Terminal"
+    },
+    "Kalyanpur": {
+        "id": "hub-kalyanpur",
+        "name": "Kalyanpur",
+        "name_bn": "কল্যাণপুর",
+        "lat": 23.778616,
+        "lng": 90.359892,
+        "landmarks": ["Kalyanpur Bus Stand", "South Plaza", "Mizan Tower", "Penta Building"],
+        "is_metro_station": False,
+        "zone": "Mirpur-Gabtoli Highway Corridor"
+    },
+    "Shyamoli": {
+        "id": "hub-shyamoli",
+        "name": "Shyamoli",
+        "name_bn": "শ্যামলী",
+        "lat": 23.774911,
+        "lng": 90.365685,
+        "landmarks": ["Shyamoli Square", "Dhaka Shishu Hospital", "Mental Hospital Gate", "Foot-overbridge"],
+        "is_metro_station": False,
+        "zone": "Mirpur-Dhanmondi Highway Hub"
+    },
+    "Asad Gate": {
+        "id": "hub-asadgate",
+        "name": "Asad Gate",
+        "name_bn": "আসাদ গেট",
+        "lat": 23.760112,
+        "lng": 90.373094,
+        "landmarks": ["Parliament Building West Gate", "Asad Gate Bus Stand", "St. Joseph Higher Secondary School", "Town Hall Connector"],
+        "is_metro_station": False,
+        "zone": "Mohammadpur-Dhanmondi Junction"
+    },
+    "Dhanmondi 27": {
+        "id": "hub-dhanmondi27",
+        "name": "Dhanmondi 27",
+        "name_bn": "ধানমন্ডি ২৭",
+        "lat": 23.756477,
+        "lng": 90.375289,
+        "landmarks": ["Rapa Plaza", "Midas Center", "Dhanmondi Lake 27 Ghat", "Subastu Zenim"],
+        "is_metro_station": False,
+        "zone": "Dhanmondi Commercial Belt"
+    },
+    "Kalabagan": {
+        "id": "hub-kalabagan",
+        "name": "Kalabagan",
+        "name_bn": "কলাবাগান",
+        "lat": 23.747599,
+        "lng": 90.380444,
+        "landmarks": ["Kalabagan Krira Chakra Field", "Bashiruddin Road", "Dolphin Mor", "Lake Circus"],
+        "is_metro_station": False,
+        "zone": "Mirpur Road South Corridor"
+    },
+    "New Market": {
+        "id": "hub-newmarket",
+        "name": "New Market",
+        "name_bn": "নিউ মার্কেট (নীলক্ষেত)",
+        "lat": 23.732862,
+        "lng": 90.385008,
+        "landmarks": ["New Market Main Gate", "Nilkhet Book Market", "Dhaka College", "Gausia Market"],
+        "is_metro_station": False,
+        "zone": "Old Commercial / Academic Hub"
+    },
+    "Banani": {
+        "id": "hub-banani",
+        "name": "Banani",
+        "name_bn": "বনানী",
+        "lat": 23.794465,
+        "lng": 90.401034,
+        "landmarks": ["Banani Road 11", "Kakoli Bus Stand", "Chairman Bari", "Sheraton Dhaka"],
+        "is_metro_station": False,
+        "zone": "Airport Road North-Central Hub"
+    },
+    "Kuril": {
+        "id": "hub-kuril",
+        "name": "Kuril",
+        "name_bn": "কুড়িল বিশ্বরোড",
+        "lat": 23.821667,
+        "lng": 90.419038,
+        "landmarks": ["Kuril Flyover", "Jamuna Future Park Gate", "Bishwa Road Overbridge", "300 Feet Highway Entry"],
+        "is_metro_station": False,
+        "zone": "Airport-Purbachal Interchange"
+    },
+    "Khilkhet": {
+        "id": "hub-khilkhet",
+        "name": "Khilkhet",
+        "name_bn": "খিলক্ষেত",
+        "lat": 23.828786,
+        "lng": 90.419952,
+        "landmarks": ["Khilkhet Foot-overbridge", "Tanpara Road", "Airport Highway Entry", "Nikunja 2 Gate"],
+        "is_metro_station": False,
+        "zone": "Airport Corridor"
+    },
+    "Kakrail": {
+        "id": "hub-kakrail",
+        "name": "Kakrail",
+        "name_bn": "কাকরাইল",
+        "lat": 23.733836,
+        "lng": 90.403085,
+        "landmarks": ["Kakrail Mosque", "Rajmoni Cinema Mor", "Chief Justice Official Residence", "Shantinagar Corner"],
+        "is_metro_station": False,
+        "zone": "Central Administrative Zone"
+    },
+    "Gulisthan": {
+        "id": "hub-gulisthan",
+        "name": "Gulisthan",
+        "name_bn": "গুলিস্তান (জিরো পয়েন্ট)",
+        "lat": 23.7250,
+        "lng": 90.4110,
+        "landmarks": ["Zero Point", "Fulbaria Bus Stand", "Sundarban Square Market", "Baitul Mukarram National Mosque"],
+        "is_metro_station": False,
+        "zone": "Central Dhaka Bus Interchange"
     }
 }
 
@@ -494,7 +625,7 @@ TRANSIT_ROUTES = [
         "color": "#2563eb",
         "student_pass_allowed": True,
         "frequency_mins": 8,
-        "hubs": ["Pallabi", "Mirpur 10", "Dhanmondi", "Science Lab", "Shahbagh", "Dhaka University"],
+        "hubs": ["Mirpur 12", "Mirpur 10", "Mirpur 1", "Kalyanpur", "Shyamoli", "Asad Gate", "Dhanmondi 27", "Kalabagan", "Science Lab", "New Market", "Dhaka University"],
         "stops": [
             "Mirpur 12", "Purobi Hall", "Yantai", "Mirpur 10", "Stadium",
             "Mirpur 1", "Ansar Camp", "Darussalam", "Kalyan Pur", "Shyamoli",
@@ -512,7 +643,7 @@ TRANSIT_ROUTES = [
         "color": "#ea580c",
         "student_pass_allowed": True,
         "frequency_mins": 8,
-        "hubs": ["Uttara", "Mohakhali", "Farmgate", "Karwan Bazar", "Shahbagh", "Bangladesh Secretariat"],
+        "hubs": ["Uttara", "Khilkhet", "Kuril", "Banani", "Mohakhali", "Farmgate", "Karwan Bazar", "Shahbagh", "Kakrail", "Bangladesh Secretariat"],
         "stops": [
             "BRTC", "Rajuk", "Azampur", "Rajlokkhi", "Jashim Uddin",
             "Khilkhet", "Kuril", "Shewra", "MES Bus Stop", "Banani",
@@ -782,7 +913,28 @@ TRANSIT_EDGES = {
     ("Mirpur 10", "Dhanmondi"): {"distance_km": 6.2, "base_time_mins": 25, "rickshaw_base_bdt": 120},
     ("Shahbagh", "Bangladesh Secretariat"): {"distance_km": 1.8, "base_time_mins": 8, "rickshaw_base_bdt": 40},
     ("Science Lab", "Dhaka University"): {"distance_km": 1.5, "base_time_mins": 6, "rickshaw_base_bdt": 35},
-    ("Pallabi", "Mirpur 10"): {"distance_km": 3.1, "base_time_mins": 10, "rickshaw_base_bdt": 60}
+    ("Pallabi", "Mirpur 10"): {"distance_km": 3.1, "base_time_mins": 10, "rickshaw_base_bdt": 60},
+    ("Mirpur 12", "Pallabi"): {"distance_km": 0.8, "base_time_mins": 3, "rickshaw_base_bdt": 25},
+    ("Mirpur 12", "Mirpur 11"): {"distance_km": 1.0, "base_time_mins": 3, "rickshaw_base_bdt": 25},
+    ("Mirpur 10", "Mirpur 1"): {"distance_km": 1.8, "base_time_mins": 6, "rickshaw_base_bdt": 40},
+    ("Mirpur 1", "Kalyanpur"): {"distance_km": 2.0, "base_time_mins": 7, "rickshaw_base_bdt": 45},
+    ("Kalyanpur", "Shyamoli"): {"distance_km": 1.0, "base_time_mins": 4, "rickshaw_base_bdt": 30},
+    ("Shyamoli", "Asad Gate"): {"distance_km": 1.8, "base_time_mins": 6, "rickshaw_base_bdt": 40},
+    ("Asad Gate", "Dhanmondi 27"): {"distance_km": 1.0, "base_time_mins": 4, "rickshaw_base_bdt": 30},
+    ("Dhanmondi 27", "Kalabagan"): {"distance_km": 1.1, "base_time_mins": 4, "rickshaw_base_bdt": 30},
+    ("Kalabagan", "Science Lab"): {"distance_km": 1.0, "base_time_mins": 4, "rickshaw_base_bdt": 30},
+    ("Science Lab", "New Market"): {"distance_km": 0.6, "base_time_mins": 2, "rickshaw_base_bdt": 20},
+    ("New Market", "Dhaka University"): {"distance_km": 1.2, "base_time_mins": 5, "rickshaw_base_bdt": 30},
+    ("Uttara", "Khilkhet"): {"distance_km": 3.5, "base_time_mins": 10, "rickshaw_base_bdt": 70},
+    ("Khilkhet", "Kuril"): {"distance_km": 1.5, "base_time_mins": 5, "rickshaw_base_bdt": 35},
+    ("Kuril", "Banani"): {"distance_km": 2.8, "base_time_mins": 9, "rickshaw_base_bdt": 55},
+    ("Banani", "Mohakhali"): {"distance_km": 1.8, "base_time_mins": 6, "rickshaw_base_bdt": 40},
+    ("Farmgate", "Kakrail"): {"distance_km": 3.2, "base_time_mins": 12, "rickshaw_base_bdt": 60},
+    ("Kakrail", "Bangladesh Secretariat"): {"distance_km": 0.9, "base_time_mins": 3, "rickshaw_base_bdt": 25},
+    ("Bangladesh Secretariat", "Gulisthan"): {"distance_km": 0.8, "base_time_mins": 3, "rickshaw_base_bdt": 25},
+    ("Gulisthan", "Motijheel"): {"distance_km": 0.9, "base_time_mins": 3, "rickshaw_base_bdt": 25},
+    ("Gulisthan", "Sadarghat"): {"distance_km": 1.8, "base_time_mins": 8, "rickshaw_base_bdt": 40},
+    ("Gulisthan", "Jatrabari"): {"distance_km": 2.8, "base_time_mins": 10, "rickshaw_base_bdt": 55}
 }
 
 # Pre-seeded Street Disruption Logs

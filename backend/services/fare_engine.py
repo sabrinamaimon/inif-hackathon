@@ -308,6 +308,40 @@ class DhakaFareEngine:
         return final_fare, final_fare, round(surge, 2)
 
     @classmethod
+    def calculate_cng_fare(
+        cls,
+        distance_km: float,
+        weather: str = "normal",
+        is_rush_hour: bool = False
+    ) -> Tuple[int, int, float]:
+        """
+        BRTA Regulated CNG Auto-Rickshaw Fare calculation:
+        - Base fare: 40 BDT for first 2.0 km
+        - Per km thereafter: 12 BDT / km
+        - Real-world Dhaka minimum contract floor: 100 BDT
+        - Weather surge: +30% rain, +50% heavy monsoon
+        - Rush hour surge: +25%
+        Returns: (regular_fare, student_fare, surge_multiplier)
+        """
+        if distance_km <= 2.0:
+            base = 40
+        else:
+            base = 40 + int(math.ceil((distance_km - 2.0) * 12.0))
+        base = max(100, base)
+
+        surge = 1.0
+        if weather == "rain":
+            surge += 0.30
+        elif weather == "heavy_monsoon":
+            surge += 0.50
+        if is_rush_hour:
+            surge += 0.25
+
+        final_fare = int(math.ceil(base * surge))
+        # CNG does not have student concession
+        return final_fare, final_fare, round(surge, 2)
+
+    @classmethod
     def calculate_multimodal_breakdown(
         cls,
         from_hub: str,
@@ -319,7 +353,7 @@ class DhakaFareEngine:
         card_type: str = "single_journey"
     ) -> Dict[str, Any]:
         """
-        Produces an all-in-one multi-modal fare breakdown comparing Bus, Metro, Leguna, and Rickshaw.
+        Produces an all-in-one multi-modal fare breakdown comparing Bus, Metro, Leguna, Rickshaw, and CNG.
         Includes statutory citations, exact DMTCL rules, and list of direct buses serving the route.
         """
         # Bus
@@ -338,6 +372,11 @@ class DhakaFareEngine:
         # Rickshaw
         rick_reg, rick_stud, surge = cls.calculate_rickshaw_fare(
             from_hub, to_hub, distance_km, weather=weather, is_rush_hour=is_rush_hour
+        )
+
+        # CNG Auto-Rickshaw
+        cng_reg, cng_stud, cng_surge = cls.calculate_cng_fare(
+            distance_km, weather=weather, is_rush_hour=is_rush_hour
         )
 
         modes = {
@@ -384,6 +423,15 @@ class DhakaFareEngine:
                 "student_discount_applied": False,
                 "rate_formula": f"Base distance + surge ({surge}x)",
                 "note": f"Weather={weather}, RushHour={is_rush_hour}. Rickshaws do not give student half-pass."
+            },
+            "cng": {
+                "available": True,
+                "regular_fare_bdt": cng_reg,
+                "student_fare_bdt": cng_stud,
+                "selected_fare_bdt": cng_reg,
+                "student_discount_applied": False,
+                "rate_formula": f"40 BDT base (2 km) + 12 BDT/km + surge ({cng_surge}x)",
+                "note": "BRTA regulated CNG Auto-rickshaw meter rate with Dhaka traffic waiting factor."
             }
         }
 
