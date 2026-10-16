@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Phone, Shield, LifeBuoy, AlertCircle } from 'lucide-react';
+import { Phone, Shield, LifeBuoy, AlertCircle, Compass } from 'lucide-react';
 import { STATIC_EMERGENCY_CONTACTS } from '../data/staticData';
 import { I18N } from '../utils/localization';
 
@@ -9,50 +9,61 @@ export default function EmergencyHelpline({ lang = 'bn', isHome = true }) {
   const t = I18N[lang] || I18N.bn;
 
   if (!isHome) {
-    // Clean, minimal copyright strip on all inner tabs
     return (
-      <footer className="w-full py-6 mt-12 border-t border-slate-800/80 text-center text-xs text-slate-500">
-        <p>© 2026 DhakaPath — INIF National IT Fest Smart City Hackathon. All rights reserved.</p>
-        <p className="text-[11px] text-slate-600 mt-1">
-          Open Tech Stack: Next.js 14, FastAPI, NetworkX, Leaflet (OpenStreetMap Free), Google Gemini AI.
+      <footer className="w-full py-8 mt-12 border-t-2 border-[#c69429]/30 text-center font-anek text-xs text-[#dfcfb2] bg-[#14100c]/80">
+        <p className="font-rickshaw text-base text-[#f6d16f]">
+          © ২০২৬ ঢাকা-পাথ — আইএআইটি জাতীয় আইটি উৎসব হ্যাকাথন। সর্বস্বত্ব সংরক্ষিত।
+        </p>
+        <p className="text-[11px] text-[#9e8a76] mt-1 font-mono">
+          Open Tech Stack: Next.js 14, Leaflet.js (OpenStreetMap Free), FastAPI, Google Gemini AI.
         </p>
       </footer>
     );
   }
 
-  // Dedicated emergency contact/helpline strip with 1-tap phone dialer exclusively on Homepage
   return (
-    <div className="w-full my-8">
-      <div className="glass-panel p-5 border border-rose-500/30 bg-slate-900/80">
-        <div className="flex items-center gap-2.5 mb-4">
-          <div className="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold">
-            <Phone className="w-4 h-4" />
+    <div className="w-full my-10 space-y-4">
+      {/* Emergency Contact Strip */}
+      <div className="heritage-card p-5 sm:p-6 border-2 border-[#b83a2e]/60 bg-gradient-to-r from-[#1c1511] via-[#241713] to-[#1c1511] shadow-2xl">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-[#c69429]/30">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#b83a2e]/30 border border-[#b83a2e] flex items-center justify-center text-[#f6d16f] shadow-md">
+              <Phone className="w-5 h-5 text-[#f6d16f]" />
+            </div>
+            <div>
+              <h3 className="font-rickshaw text-2xl text-[#f6d16f] rickshaw-text-pop">
+                {t.emergencyTitle}
+              </h3>
+              <p className="font-anek text-xs sm:text-sm text-[#dfcfb2]">
+                {lang === 'bn' 
+                  ? 'সড়ক দুর্ঘটনা, জলজট উদ্ধার, সদরঘাট নদীপথ ও ট্রাফিক সহায়তায় ১-ট্যাপে সরাসরি কল করুন' 
+                  : '1-tap phone dialer for traffic emergencies, flood rescue & police assistance'}
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-base font-extrabold text-white">{t.emergencyTitle}</h3>
-            <p className="text-xs text-slate-400">
-              {lang === 'bn' ? 'যেকোনো আকস্মিক সড়ক দুর্ঘটনা, জলজট উদ্ধার বা পুলিশি সহায়তায় ১-ট্যাপে কল করুন' : '1-tap phone dialer for traffic emergencies, flood rescue & police assistance'}
-            </p>
+
+          <div className="text-[11px] font-anek font-bold text-[#f6d16f] bg-black/40 px-3 py-1 rounded-xl border border-[#c69429]/40">
+            ★ ২৪ ঘণ্টা সার্বক্ষণিক সচল
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
           {STATIC_EMERGENCY_CONTACTS.map((c, idx) => (
             <a
               key={idx}
               href={`tel:${c.phone}`}
-              className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 hover:border-rose-500/50 hover:bg-rose-950/20 transition-all flex items-center justify-between group active:scale-95"
+              className="p-4 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/30 hover:border-[#f6d16f] hover:bg-[#1a1410] transition-all flex items-center justify-between group active:scale-95 shadow-md"
             >
               <div>
-                <div className="text-xs font-bold text-white group-hover:text-rose-300 transition-colors">
+                <div className="font-anek text-sm font-extrabold text-[#fbf8f1] group-hover:text-[#f6d16f] transition-colors">
                   {lang === 'bn' ? c.name_bn : c.name}
                 </div>
-                <div className="text-[10px] text-slate-400 mt-0.5 line-clamp-1">
+                <div className="font-anek text-[11px] text-[#dfcfb2] mt-0.5 line-clamp-1">
                   {c.desc}
                 </div>
               </div>
 
-              <div className="px-2.5 py-1 rounded-lg bg-rose-500/20 text-rose-400 text-xs font-black shrink-0 ml-2 group-hover:bg-rose-500 group-hover:text-white transition-all">
+              <div className="px-3 py-1 rounded-lg bg-[#b83a2e] text-[#fbf8f1] text-xs font-mono font-black shrink-0 ml-2 group-hover:bg-[#f6d16f] group-hover:text-[#120e0b] transition-all shadow-md">
                 {c.phone}
               </div>
             </a>
@@ -60,8 +71,21 @@ export default function EmergencyHelpline({ lang = 'bn', isHome = true }) {
         </div>
       </div>
 
-      <footer className="w-full py-6 mt-6 border-t border-slate-800/80 text-center text-xs text-slate-500">
-        <p>© 2026 DhakaPath — Live Urban Transit & Route Intelligence. INIF 2026 Smart City Hackathon.</p>
+      {/* Classic Vintage Postal Card Footer */}
+      <footer className="w-full py-8 border-t-2 border-[#c69429]/30 text-center font-anek text-xs text-[#dfcfb2]">
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <span className="text-xl">🛺</span>
+          <span className="font-rickshaw text-xl text-[#f6d16f] rickshaw-text-pop">
+            ঢাকা-পাথ (DhakaPath)
+          </span>
+          <span className="text-xl">🛺</span>
+        </div>
+        <p className="text-xs text-[#dfcfb2]">
+          পুরান ঢাকার ৪০০ বছরের সাংস্কৃতিক ঐতিহ্য, রিকশা আর্ট ও আধুনিক মেট্রোরেল ট্রানজিট ইন্টেলিজেন্স।
+        </p>
+        <p className="text-[11px] text-[#9e8a76] mt-1 font-mono">
+          IAIT National IT Fest 2026 | Theme: Smart City | DhakaPath
+        </p>
       </footer>
     </div>
   );

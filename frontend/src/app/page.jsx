@@ -16,6 +16,7 @@ import ChatDrawer from '../components/ChatDrawer';
 import RideShareBoard from '../components/RideShareBoard';
 import NoticeScanner from '../components/NoticeScanner';
 import EmergencyHelpline from '../components/EmergencyHelpline';
+import DhakaCommuteHeritageShowcase from '../components/DhakaCommuteHeritageShowcase';
 
 import { STATIC_HUBS, STATIC_ALERTS } from '../data/staticData';
 
@@ -155,6 +156,46 @@ export default function Home() {
             student_fare_bdt: 15,
             surge_multiplier: 1.0,
             landmark_instructions: `Board at ${orig} bus counter. 50% Student discount applies with 10 BDT min floor.`
+          }
+        ]
+      },
+      {
+        id: 'opt-heritage',
+        title: `Puran Dhaka Rickshaw & Connector Route (${orig} ➔ ${dest})`,
+        title_bn: `পুরান ঢাকা হেরিটেজ রিকশা ও কানেক্টর রুট`,
+        type_badge: 'Heritage & Detour Pick',
+        total_duration_mins: 38,
+        total_regular_fare: 45,
+        total_student_fare: 35,
+        transfers: 1,
+        is_recommended: false,
+        is_detour: weather === 'rain',
+        legs: [
+          {
+            leg_number: 1,
+            mode: 'bus',
+            line_name: 'Bihanga Paribahan',
+            from_hub: orig,
+            to_hub: 'Shahbagh',
+            distance_km: 5.2,
+            duration_mins: 22,
+            regular_fare_bdt: 20,
+            student_fare_bdt: 10,
+            surge_multiplier: 1.0,
+            landmark_instructions: `Board near ${orig} main counter.`
+          },
+          {
+            leg_number: 2,
+            mode: 'rickshaw',
+            line_name: 'Painted Heritage Connector Rickshaw',
+            from_hub: 'Shahbagh',
+            to_hub: dest,
+            distance_km: 3.1,
+            duration_mins: 16,
+            regular_fare_bdt: 25,
+            student_fare_bdt: 25,
+            surge_multiplier: weather === 'rain' ? 1.5 : 1.0,
+            landmark_instructions: `Alight at Shahbagh, hire painted connector rickshaw to ${dest}.`
           }
         ]
       }
@@ -325,20 +366,9 @@ export default function Home() {
         {/* Living Stats Bar */}
         <StatsBar lang={lang} />
 
-        {/* TAB 1: HOME (Map + Search + Results) */}
+        {/* TAB 1: HOME (Search + Results + Map + Heritage Showcase + Simulator) */}
         {currentTab === 'home' && (
           <div>
-            {/* Interactive Leaflet Map View */}
-            <MapView
-              hubs={hubs}
-              activeAlerts={alerts}
-              activeRoute={selectedRoute}
-              lang={lang}
-              onSelectHub={(hubName) => {
-                if (hubName !== origin) setDestination(hubName);
-              }}
-            />
-
             {/* Route Search Engine */}
             <RouteSearch
               origin={origin}
@@ -357,7 +387,7 @@ export default function Home() {
               lang={lang}
             />
 
-            {/* Route Results & Detour Showcase */}
+            {/* Route Results: Focused Large-Print Bangladesh Postcard Commute Cards */}
             <RouteResults
               routes={routes}
               origin={origin}
@@ -368,6 +398,20 @@ export default function Home() {
               onSelectRoute={(r) => setSelectedRoute(r)}
               onOpenFareBreakdown={(r) => setFareModalRoute(r)}
             />
+
+            {/* Interactive Leaflet Map View */}
+            <MapView
+              hubs={hubs}
+              activeAlerts={alerts}
+              activeRoute={selectedRoute}
+              lang={lang}
+              onSelectHub={(hubName) => {
+                if (hubName !== origin) setDestination(hubName);
+              }}
+            />
+
+            {/* Dhaka Cultural Heritage & Commute Showcase */}
+            <DhakaCommuteHeritageShowcase lang={lang} />
 
             {/* Quick Scenario Simulator Shortcut */}
             <ScenarioSimulator

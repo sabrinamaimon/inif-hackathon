@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { STATIC_HUBS } from '../data/staticData';
-import { MapPin, Navigation, Droplets, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { MapPin, Navigation, Droplets, AlertTriangle, ShieldCheck, Compass } from 'lucide-react';
 import { toBnDigits } from '../utils/localization';
 
 export default function MapView({ 
@@ -34,13 +34,13 @@ export default function MapView({
       if (!mapInstanceRef.current) {
         // Center around Dhaka center: Lat 23.777176, Lng 90.399452, Zoom: 12
         const map = L.map(mapContainerRef.current, {
-          center: [23.7772, 90.3995],
+          center: [23.7550, 90.4050],
           zoom: 12,
           zoomControl: true,
           attributionControl: false
         });
 
-        // OpenStreetMap free tile server (100% free, no API key required)
+        // CartoDB Voyager (free, no API key required, vintage cartography aesthetic)
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
           maxZoom: 19,
           subdomains: 'abcd',
@@ -65,8 +65,11 @@ export default function MapView({
         const isWaterlogged = activeAlerts.some(a => a.hub === name && a.type === 'waterlogging' && a.is_active);
         const isBlockaded = activeAlerts.some(a => a.hub === name && a.type === 'blockade' && a.is_active);
         const isMetro = data.is_metro_station;
+        const isRiverport = name === 'Sadarghat';
+        const isLalbagh = name === 'Lalbagh';
 
-        let badgeBg = isWaterlogged ? '#ef4444' : isBlockaded ? '#f59e0b' : isMetro ? '#059669' : '#2563eb';
+        let badgeBg = isWaterlogged ? '#b83a2e' : isBlockaded ? '#e2b448' : isMetro ? '#0e6e41' : isRiverport ? '#1c4568' : '#292019';
+        let badgeIcon = isWaterlogged ? '💧' : isBlockaded ? '⚠️' : isMetro ? '🚇' : isRiverport ? '⛵' : isLalbagh ? '🏛️' : '🛺';
         let pulseClass = (isWaterlogged || isBlockaded) ? 'animate-ping' : '';
 
         const customIcon = L.divIcon({
@@ -74,18 +77,18 @@ export default function MapView({
           html: `
             <div style="position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer;">
               ${(isWaterlogged || isBlockaded) ? `
-                <div style="position: absolute; width: 34px; height: 34px; border-radius: 50%; background: ${badgeBg}; opacity: 0.4;" class="${pulseClass}"></div>
+                <div style="position: absolute; width: 36px; height: 36px; border-radius: 50%; background: ${badgeBg}; opacity: 0.45;" class="${pulseClass}"></div>
               ` : ''}
-              <div style="background: ${badgeBg}; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
-                ${isMetro ? 'M' : isWaterlogged ? '💧' : isBlockaded ? '⚠️' : '●'}
+              <div style="background: ${badgeBg}; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; border: 2.5px solid #f6d16f; box-shadow: 0 4px 12px rgba(0,0,0,0.6);">
+                ${badgeIcon}
               </div>
-              <div style="background: rgba(15, 23, 42, 0.9); color: #f8fafc; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 6px; margin-top: 3px; white-space: nowrap; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 2px 6px rgba(0,0,0,0.4);">
-                ${lang === 'bn' ? data.name_bn : data.name}
+              <div style="background: #18130f; color: #f6d16f; font-family: 'Anek Bangla', sans-serif; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 8px; margin-top: 3px; white-space: nowrap; border: 1.5px solid #c69429; box-shadow: 0 3px 8px rgba(0,0,0,0.5);">
+                ${lang === 'bn' ? (data.name_bn || data.name) : data.name}
               </div>
             </div>
           `,
-          iconSize: [80, 48],
-          iconAnchor: [40, 24]
+          iconSize: [90, 52],
+          iconAnchor: [45, 26]
         });
 
         const marker = L.marker([data.lat, data.lng], { icon: customIcon }).addTo(map);
@@ -95,26 +98,28 @@ export default function MapView({
         });
 
         const statusText = isWaterlogged 
-          ? (lang === 'bn' ? '⚠️ জলজট সতর্কতা: নিচু গাড়ি চলাচল বন্ধ' : '⚠️ Waterlogging: Surface transport stalled')
+          ? (lang === 'bn' ? '⚠️ জলজট সতর্কতা: নিচু রাস্তায় যান চলাচল ব্যাহত' : '⚠️ Waterlogging: Surface transport stalled')
           : isBlockaded 
-          ? (lang === 'bn' ? '🚫 ব্যারিকেড সতর্কতা: মেট্রোরেল চালু' : '🚫 Blockade: Metro operational')
+          ? (lang === 'bn' ? '🚫 ব্যারিকেড সতর্কতা: মেট্রোরেল বা গলিপথে রিকশা চালু' : '🚫 Blockade: Metro & Rickshaws operational')
           : isMetro 
-          ? (lang === 'bn' ? 'মেট্রোরেল (MRT-6) স্টেশন সংযুক্ত' : 'MRT-6 Metro Station Connected')
-          : (lang === 'bn' ? 'স্বাভাবিক ট্রানজিট প্রবাহ' : 'Normal Transit Flow');
+          ? (lang === 'bn' ? '🚇 এমআরটি-৬ মেট্রোরেল স্টেশন সংযুক্ত' : 'MRT-6 Metro Station Connected')
+          : isRiverport
+          ? (lang === 'bn' ? '⛵ সদরঘাট লঞ্চ ও বুড়িগঙ্গা খেয়া ঘাট' : 'Sadarghat Launch & Riverport')
+          : (lang === 'bn' ? 'সচল ট্রানজিট করিডোর' : 'Normal Transit Corridor');
 
         marker.bindPopup(`
-          <div style="padding: 4px;">
-            <div style="font-weight: 800; font-size: 14px; color: #10b981; margin-bottom: 2px;">
-              ${lang === 'bn' ? data.name_bn : data.name}
+          <div style="padding: 6px; font-family: 'Hind Siliguri', sans-serif;">
+            <div style="font-weight: 800; font-size: 15px; color: #f6d16f; margin-bottom: 2px;">
+              ${lang === 'bn' ? (data.name_bn || data.name) : data.name}
             </div>
-            <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">
+            <div style="font-size: 11px; color: #dfcfb2; margin-bottom: 6px;">
               ${data.zone}
             </div>
-            <div style="font-size: 12px; font-weight: 600; color: #f8fafc; margin-bottom: 6px;">
+            <div style="font-size: 12px; font-weight: 700; color: #fbf8f1; margin-bottom: 6px;">
               ${statusText}
             </div>
-            <div style="font-size: 10px; color: #cbd5e1;">
-              <strong>${lang === 'bn' ? 'ল্যান্ডমার্ক:' : 'Landmarks:'}</strong> ${data.landmarks ? data.landmarks.join(', ') : 'Main Intersection'}
+            <div style="font-size: 11px; color: #cbb692;">
+              <strong>${lang === 'bn' ? 'ল্যান্ডমার্ক:' : 'Landmarks:'}</strong> ${data.landmarks ? data.landmarks.join(', ') : 'Main Road'}
             </div>
           </div>
         `);
@@ -136,10 +141,10 @@ export default function MapView({
 
         if (latlngs.length >= 2) {
           polylineRef.current = L.polyline(latlngs, {
-            color: activeRoute.is_detour ? '#ef4444' : '#10b981',
+            color: activeRoute.is_detour ? '#b83a2e' : '#f6d16f',
             weight: 5,
             opacity: 0.9,
-            dashArray: activeRoute.is_detour ? '8, 8' : undefined
+            dashArray: activeRoute.is_detour ? '8, 8' : null
           }).addTo(map);
 
           map.fitBounds(polylineRef.current.getBounds(), { padding: [50, 50] });
@@ -153,38 +158,50 @@ export default function MapView({
   }, [isClient, hubs, activeAlerts, activeRoute, lang]);
 
   return (
-    <div className="relative w-full h-[360px] sm:h-[450px] lg:h-[500px] glass-panel overflow-hidden border border-emerald-500/30">
-      {/* Map Header Strip */}
-      <div className="absolute top-3 left-3 z-[400] flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/90 backdrop-blur-md border border-slate-700/80 text-xs text-white shadow-lg">
-        <Navigation className="w-3.5 h-3.5 text-emerald-400" />
-        <span className="font-bold">{lang === 'bn' ? 'ঢাকা লাইভ ট্রানজিট গ্রিড' : 'Dhaka Live Transit Grid'}</span>
-        <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold border border-emerald-500/40">
-          OpenStreetMap Free
-        </span>
+    <div className="heritage-card p-4 my-6 border-2 border-[#c69429]/50 shadow-2xl relative overflow-hidden bg-[#18130f]">
+      {/* Map Header */}
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-3 pb-2 border-b border-[#c69429]/30">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-[#b83a2e]/30 border border-[#b83a2e] flex items-center justify-center text-[#f6d16f]">
+            <Compass className="w-4 h-4" />
+          </div>
+          <div>
+            <h3 className="font-rickshaw text-xl text-[#f6d16f] rickshaw-text-pop">
+              {lang === 'bn' ? 'ঢাকা লাইভ ট্রানজিট ও হেরিটেজ ম্যাপ' : 'Dhaka Live Transit & Heritage Map'}
+            </h3>
+            <p className="font-anek text-xs text-[#dfcfb2]">
+              {lang === 'bn' ? 'ওপেনস্ট্রিটম্যাপ ও কার্টোগ্রাফিক শৈলীতে ১৬টি নোড ও রুট প্রদর্শন' : 'Interactive node graph covering 16 major Dhaka hubs'}
+            </p>
+          </div>
+        </div>
+
+        {/* Legend */}
+        <div className="flex items-center gap-3 text-[11px] font-anek font-bold text-[#dfcfb2] bg-[#120e0b] px-3 py-1.5 rounded-xl border border-[#c69429]/40">
+          <span className="flex items-center gap-1 text-[#6ee7b7]">
+            <span>🚇</span>
+            <span>মেট্রোরেল</span>
+          </span>
+          <span className="flex items-center gap-1 text-[#f6d16f]">
+            <span>🛺</span>
+            <span>বাস/রিকশা</span>
+          </span>
+          <span className="flex items-center gap-1 text-[#7dd3fc]">
+            <span>⛵</span>
+            <span>সদরঘাট খেয়া</span>
+          </span>
+          <span className="flex items-center gap-1 text-[#d6645a]">
+            <span>💧</span>
+            <span>জলজট</span>
+          </span>
+        </div>
       </div>
 
-      {/* Map Legend */}
-      <div className="absolute bottom-3 left-3 z-[400] flex flex-wrap items-center gap-2 px-3 py-2 rounded-xl bg-slate-900/90 backdrop-blur-md border border-slate-700/80 text-[11px] text-slate-300 shadow-lg max-w-[90%]">
-        <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-          <span>{lang === 'bn' ? 'মেট্রোরেল (MRT-6)' : 'MRT-6 Metro'}</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
-          <span>{lang === 'bn' ? 'বাস ও লেগুনা' : 'Bus & Leguna'}</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
-          <span>{lang === 'bn' ? 'জলজট' : 'Waterlogging'}</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
-          <span>{lang === 'bn' ? 'ব্যারিকেড' : 'Blockade'}</span>
-        </div>
-      </div>
-
-      {/* Leaflet Canvas Container */}
-      <div ref={mapContainerRef} className="w-full h-full" />
+      {/* Map Canvas Container */}
+      <div 
+        ref={mapContainerRef} 
+        style={{ height: '380px', width: '100%' }}
+        className="rounded-xl border border-[#c69429]/30 overflow-hidden shadow-inner"
+      />
     </div>
   );
 }

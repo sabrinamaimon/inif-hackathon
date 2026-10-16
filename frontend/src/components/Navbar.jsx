@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Menu, Navigation, AlertTriangle, Cpu, Users, Bus, Globe, MapPin, Activity } from 'lucide-react';
+import { Menu, Navigation, AlertTriangle, Cpu, Users, Bus, Globe, MapPin, Sparkles } from 'lucide-react';
 import { I18N, toBnDigits } from '../utils/localization';
 
 export default function Navbar({ 
@@ -23,30 +23,57 @@ export default function Navbar({
   ];
 
   return (
-    <header className="w-full sticky top-0 z-50 glass-panel" style={{ borderRadius: '0 0 20px 20px', borderTop: 'none' }}>
+    <header className="w-full sticky top-0 z-50 bg-[#14100c]/95 backdrop-blur-md border-b border-[#c69429]/40 shadow-2xl">
+      {/* Top Air Mail Postal Ribbon */}
+      <div className="w-full bg-gradient-to-r from-[#15453b] via-[#b83a2e] to-[#1c4568] px-4 py-1 flex items-center justify-between text-[11px] text-[#fbf8f1] font-semibold tracking-wider select-none border-b border-[#c69429]/30">
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#f6d16f] animate-ping" />
+          <span className="font-regal uppercase tracking-widest text-[10px] text-[#f6d16f]">
+            ★ AIR MAIL বিমান ডাক • DHAKA 2026 ISSUE ★
+          </span>
+        </div>
+        <div className="hidden sm:flex items-center gap-4 text-[10px] text-[#f5eedf]/90 font-mono">
+          <span>COORDINATES: 23.6850° N, 90.3563° E</span>
+          <span className="text-[#f6d16f]">THE LAND OF RIVERS & RICKSHAWS</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="px-2 py-0.2 rounded bg-black/30 border border-[#f6d16f]/40 text-[#f6d16f] font-mono text-[9px]">
+            POST 85 BDT
+          </span>
+        </div>
+      </div>
+
       {/* ================= DESKTOP HEADER (>768px) ================= */}
-      <div className="hidden md:flex items-center justify-between px-6 py-3.5 max-w-7xl mx-auto">
-        {/* Brand Logo */}
+      <div className="hidden md:flex items-center justify-between px-6 py-3 max-w-7xl mx-auto">
+        {/* Brand Logo with Rickshaw Art Styling */}
         <div 
-          className="flex items-center gap-3 cursor-pointer select-none"
+          className="flex items-center gap-3.5 cursor-pointer select-none group"
           onClick={() => setCurrentTab('home')}
         >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/30">
-            <Navigation className="w-5 h-5 text-slate-950 font-bold" />
+          {/* Rickshaw Art Painted Badge Icon */}
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-[#b83a2e] to-[#e2b448] p-0.5 shadow-lg shadow-[#b83a2e]/30 group-hover:scale-105 transition-transform">
+            <div className="w-full h-full rounded-[10px] bg-[#1a1410] flex items-center justify-center border border-[#f6d16f]/60">
+              <span className="text-xl">🛺</span>
+            </div>
           </div>
+
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xl font-extrabold tracking-tight text-white">{t.brandName}</span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30">
-                v1.0 Live
+              <span className="font-rickshaw text-2xl tracking-normal text-[#f6d16f] rickshaw-text-pop">
+                {lang === 'bn' ? 'ঢাকা-পাথ' : 'DhakaPath'}
+              </span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#b83a2e]/30 text-[#f6d16f] font-anek font-bold border border-[#c69429]/50 shadow-sm">
+                {lang === 'bn' ? 'পুরান ঢাকা সংস্করণ' : 'Heritage Edition'}
               </span>
             </div>
-            <p className="text-xs text-slate-400">{t.tagline}</p>
+            <p className="text-[11px] font-anek text-[#dfcfb2] -mt-1 font-medium">
+              {lang === 'bn' ? 'লাইভ আরবান ট্রানজিট ও ঐতিহ্যবাহী রুট ইন্টেলিজেন্স' : 'Live Urban Transit & Heritage Commute Intelligence'}
+            </p>
           </div>
         </div>
 
-        {/* Desktop Nav Tabs */}
-        <nav className="flex items-center gap-1.5 bg-slate-900/60 p-1.5 rounded-2xl border border-slate-800/80">
+        {/* Desktop Nav Tabs with Antique Postal/Brass Buttons */}
+        <nav className="flex items-center gap-1.5 bg-[#1e1712]/90 p-1.5 rounded-2xl border border-[#c69429]/30 shadow-inner">
           {navLinks.map((tab) => {
             const Icon = tab.icon;
             const isActive = currentTab === tab.id;
@@ -54,16 +81,16 @@ export default function Navbar({
               <button
                 key={tab.id}
                 onClick={() => setCurrentTab(tab.id)}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 relative ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-200 relative ${
                   isActive 
-                    ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-md shadow-emerald-600/30 font-bold' 
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                    ? 'bg-gradient-to-r from-[#b83a2e] to-[#96281e] text-[#fbf8f1] border border-[#f6d16f] shadow-md shadow-[#b83a2e]/40 font-anek' 
+                    : 'text-[#dfcfb2] hover:text-[#fbf8f1] hover:bg-[#2a2019]'
                 }`}
               >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-emerald-400'}`} />
-                <span>{tab.label}</span>
+                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#f6d16f]' : 'text-[#c69429]'}`} />
+                <span className="font-anek text-xs">{tab.label}</span>
                 {tab.badge !== undefined && tab.badge > 0 && (
-                  <span className="ml-1 px-1.5 py-0.2 text-[10px] font-bold rounded-full bg-rose-500 text-white animate-pulse">
+                  <span className="ml-1 px-1.5 py-0.2 text-[10px] font-black rounded-full bg-[#f6d16f] text-[#14100c] animate-pulse">
                     {lang === 'bn' ? toBnDigits(tab.badge) : tab.badge}
                   </span>
                 )}
@@ -74,67 +101,61 @@ export default function Navbar({
 
         {/* Location & Language Switcher */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-300 font-medium">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-            <span>{t.cityStatus}</span>
+          {/* Shapla Chattar Enamel Badge */}
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#15453b]/40 border border-[#2a6f62] text-xs text-[#f6d16f] font-anek font-semibold">
+            <span className="w-2 h-2 rounded-full bg-[#f6d16f] animate-pulse" />
+            <span>{lang === 'bn' ? '১৬টি হাব সচল (সদরঘাট-উত্তরা)' : '16 Active Hubs'}</span>
           </div>
 
           <button
             onClick={() => setLang(lang === 'bn' ? 'en' : 'bn')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition-all hover:border-emerald-500"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#2a2019] hover:bg-[#3d3026] text-[#f6d16f] text-xs font-anek font-bold border border-[#c69429]/50 transition-all active:scale-95 shadow-md"
             title="Toggle Language"
           >
-            <Globe className="w-3.5 h-3.5 text-emerald-400" />
+            <Globe className="w-3.5 h-3.5 text-[#f6d16f]" />
             <span>{lang === 'bn' ? 'English' : 'বাংলা'}</span>
           </button>
         </div>
       </div>
 
       {/* ================= MOBILE HEADER (<768px) ================= */}
-      {/* 2-row layout per specifications */}
-      <div className="md:hidden flex flex-col px-4 py-2.5 gap-2">
-        {/* Row 1: Left Menu Button (38x38px, emerald tint, strokeWidth 2.4), Center Brand, Right Language Pill */}
+      <div className="md:hidden flex flex-col px-4 py-2.5 gap-2 bg-[#17120e]">
         <div className="flex items-center justify-between w-full">
-          {/* Top-LEFT: 3-line hamburger menu button */}
           <button
             onClick={() => setIsDrawerOpen(true)}
             aria-label="Open Mobile Menu"
             style={{ width: '38px', height: '38px' }}
-            className="flex items-center justify-center rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-400 active:scale-95 transition-all shadow-sm shadow-emerald-500/20"
+            className="flex items-center justify-center rounded-xl bg-[#292019] border border-[#c69429]/50 text-[#f6d16f] active:scale-95 transition-all shadow-md"
           >
-            <Menu className="w-5 h-5 text-emerald-400" strokeWidth={2.4} />
+            <Menu className="w-5 h-5 text-[#f6d16f]" strokeWidth={2.4} />
           </button>
 
-          {/* Brand in CENTER */}
           <div 
             className="flex items-center gap-2 cursor-pointer"
             onClick={() => setCurrentTab('home')}
           >
-            <div className="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center">
-              <Navigation className="w-4 h-4 text-slate-950 font-bold" />
-            </div>
-            <span className="text-base font-extrabold text-white tracking-tight">{t.brandName}</span>
+            <span className="text-xl">🛺</span>
+            <span className="font-rickshaw text-xl text-[#f6d16f] rickshaw-gold-pop">{t.brandName}</span>
           </div>
 
-          {/* Top-RIGHT: Language Switcher pill */}
           <button
             onClick={() => setLang(lang === 'bn' ? 'en' : 'bn')}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-slate-800 border border-emerald-500/40 text-slate-200 text-xs font-bold active:scale-95 transition-all"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[#292019] border border-[#c69429]/50 text-[#f6d16f] text-xs font-anek font-bold active:scale-95 transition-all"
           >
-            <Globe className="w-3.5 h-3.5 text-emerald-400" />
+            <Globe className="w-3.5 h-3.5 text-[#f6d16f]" />
             <span>{lang === 'bn' ? 'ENG' : 'বাং'}</span>
           </button>
         </div>
 
-        {/* Row 2: Location & Status pill spanning full width */}
-        <div className="w-full flex items-center justify-between px-3 py-1.5 rounded-xl bg-emerald-950/50 border border-emerald-500/30 text-[11px] text-emerald-300 font-medium">
+        {/* Row 2: Live status pill */}
+        <div className="w-full flex items-center justify-between px-3 py-1 rounded-xl bg-[#15453b]/50 border border-[#2a6f62] text-[11px] text-[#f6d16f] font-anek">
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="font-semibold">{t.liveCityStatus}</span>
+            <span className="w-2 h-2 rounded-full bg-[#f6d16f] animate-pulse" />
+            <span className="font-bold">{lang === 'bn' ? 'ঢাকা লাইভ ট্রানজিট গ্রিড: সচল' : 'Live Dhaka Grid: Normal'}</span>
           </div>
-          <div className="flex items-center gap-1 text-slate-400 text-[10px]">
-            <MapPin className="w-3 h-3 text-emerald-400" />
-            <span>{t.cityStatus}</span>
+          <div className="flex items-center gap-1 text-[#dfcfb2] text-[10px]">
+            <MapPin className="w-3 h-3 text-[#f6d16f]" />
+            <span>{lang === 'bn' ? 'সদরঘাট ও লালবাগ অন্তর্ভুক্ত' : 'Sadarghat & Lalbagh Live'}</span>
           </div>
         </div>
       </div>

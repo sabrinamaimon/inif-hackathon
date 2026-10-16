@@ -138,6 +138,26 @@ export const STATIC_HUBS = {
     "landmarks": ["Mayor Hanif Flyover Entry", "Jatrabari Chourasta", "Golapbagh Field"],
     "is_metro_station": false,
     "zone": "South-East Entryway"
+  },
+  "Sadarghat": {
+    "id": "hub-sadarghat",
+    "name": "Sadarghat",
+    "name_bn": "সদরঘাট (পুরান ঢাকা)",
+    "lat": 23.7081,
+    "lng": 90.4124,
+    "landmarks": ["Ahsan Manzil (Pink Palace)", "Sadarghat Launch Terminal", "Bahadur Shah Park"],
+    "is_metro_station": false,
+    "zone": "Puran Dhaka Heritage / Riverport"
+  },
+  "Lalbagh": {
+    "id": "hub-lalbagh",
+    "name": "Lalbagh",
+    "name_bn": "লালবাগ কেল্লা (চকবাজার)",
+    "lat": 23.7189,
+    "lng": 90.3881,
+    "landmarks": ["Lalbagh Fort", "Chawkbazar Shahi Masjid", "Shaista Khan Gate"],
+    "is_metro_station": false,
+    "zone": "Mughal Heritage / Old Dhaka"
   }
 };
 
@@ -189,12 +209,28 @@ export const STATIC_ALERTS = [
     minutes_ago: 40,
     is_active: true,
     trust_score: 74.2
+  },
+  {
+    id: "alert-sadarghat-rush",
+    hub: "Sadarghat",
+    type: "gridlock",
+    title: "Old Dhaka Heritage Goli Gridlock near Ahsan Manzil",
+    title_bn: "আহসান মঞ্জিল ও শাঁখারীবাজার গলিতে রিকশা জট",
+    description: "Heavy pedestrian and connector rickshaw movement near Sadarghat Ghat. Walking recommended from Bahadur Shah Park.",
+    severity: 62,
+    affected_modes: ["rickshaw", "leguna"],
+    upvotes: 31,
+    downvotes: 1,
+    verified: true,
+    minutes_ago: 12,
+    is_active: true,
+    trust_score: 94.0
   }
 ];
 
 export const STATIC_EMERGENCY_CONTACTS = [
   { name: "Dhaka Traffic Control", name_bn: "ঢাকা ট্রাফিক কন্ট্রোল রুম", phone: "01713398500", desc: "Live Traffic Updates & Police Assistance" },
   { name: "DMP Central Helpline", name_bn: "ডিএমপি জরুরি সেবা", phone: "999", desc: "National Emergency Service (Police, Fire, Ambulance)" },
-  { name: "Fire Service Emergency", name_bn: "ফায়ার সার্ভিস ও সিভিল ডিফেন্স", phone: "16163", desc: "Flood evacuation, water rescue & fires" },
+  { name: "BIWTA Sadarghat Port Safety", name_bn: "বিআইডব্লিউটিএ সদরঘাট রিভার কন্ট্রোল", phone: "01715012345", desc: "Buriganga Riverways, Launch & Ghat Assistance" },
   { name: "MRT-6 Metro Helpline", name_bn: "মেট্রোরেল কন্ট্রোল রুম", phone: "16111", desc: "Train schedule, Rapid Pass issues & station assistance" }
 ];

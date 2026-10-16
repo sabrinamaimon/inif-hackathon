@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, Mic, CloudRain, Clock, GraduationCap, User, ArrowRightLeft, Sparkles } from 'lucide-react';
+import { Search, Mic, CloudRain, Clock, GraduationCap, User, ArrowRightLeft, Sparkles, MapPin } from 'lucide-react';
 import { I18N } from '../utils/localization';
 import { STATIC_HUBS } from '../data/staticData';
 import { startSpeechRecognition } from '../utils/speech';
@@ -58,78 +58,86 @@ export default function RouteSearch({
   };
 
   return (
-    <div className="glass-panel p-4 sm:p-5 border border-emerald-500/30 shadow-xl my-4">
-      {/* Title */}
-      <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-800">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
-            <Search className="w-4 h-4" />
+    <div className="heritage-card p-4 sm:p-6 my-6 border-2 border-[#c69429]/50 shadow-2xl relative overflow-hidden bg-[#18130f]">
+      {/* Top Rickshaw Paint Arch & Title */}
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-5 pb-3 border-b border-[#c69429]/30">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#b83a2e] to-[#e2b448] p-0.5 shadow-md">
+            <div className="w-full h-full rounded-[10px] bg-[#1a1410] flex items-center justify-center">
+              <Search className="w-5 h-5 text-[#f6d16f]" />
+            </div>
           </div>
           <div>
-            <h2 className="text-base sm:text-lg font-extrabold text-white">{t.searchTitle}</h2>
-            <p className="text-xs text-slate-400">
-              {lang === 'bn' ? 'মেট্রোরেল, লোকাল বাস, লেগুনা ও রিকশা ভাড়া বিশ্লেষণ' : 'Metro, Bus, Leguna & Rickshaw intelligence'}
+            <h2 className="font-rickshaw text-2xl sm:text-3xl font-bold text-[#f6d16f] tracking-wide rickshaw-text-pop">
+              {t.searchTitle}
+            </h2>
+            <p className="font-anek text-xs sm:text-sm text-[#dfcfb2]">
+              {lang === 'bn' 
+                ? 'মেট্রোরেল, মুড়ির টিন ও লোকাল বাস, লেগুনা এবং কানেক্টর রিকশা ভাড়া বিশ্লেষণ' 
+                : 'Metro Rail, Local Bus, Leguna & Connector Rickshaw Fare Intelligence'}
             </p>
           </div>
         </div>
 
-        {/* Passenger Category Badge Toggle */}
-        <div className="flex items-center gap-1 bg-slate-900/80 p-1 rounded-xl border border-slate-800">
+        {/* Passenger Category Badge Toggle (General vs Student Half-Pass) */}
+        <div className="flex items-center gap-1.5 bg-[#120e0b] p-1 rounded-2xl border border-[#c69429]/40 shadow-inner">
           <button
             type="button"
             onClick={() => setPassengerType('general')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-anek font-bold transition-all ${
               passengerType === 'general'
-                ? 'bg-slate-700 text-white shadow-sm'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-[#2a2019] text-[#fbf8f1] border border-[#c69429] shadow-md'
+                : 'text-[#dfcfb2] hover:text-[#fbf8f1]'
             }`}
           >
-            <User className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="hidden sm:inline">{t.generalCommuter}</span>
-            <span className="sm:hidden">{lang === 'bn' ? 'সাধারণ' : 'General'}</span>
+            <User className="w-3.5 h-3.5 text-[#f6d16f]" />
+            <span>{t.generalCommuter}</span>
           </button>
 
           <button
             type="button"
             onClick={() => setPassengerType('student')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-anek font-bold transition-all ${
               passengerType === 'student'
-                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-gradient-to-r from-[#b83a2e] to-[#891e17] text-[#fbf8f1] border border-[#f6d16f] shadow-lg shadow-[#b83a2e]/40'
+                : 'text-[#dfcfb2] hover:text-[#fbf8f1]'
             }`}
           >
-            <GraduationCap className="w-3.5 h-3.5 text-blue-300" />
-            <span className="hidden sm:inline">{t.studentPass}</span>
-            <span className="sm:hidden">{lang === 'bn' ? 'হাফ-পাস' : 'Student'}</span>
+            <GraduationCap className="w-3.5 h-3.5 text-[#f6d16f]" />
+            <span>{t.studentPass}</span>
           </button>
         </div>
       </div>
 
-      {/* Origin & Destination Selectors */}
-      <div className="grid grid-cols-1 sm:grid-cols-[1fr,auto,1fr] gap-3 items-center mb-4">
+      {/* Origin & Destination Selectors with Swap Button */}
+      <div className="grid grid-cols-1 sm:grid-cols-[1fr,auto,1fr] gap-3 items-center mb-5">
         <div>
-          <label className="block text-xs font-bold text-slate-300 mb-1">
-            {t.originLabel}
+          <label className="block font-anek text-xs font-bold text-[#f6d16f] mb-1.5 flex items-center gap-1.5">
+            <MapPin className="w-3.5 h-3.5 text-[#b83a2e]" />
+            <span>{t.originLabel}</span>
           </label>
           <select
             value={origin}
             onChange={(e) => setOrigin(e.target.value)}
-            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-white text-sm font-semibold focus:border-emerald-500 focus:outline-none transition-all"
+            className="w-full px-4 py-3 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/40 text-[#fbf8f1] text-sm font-anek font-bold focus:border-[#f6d16f] focus:outline-none transition-all shadow-inner"
           >
             {hubNames.map((name) => (
-              <option key={name} value={name}>
-                {lang === 'bn' ? STATIC_HUBS[name].name_bn : name} ({STATIC_HUBS[name].zone})
+              <option key={name} value={name} className="bg-[#1a1410] text-[#fbf8f1]">
+                {STATIC_HUBS[name]?.name_bn 
+                  ? `${STATIC_HUBS[name].name_bn} (${name})` 
+                  : name}
+                {STATIC_HUBS[name]?.is_metro_station ? ' 🚇 [মেট্রো]' : ''}
               </option>
             ))}
           </select>
         </div>
 
-        {/* Swap button */}
-        <div className="flex justify-center sm:pt-5">
+        {/* Swap Button with Rickshaw Bell Accent */}
+        <div className="flex justify-center sm:pt-6">
           <button
             type="button"
             onClick={handleSwap}
-            className="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 flex items-center justify-center active:scale-95 transition-all shadow-sm"
+            className="w-10 h-10 rounded-full bg-[#292019] border-2 border-[#c69429] hover:border-[#f6d16f] text-[#f6d16f] hover:bg-[#3d3026] flex items-center justify-center transition-all shadow-md active:rotate-180 duration-300"
             title="Swap Origin and Destination"
           >
             <ArrowRightLeft className="w-4 h-4" />
@@ -137,117 +145,112 @@ export default function RouteSearch({
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-slate-300 mb-1">
-            {t.destLabel}
+          <label className="block font-anek text-xs font-bold text-[#f6d16f] mb-1.5 flex items-center gap-1.5">
+            <MapPin className="w-3.5 h-3.5 text-[#15453b]" />
+            <span>{t.destLabel}</span>
           </label>
           <select
             value={destination}
             onChange={(e) => setDestination(e.target.value)}
-            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-white text-sm font-semibold focus:border-emerald-500 focus:outline-none transition-all"
+            className="w-full px-4 py-3 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/40 text-[#fbf8f1] text-sm font-anek font-bold focus:border-[#f6d16f] focus:outline-none transition-all shadow-inner"
           >
             {hubNames.map((name) => (
-              <option key={name} value={name}>
-                {lang === 'bn' ? STATIC_HUBS[name].name_bn : name} ({STATIC_HUBS[name].zone})
+              <option key={name} value={name} className="bg-[#1a1410] text-[#fbf8f1]">
+                {STATIC_HUBS[name]?.name_bn 
+                  ? `${STATIC_HUBS[name].name_bn} (${name})` 
+                  : name}
+                {STATIC_HUBS[name]?.is_metro_station ? ' 🚇 [মেট্রো]' : ''}
               </option>
             ))}
           </select>
         </div>
       </div>
 
-      {/* Natural Language & Voice Search Input (Banglish / English) */}
-      <form onSubmit={handleNlpSubmit} className="relative mb-4">
+      {/* Conditions Toggle Pills: Weather & Rush Hour */}
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-[#120e0b] border border-[#c69429]/30 mb-5">
         <div className="flex items-center gap-2">
-          <div className="relative flex-1">
-            <input
-              type="text"
-              value={naturalQuery}
-              onChange={(e) => setNaturalQuery(e.target.value)}
-              placeholder={isListening ? t.micListening : t.searchPlaceholder}
-              className={`w-full pl-10 pr-12 py-2.5 rounded-xl bg-slate-900/90 border text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none transition-all ${
-                isListening 
-                  ? 'border-rose-500 ring-2 ring-rose-500/30' 
-                  : 'border-slate-700 focus:border-emerald-500'
-              }`}
-            />
-            <Sparkles className="w-4 h-4 text-emerald-400 absolute left-3 top-3.5" />
-
-            {/* Voice mic button */}
-            <button
-              type="button"
-              onClick={handleVoiceInput}
-              title={t.micTooltip}
-              className={`absolute right-2 top-2 p-1.5 rounded-lg transition-all ${
-                isListening 
-                  ? 'mic-active text-white' 
-                  : 'text-slate-400 hover:text-emerald-400 hover:bg-slate-800'
-              }`}
-            >
-              <Mic className="w-4 h-4" />
-            </button>
-          </div>
-
-          <button
-            type="submit"
-            className="hidden sm:flex px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-emerald-400 font-bold text-xs items-center gap-1.5 transition-all"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>AI Parse</span>
-          </button>
+          <span className="font-anek text-xs font-bold text-[#dfcfb2]">
+            {lang === 'bn' ? 'সড়কের আবহাওয়া ও সময়:' : 'Road Condition & Time:'}
+          </span>
         </div>
-      </form>
 
-      {/* Weather & Rush Hour Simulation Toggles */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-800 text-xs">
-        <div className="flex items-center gap-2">
-          {/* Weather Toggle */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Monsoon Rain Toggle */}
           <button
             type="button"
             onClick={() => setWeather(weather === 'rain' ? 'normal' : 'rain')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-semibold transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-anek font-bold transition-all border ${
               weather === 'rain'
-                ? 'bg-blue-950/70 text-blue-300 border-blue-500/50 shadow-sm shadow-blue-500/20'
-                : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700'
+                ? 'bg-[#1c4568] text-[#fbf8f1] border-[#346894] shadow-md shadow-[#1c4568]/40 animate-pulse'
+                : 'bg-[#1c1511] text-[#dfcfb2] border-[#c69429]/30 hover:border-[#c69429]'
             }`}
           >
-            <CloudRain className={`w-3.5 h-3.5 ${weather === 'rain' ? 'text-blue-400' : 'text-slate-500'}`} />
-            <span>{weather === 'rain' ? (lang === 'bn' ? 'বৃষ্টি চালু (+৫০% রিকশা)' : 'Rain Active (+50% Surge)') : (lang === 'bn' ? 'স্বাভাবিক আবহাওয়া' : 'Normal Weather')}</span>
+            <CloudRain className={`w-3.5 h-3.5 ${weather === 'rain' ? 'text-[#7dd3fc]' : 'text-[#dfcfb2]'}`} />
+            <span>{weather === 'rain' ? (lang === 'bn' ? 'মৌসুমী ভারী বৃষ্টি (জলজট)' : 'Monsoon Rain Active') : (lang === 'bn' ? 'স্বাভাবিক আবহাওয়া' : 'Normal Weather')}</span>
           </button>
 
           {/* Rush Hour Toggle */}
           <button
             type="button"
             onClick={() => setIsRushHour(!isRushHour)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-semibold transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-anek font-bold transition-all border ${
               isRushHour
-                ? 'bg-amber-950/70 text-amber-300 border-amber-500/50 shadow-sm shadow-amber-500/20'
-                : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700'
+                ? 'bg-[#b83a2e] text-[#fbf8f1] border-[#f6d16f] shadow-md shadow-[#b83a2e]/40'
+                : 'bg-[#1c1511] text-[#dfcfb2] border-[#c69429]/30 hover:border-[#c69429]'
             }`}
           >
-            <Clock className={`w-3.5 h-3.5 ${isRushHour ? 'text-amber-400' : 'text-slate-500'}`} />
-            <span>{isRushHour ? (lang === 'bn' ? 'পিক আওয়ার (+২৫% যানজট)' : 'Rush Hour Active') : (lang === 'bn' ? 'পিক আওয়ার বন্ধ' : 'Off-Peak')}</span>
+            <Clock className={`w-3.5 h-3.5 ${isRushHour ? 'text-[#f6d16f]' : 'text-[#dfcfb2]'}`} />
+            <span>{isRushHour ? (lang === 'bn' ? 'বিকেল ৫:৩০ অফিস ছুটি (পিক আওয়ার)' : 'Peak Rush Hour Active') : (lang === 'bn' ? 'অফ-পিক সময়' : 'Off-Peak Time')}</span>
           </button>
         </div>
-
-        {/* Main Search Action Button */}
-        <button
-          type="button"
-          onClick={onSearch}
-          disabled={isLoading}
-          className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-slate-950 font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 active:scale-95 transition-all disabled:opacity-50"
-        >
-          {isLoading ? (
-            <span className="flex items-center gap-2">
-              <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
-              <span>{lang === 'bn' ? 'গণনা হচ্ছে...' : 'Calculating...'}</span>
-            </span>
-          ) : (
-            <>
-              <Search className="w-4 h-4" />
-              <span>{t.searchBtn}</span>
-            </>
-          )}
-        </button>
       </div>
+
+      {/* Natural Language Query Bar with Voice Mic */}
+      <form onSubmit={handleNlpSubmit} className="relative mb-5">
+        <input
+          type="text"
+          value={naturalQuery}
+          onChange={(e) => setNaturalQuery(e.target.value)}
+          placeholder={t.searchPlaceholder}
+          className="w-full pl-4 pr-24 py-3.5 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/50 text-[#fbf8f1] placeholder-[#7a6654] text-xs sm:text-sm font-anek font-semibold focus:border-[#f6d16f] focus:outline-none transition-all shadow-inner"
+        />
+
+        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+          {/* Voice Input Mic */}
+          <button
+            type="button"
+            onClick={handleVoiceInput}
+            title={t.micTooltip}
+            className={`p-2 rounded-xl transition-all ${
+              isListening
+                ? 'bg-[#b83a2e] text-white animate-pulse shadow-lg'
+                : 'bg-[#292019] text-[#f6d16f] hover:bg-[#3d3026] border border-[#c69429]/40'
+            }`}
+          >
+            <Mic className="w-4 h-4" />
+          </button>
+
+          {/* NLP Submit */}
+          <button
+            type="submit"
+            className="p-2 rounded-xl bg-[#15453b] hover:bg-[#1f5e51] text-[#f6d16f] border border-[#2a6f62] transition-all"
+            title="Search with AI"
+          >
+            <Sparkles className="w-4 h-4" />
+          </button>
+        </div>
+      </form>
+
+      {/* Main Action Search Button */}
+      <button
+        type="button"
+        onClick={onSearch}
+        disabled={isLoading}
+        className="w-full py-4 rounded-xl bg-gradient-to-r from-[#b83a2e] via-[#c69429] to-[#b83a2e] text-[#120e0b] font-anek font-black text-base sm:text-lg border-2 border-[#f6d16f] shadow-xl shadow-[#b83a2e]/30 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 tracking-wide uppercase"
+      >
+        <span className="text-xl">🛺</span>
+        <span>{isLoading ? (lang === 'bn' ? 'রুট যাচাই ও হিসাব হচ্ছে...' : 'Calculating Routes...') : t.searchBtn}</span>
+      </button>
     </div>
   );
 }
