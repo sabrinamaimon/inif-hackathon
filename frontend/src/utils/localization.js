@@ -93,7 +93,7 @@ export const I18N = {
 
     // Assistant
     chatTitle: "DhakaPath Commute Assistant",
-    chatPlaceholder: "Ask in English or Banglish...",
+    chatPlaceholder: "Type here...",
     chatSend: "Send",
     audioPrompt: "Listen to audio response"
   },
@@ -170,7 +170,7 @@ export const I18N = {
 
     // Assistant
     chatTitle: "ঢাকা-পাথ এআই সহকারী",
-    chatPlaceholder: "বাংলা বা বাংলিশে লিখুন...",
+    chatPlaceholder: "লিখুন...",
     chatSend: "পাঠান",
     audioPrompt: "অডিও ব্রিফিং শুনুন"
   }

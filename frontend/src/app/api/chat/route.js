@@ -265,10 +265,10 @@ User query (may be in Banglish, Bengali, or English): "${message}"`
       return NextResponse.json({ reply, reply_bn: reply, action_type: 'metro_info' });
     }
 
-    // DEFAULT: Helpful Banglish-friendly transit guide
+    // DEFAULT: Helpful transit guide
     const reply = language === 'bn'
-      ? `ঢাকা-পাথ এআই প্রস্তুত! আপনি বাংলিশে লিখতে পারেন, যেমন: 'mirpur theke motijheel student bhara koto?', 'shahbagh e jam ache kina?', অথবা 'brishti hoile rickshaw fare koto barbe?'। আমি তাৎক্ষণিক সঠিক তথ্য জানিয়ে দেব।`
-      : `DhakaPath AI is ready! You can write in Banglish (e.g. 'mirpur theke motijheel student bhara koto?', 'shahbagh e jam ache?'). I will provide instant route and fare intelligence.`;
+      ? `ঢাকা-পাথ এআই প্রস্তুত! আপনি যে কোনো প্রশ্ন লিখতে পারেন, যেমন: 'মিরপুর থেকে মতিঝিল শিক্ষার্থী ভাড়া কত?', 'শাহবাগে জ্যাম আছে কি?', অথবা 'বৃষ্টি হলে রিকশা ভাড়া কত বাড়বে?'। আমি তাৎক্ষণিক তথ্য জানিয়ে দেব।`
+      : `DhakaPath AI is ready! You can ask questions like: 'mirpur to motijheel fare', 'is shahbagh jammed?', or 'rickshaw surge in rain'. I will provide instant route and fare intelligence.`;
 
     return NextResponse.json({
       reply,

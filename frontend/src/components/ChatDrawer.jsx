@@ -18,8 +18,8 @@ export default function ChatDrawer({
     {
       sender: 'bot',
       text: lang === 'bn' 
-        ? 'আসসালামু আলাইকুম! আমি ঢাকা-পাথ এআই সহকারী। আপনি বাংলা বা বাংলিশে যে কোনো ট্রানজিট রুট, ছাত্র হাফ-পাস ভাড়া, বা মালিবাগ/শাহবাগের লাইভ জ্যাম পরিস্থিতি জানতে পারেন।'
-        : 'Hello! I am your DhakaPath AI Transit Assistant. Ask about routes, student half-pass rules, or live waterlogging and roadblock updates in English or Banglish.'
+        ? 'আসসালামু আলাইকুম! আমি ঢাকা-পাথ এআই সহকারী। আপনি যে কোনো ট্রানজিট রুট, ছাত্র হাফ-পাস ভাড়া, বা মালিবাগ/শাহবাগের লাইভ জ্যাম পরিস্থিতি জানতে পারেন।'
+        : 'Hello! I am your DhakaPath AI Transit Assistant. Ask about routes, student half-pass rules, or live waterlogging and roadblock updates.'
     }
   ]);
   const [inputText, setInputText] = useState('');
@@ -120,7 +120,7 @@ export default function ChatDrawer({
                   {t.chatTitle}
                 </h3>
                 <p className="font-anek text-xs text-[#7dd3fc] font-semibold">
-                  {lang === 'bn' ? 'বাংলা ও বাংলিশ সমর্থিত ট্রানজিট গাইড' : 'English & Banglish Ready'}
+                  {lang === 'bn' ? 'স্মার্ট ট্রানজিট এআই সহকারী' : 'Smart Transit AI Assistant'}
                 </p>
               </div>
             </div>
@@ -204,7 +204,7 @@ export default function ChatDrawer({
           <div className="px-3.5 py-2.5 bg-[#18130f] border-t border-[#c69429]/30 flex items-center gap-2 overflow-x-auto">
             <span className="text-[11px] font-black text-[#f6d16f] uppercase tracking-wider shrink-0 flex items-center gap-1 font-anek">
               <Sparkles className="w-3 h-3 text-[#f6d16f]" />
-              <span>বাংলিশ:</span>
+              <span>{lang === 'bn' ? 'লিখুন:' : 'Prompt:'}</span>
             </span>
             {[
               "Mirpur theke motijheel student bhara koto?",
