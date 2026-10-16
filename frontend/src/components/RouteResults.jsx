@@ -148,55 +148,55 @@ export default function RouteResults({
               {/* ========================================================= */}
               <div className="relative z-10 p-5 sm:p-7 space-y-5">
                 {/* Central Focused Route Ledger (High Contrast & Clear) */}
-                <div className="bg-[#fcf9f2] text-[#120e0b] p-5 sm:p-6 rounded-2xl border-2 border-[#c69429] shadow-xl">
+                <div className="bg-[#fcf9f2] text-[#120e0b] p-4 sm:p-6 rounded-2xl border-2 border-[#c69429] shadow-xl overflow-hidden">
                   {/* Huge Route Banner (Origin ➔ Destination) */}
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b-2 border-[#c69429]/40">
-                    <div>
+                  <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-4 border-b-2 border-[#c69429]/40">
+                    <div className="min-w-0 flex-1">
                       <div className="text-xs font-anek font-bold text-[#b83a2e] uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                        <MapPin className="w-4 h-4 text-[#b83a2e]" />
-                        <span>{lang === 'bn' ? 'সরাসরি যাত্রাপথ (বড় অক্ষরে নির্দেশিকা)' : 'DIRECT TRANSIT CORRIDOR'}</span>
+                        <MapPin className="w-3.5 h-3.5 text-[#b83a2e] shrink-0" />
+                        <span>{lang === 'bn' ? 'সরাসরি যাত্রাপথ' : 'DIRECT TRANSIT CORRIDOR'}</span>
                       </div>
                       
-                      {/* HUGE ROUTE DISPLAY FOR OLDER PEOPLE */}
-                      <h4 className="font-anek text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#120e0b] tracking-tight flex items-center flex-wrap gap-2.5">
+                      {/* HUGE ROUTE DISPLAY */}
+                      <h4 className="font-anek text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#120e0b] tracking-tight flex items-center flex-wrap gap-2">
                         <span>{origin}</span>
-                        <span className="text-[#b83a2e] text-3xl font-black">➔</span>
+                        <span className="text-[#b83a2e] text-2xl sm:text-3xl font-black">➔</span>
                         <span className="text-[#15453b]">{destination}</span>
                       </h4>
 
-                      <p className="font-anek text-base font-bold text-[#b83a2e] mt-1">
+                      <p className="font-anek text-sm sm:text-base font-bold text-[#b83a2e] mt-1">
                         {lang === 'bn' ? route.title_bn : route.title}
                       </p>
                     </div>
 
-                    {/* Extra Large Metric Badges */}
-                    <div className="flex items-center gap-3 bg-[#f5eedf] p-3 rounded-2xl border-2 border-[#c69429]/40 shadow-inner shrink-0">
+                    {/* Resized & Responsive Metric Badges Bar (Never overflows or cuts off) */}
+                    <div className="w-full xl:w-auto flex items-center justify-around sm:justify-end gap-1.5 sm:gap-2.5 bg-[#f5eedf] px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl border-2 border-[#c69429]/40 shadow-inner shrink-0">
                       {/* Total Duration */}
-                      <div className="px-3 text-center border-r-2 border-[#c69429]/30">
-                        <div className="text-[11px] font-anek font-bold text-[#7a6654] uppercase">
+                      <div className="px-2 sm:px-3 text-center border-r-2 border-[#c69429]/30 flex-1 sm:flex-initial">
+                        <div className="text-[10px] sm:text-[11px] font-anek font-bold text-[#7a6654] uppercase tracking-wide">
                           {t.durationLabel}
                         </div>
-                        <div className="text-2xl sm:text-3xl font-mono font-black text-[#15453b]">
+                        <div className="text-lg sm:text-xl md:text-2xl font-mono font-black text-[#15453b] whitespace-nowrap">
                           {formatDuration(route.total_duration_mins, lang)}
                         </div>
                       </div>
 
                       {/* Regular Fare */}
-                      <div className="px-3 text-center border-r-2 border-[#c69429]/30">
-                        <div className="text-[11px] font-anek font-bold text-[#7a6654] uppercase">
+                      <div className="px-2 sm:px-3 text-center border-r-2 border-[#c69429]/30 flex-1 sm:flex-initial">
+                        <div className="text-[10px] sm:text-[11px] font-anek font-bold text-[#7a6654] uppercase tracking-wide">
                           {t.regularFare}
                         </div>
-                        <div className="text-2xl sm:text-3xl font-mono font-black text-[#b83a2e]">
+                        <div className="text-lg sm:text-xl md:text-2xl font-mono font-black text-[#b83a2e] whitespace-nowrap">
                           {formatFare(route.total_regular_fare, lang)}
                         </div>
                       </div>
 
                       {/* Student Half-Pass Fare */}
-                      <div className="px-3 text-center">
-                        <div className="text-[11px] font-anek font-bold text-[#0e6e41] flex items-center justify-center gap-1">
+                      <div className="px-2 sm:px-3 text-center flex-1 sm:flex-initial">
+                        <div className="text-[10px] sm:text-[11px] font-anek font-bold text-[#0e6e41] flex items-center justify-center gap-1 whitespace-nowrap">
                           <span>🎓 {t.studentFare}</span>
                         </div>
-                        <div className="text-2xl sm:text-3xl font-mono font-black text-[#0e6e41]">
+                        <div className="text-lg sm:text-xl md:text-2xl font-mono font-black text-[#0e6e41] whitespace-nowrap">
                           {formatFare(route.total_student_fare, lang)}
                         </div>
                       </div>
