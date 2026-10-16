@@ -58,63 +58,61 @@ export default function RouteSearch({
   };
 
   return (
-    <div className="glass-panel p-4 sm:p-5 border border-emerald-500/30 shadow-xl my-4">
-      {/* Title */}
-      <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-800">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
-            <Search className="w-4 h-4" />
+    <div className="glass-panel p-6 sm:p-7 border border-emerald-500/30 shadow-2xl my-6">
+      {/* Title & Category Row */}
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-5 pb-3 border-b border-slate-800">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+            <Search className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-base sm:text-lg font-extrabold text-white">{t.searchTitle}</h2>
-            <p className="text-xs text-slate-400">
+            <h2 className="text-xl sm:text-2xl font-black text-white">{t.searchTitle}</h2>
+            <p className="text-sm text-slate-300 font-medium">
               {lang === 'bn' ? 'মেট্রোরেল, লোকাল বাস, লেগুনা ও রিকশা ভাড়া বিশ্লেষণ' : 'Metro, Bus, Leguna & Rickshaw intelligence'}
             </p>
           </div>
         </div>
 
         {/* Passenger Category Badge Toggle */}
-        <div className="flex items-center gap-1 bg-slate-900/80 p-1 rounded-xl border border-slate-800">
+        <div className="flex items-center gap-1.5 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800">
           <button
             type="button"
             onClick={() => setPassengerType('general')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
               passengerType === 'general'
-                ? 'bg-slate-700 text-white shadow-sm'
+                ? 'bg-slate-700 text-white shadow-md'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <User className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="hidden sm:inline">{t.generalCommuter}</span>
-            <span className="sm:hidden">{lang === 'bn' ? 'সাধারণ' : 'General'}</span>
+            <User className="w-4 h-4 text-emerald-400" />
+            <span>{t.generalCommuter}</span>
           </button>
 
           <button
             type="button"
             onClick={() => setPassengerType('student')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-extrabold transition-all ${
               passengerType === 'student'
-                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/40'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <GraduationCap className="w-3.5 h-3.5 text-blue-300" />
-            <span className="hidden sm:inline">{t.studentPass}</span>
-            <span className="sm:hidden">{lang === 'bn' ? 'হাফ-পাস' : 'Student'}</span>
+            <GraduationCap className="w-4 h-4 text-blue-300" />
+            <span>{t.studentPass}</span>
           </button>
         </div>
       </div>
 
       {/* Origin & Destination Selectors */}
-      <div className="grid grid-cols-1 sm:grid-cols-[1fr,auto,1fr] gap-3 items-center mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-[1fr,auto,1fr] gap-4 items-center mb-5">
         <div>
-          <label className="block text-xs font-bold text-slate-300 mb-1">
+          <label className="block text-sm font-extrabold text-slate-200 mb-1.5">
             {t.originLabel}
           </label>
           <select
             value={origin}
             onChange={(e) => setOrigin(e.target.value)}
-            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-white text-sm font-semibold focus:border-emerald-500 focus:outline-none transition-all"
+            className="w-full px-4 py-3.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-base font-bold focus:border-emerald-500 focus:outline-none transition-all shadow-sm"
           >
             {hubNames.map((name) => (
               <option key={name} value={name}>
@@ -125,25 +123,25 @@ export default function RouteSearch({
         </div>
 
         {/* Swap button */}
-        <div className="flex justify-center sm:pt-5">
+        <div className="flex justify-center sm:pt-6">
           <button
             type="button"
             onClick={handleSwap}
-            className="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 flex items-center justify-center active:scale-95 transition-all shadow-sm"
+            className="w-11 h-11 rounded-2xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 flex items-center justify-center active:scale-95 transition-all shadow-md"
             title="Swap Origin and Destination"
           >
-            <ArrowRightLeft className="w-4 h-4" />
+            <ArrowRightLeft className="w-5 h-5" />
           </button>
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-slate-300 mb-1">
+          <label className="block text-sm font-extrabold text-slate-200 mb-1.5">
             {t.destLabel}
           </label>
           <select
             value={destination}
             onChange={(e) => setDestination(e.target.value)}
-            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-white text-sm font-semibold focus:border-emerald-500 focus:outline-none transition-all"
+            className="w-full px-4 py-3.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-base font-bold focus:border-emerald-500 focus:outline-none transition-all shadow-sm"
           >
             {hubNames.map((name) => (
               <option key={name} value={name}>
@@ -155,75 +153,75 @@ export default function RouteSearch({
       </div>
 
       {/* Natural Language & Voice Search Input (Banglish / English) */}
-      <form onSubmit={handleNlpSubmit} className="relative mb-4">
-        <div className="flex items-center gap-2">
+      <form onSubmit={handleNlpSubmit} className="relative mb-5">
+        <div className="flex items-center gap-2.5">
           <div className="relative flex-1">
             <input
               type="text"
               value={naturalQuery}
               onChange={(e) => setNaturalQuery(e.target.value)}
               placeholder={isListening ? t.micListening : t.searchPlaceholder}
-              className={`w-full pl-10 pr-12 py-2.5 rounded-xl bg-slate-900/90 border text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none transition-all ${
+              className={`w-full pl-12 pr-14 py-3.5 rounded-2xl bg-slate-900 border text-white text-base placeholder:text-slate-500 focus:outline-none transition-all shadow-inner ${
                 isListening 
-                  ? 'border-rose-500 ring-2 ring-rose-500/30' 
+                  ? 'border-rose-500 ring-2 ring-rose-500/40' 
                   : 'border-slate-700 focus:border-emerald-500'
               }`}
             />
-            <Sparkles className="w-4 h-4 text-emerald-400 absolute left-3 top-3.5" />
+            <Sparkles className="w-5 h-5 text-emerald-400 absolute left-4 top-4" />
 
             {/* Voice mic button */}
             <button
               type="button"
               onClick={handleVoiceInput}
               title={t.micTooltip}
-              className={`absolute right-2 top-2 p-1.5 rounded-lg transition-all ${
+              className={`absolute right-2.5 top-2.5 p-2 rounded-xl transition-all ${
                 isListening 
                   ? 'mic-active text-white' 
                   : 'text-slate-400 hover:text-emerald-400 hover:bg-slate-800'
               }`}
             >
-              <Mic className="w-4 h-4" />
+              <Mic className="w-5 h-5" />
             </button>
           </div>
 
           <button
             type="submit"
-            className="hidden sm:flex px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-emerald-400 font-bold text-xs items-center gap-1.5 transition-all"
+            className="hidden sm:flex px-5 py-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-emerald-400 font-extrabold text-sm items-center gap-2 transition-all shadow-sm"
           >
-            <Sparkles className="w-3.5 h-3.5" />
+            <Sparkles className="w-4 h-4" />
             <span>AI Parse</span>
           </button>
         </div>
       </form>
 
-      {/* Weather & Rush Hour Simulation Toggles */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-800 text-xs">
-        <div className="flex items-center gap-2">
+      {/* Weather & Rush Hour Simulation Toggles & Main Action Button */}
+      <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-800 text-sm">
+        <div className="flex flex-wrap items-center gap-3">
           {/* Weather Toggle */}
           <button
             type="button"
             onClick={() => setWeather(weather === 'rain' ? 'normal' : 'rain')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-semibold transition-all ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border font-bold transition-all ${
               weather === 'rain'
-                ? 'bg-blue-950/70 text-blue-300 border-blue-500/50 shadow-sm shadow-blue-500/20'
-                : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700'
+                ? 'bg-blue-950/80 text-blue-300 border-blue-500 shadow-md shadow-blue-500/20'
+                : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700'
             }`}
           >
-            <CloudRain className={`w-3.5 h-3.5 ${weather === 'rain' ? 'text-blue-400' : 'text-slate-500'}`} />
-            <span>{weather === 'rain' ? (lang === 'bn' ? 'বৃষ্টি চালু (+৫০% রিকশা)' : 'Rain Active (+50% Surge)') : (lang === 'bn' ? 'স্বাভাবিক আবহাওয়া' : 'Normal Weather')}</span>
+            <CloudRain className={`w-4 h-4 ${weather === 'rain' ? 'text-blue-400' : 'text-slate-500'}`} />
+            <span>{weather === 'rain' ? (lang === 'bn' ? 'বৃষ্টি চালু (+৫০% রিকশা ভাড়া)' : 'Rain Active (+50% Surge)') : (lang === 'bn' ? 'স্বাভাবিক আবহাওয়া' : 'Normal Weather')}</span>
           </button>
 
           {/* Rush Hour Toggle */}
           <button
             type="button"
             onClick={() => setIsRushHour(!isRushHour)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-semibold transition-all ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border font-bold transition-all ${
               isRushHour
-                ? 'bg-amber-950/70 text-amber-300 border-amber-500/50 shadow-sm shadow-amber-500/20'
-                : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700'
+                ? 'bg-amber-950/80 text-amber-300 border-amber-500 shadow-md shadow-amber-500/20'
+                : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700'
             }`}
           >
-            <Clock className={`w-3.5 h-3.5 ${isRushHour ? 'text-amber-400' : 'text-slate-500'}`} />
+            <Clock className={`w-4 h-4 ${isRushHour ? 'text-amber-400' : 'text-slate-500'}`} />
             <span>{isRushHour ? (lang === 'bn' ? 'পিক আওয়ার (+২৫% যানজট)' : 'Rush Hour Active') : (lang === 'bn' ? 'পিক আওয়ার বন্ধ' : 'Off-Peak')}</span>
           </button>
         </div>
@@ -233,16 +231,16 @@ export default function RouteSearch({
           type="button"
           onClick={onSearch}
           disabled={isLoading}
-          className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-slate-950 font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 active:scale-95 transition-all disabled:opacity-50"
+          className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-slate-950 font-black text-base flex items-center justify-center gap-2.5 shadow-xl shadow-emerald-600/30 active:scale-95 transition-all disabled:opacity-50"
         >
           {isLoading ? (
-            <span className="flex items-center gap-2">
-              <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+            <span className="flex items-center gap-2.5">
+              <span className="w-5 h-5 border-3 border-slate-950 border-t-transparent rounded-full animate-spin" />
               <span>{lang === 'bn' ? 'গণনা হচ্ছে...' : 'Calculating...'}</span>
             </span>
           ) : (
             <>
-              <Search className="w-4 h-4" />
+              <Search className="w-5 h-5" />
               <span>{t.searchBtn}</span>
             </>
           )}

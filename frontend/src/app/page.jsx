@@ -21,6 +21,7 @@ import { STATIC_HUBS, STATIC_ALERTS } from '../data/staticData';
 
 export default function Home() {
   const [lang, setLang] = useState('bn');
+  const [theme, setTheme] = useState('dark');
   const [currentTab, setCurrentTab] = useState('home');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -51,6 +52,17 @@ export default function Home() {
   const [isAddAlertOpen, setIsAddAlertOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+
+  // Sync theme with body class
+  useEffect(() => {
+    if (theme === 'light') {
+      document.body.classList.add('light-theme');
+      document.body.classList.remove('dark-theme');
+    } else {
+      document.body.classList.add('dark-theme');
+      document.body.classList.remove('light-theme');
+    }
+  }, [theme]);
 
   // Fetch initial alerts & run default search on mount
   useEffect(() => {
@@ -109,7 +121,7 @@ export default function Home() {
         type_badge: 'Fastest Route',
         total_duration_mins: isDirectMetro ? 24 : 35,
         total_regular_fare: isDirectMetro ? 50 : 60,
-        total_student_fare: isDirectMetro ? 50 : 60, // Metro has no student discount
+        total_student_fare: isDirectMetro ? 50 : 60,
         transfers: isDirectMetro ? 0 : 1,
         is_recommended: true,
         is_detour: false,
@@ -194,7 +206,6 @@ export default function Home() {
       console.warn('NLP API unavailable, applying local parsing');
     }
 
-    // Local parse fallback
     const low = queryText.toLowerCase();
     const isStudent = low.includes('student') || low.includes('half') || low.includes('হাফ');
     if (isStudent) setPassengerType('student');
@@ -282,7 +293,6 @@ export default function Home() {
     setWeather(nextRain ? 'rain' : 'normal');
     setIsRushHour(nextRush);
 
-    // Immediately recalculate routes to demonstrate live detour!
     performSearch(origin, destination, passengerType, nextRain ? 'rain' : 'normal', nextRush);
 
     try {
@@ -297,13 +307,15 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col bg-slate-950 text-slate-100">
-      {/* Top Navigation */}
+    <main className="min-h-screen flex flex-col">
+      {/* Top Navigation Bar with Theme & Language Toggle */}
       <Navbar
         currentTab={currentTab}
         setCurrentTab={setCurrentTab}
         lang={lang}
         setLang={setLang}
+        theme={theme}
+        setTheme={setTheme}
         setIsDrawerOpen={setIsDrawerOpen}
         activeAlertCount={alerts.length}
       />
@@ -320,15 +332,15 @@ export default function Home() {
         onOpenScanner={() => setIsScannerOpen(true)}
       />
 
-      {/* Main Content Area */}
-      <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6">
-        {/* Living Stats Bar */}
+      {/* Full-Width Laptop Screen Container */}
+      <div className="flex-1 w-full max-w-[1700px] mx-auto px-4 sm:px-8 lg:px-10">
+        {/* Living High-Impact Stats Bar */}
         <StatsBar lang={lang} />
 
         {/* TAB 1: HOME (Map + Search + Results) */}
         {currentTab === 'home' && (
           <div>
-            {/* Interactive Leaflet Map View */}
+            {/* Interactive Full-Width Leaflet Map */}
             <MapView
               hubs={hubs}
               activeAlerts={alerts}
@@ -339,7 +351,7 @@ export default function Home() {
               }}
             />
 
-            {/* Route Search Engine */}
+            {/* Smart Route Search Engine */}
             <RouteSearch
               origin={origin}
               setOrigin={setOrigin}
@@ -369,7 +381,7 @@ export default function Home() {
               onOpenFareBreakdown={(r) => setFareModalRoute(r)}
             />
 
-            {/* Quick Scenario Simulator Shortcut */}
+            {/* Urban Disruption Scenario Simulator */}
             <ScenarioSimulator
               simulationState={simulationState}
               onTriggerScenario={handleTriggerScenario}
