@@ -59,7 +59,7 @@ export default function EmergencyHelpline({ lang = 'bn', isHome = true }) {
                   {lang === 'bn' ? c.name_bn : c.name}
                 </div>
                 <div className="font-anek text-xs text-[#dfcfb2] mt-1 line-clamp-1">
-                  {c.desc}
+                  {lang === 'bn' ? (c.desc_bn || c.desc) : c.desc}
                 </div>
               </div>
 

@@ -6,6 +6,7 @@ import {
   Clock, Plus, Flame, Bus, Bike, Car 
 } from 'lucide-react';
 import { I18N, toBnDigits } from '../utils/localization';
+import { STATIC_HUBS } from '../data/staticData';
 
 export default function StreetAlertsFeed({
   alerts = [],
@@ -92,7 +93,7 @@ export default function StreetAlertsFeed({
                     <span>{badge.label}</span>
                   </span>
                   <span className="text-sm font-anek font-black px-3.5 py-1.5 rounded-lg bg-[#292019] text-[#fbf8f1] border border-[#c69429]/40 shadow-sm">
-                    {alert.hub}
+                    {lang === 'bn' ? (STATIC_HUBS[alert.hub]?.name_bn || alert.hub) : alert.hub}
                   </span>
                 </div>
 
@@ -114,7 +115,7 @@ export default function StreetAlertsFeed({
                 {lang === 'bn' ? (alert.title_bn || alert.title) : alert.title}
               </h4>
               <p className="font-anek text-sm sm:text-base text-[#dfcfb2] leading-relaxed mb-4 font-normal">
-                {alert.description}
+                {lang === 'bn' ? (alert.description_bn || alert.description) : alert.description}
               </p>
 
               {/* Action Buttons: Confirm & Resolve */}
@@ -125,7 +126,7 @@ export default function StreetAlertsFeed({
                     className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0e6e41] hover:bg-[#0b5834] text-white font-bold text-sm border border-emerald-600 active:scale-95 transition-all shadow-sm"
                   >
                     <ThumbsUp className="w-4 h-4 text-white" />
-                    <span>{t.confirmBtn} ({toBnDigits(alert.upvotes)})</span>
+                    <span>{t.confirmBtn} ({lang === 'bn' ? toBnDigits(alert.upvotes) : alert.upvotes})</span>
                   </button>
 
                   <button
@@ -133,12 +134,12 @@ export default function StreetAlertsFeed({
                     className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#292019] hover:bg-[#3d3026] text-[#f6d16f] font-bold text-sm border border-[#c69429]/40 active:scale-95 transition-all shadow-sm"
                   >
                     <CheckCircle className="w-4 h-4 text-[#f6d16f]" />
-                    <span>{t.resolveBtn} ({toBnDigits(alert.downvotes)})</span>
+                    <span>{t.resolveBtn} ({lang === 'bn' ? toBnDigits(alert.downvotes) : alert.downvotes})</span>
                   </button>
                 </div>
 
                 <div className="text-xs font-mono text-[#6ee7b7] font-semibold">
-                  {alert.verified ? '✓ পুলিশ ও প্রশাসন দ্বারা পরীক্ষিত' : 'যাত্রী কমিউনিটি রিপোর্ট'}
+                  {alert.verified ? (lang === 'bn' ? '✓ পুলিশ ও প্রশাসন দ্বারা পরীক্ষিত' : '✓ Verified by Traffic Police') : (lang === 'bn' ? 'যাত্রী কমিউনিটি রিপোর্ট' : 'Commuter Community Report')}
                 </div>
               </div>
             </div>

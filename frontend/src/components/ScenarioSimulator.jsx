@@ -94,7 +94,7 @@ export default function ScenarioSimulator({
           }`}>
             {isRain ? (
               <span className="text-white font-extrabold" style={{ color: '#ffffff' }}>
-                {lang === 'bn' ? 'বাস চলাচল বন্ধ; রিকশায় +৫০% রেইন সার্ঝ' : 'Buses stalled; +50% rickshaw surge'}
+                ⚡ {lang === 'bn' ? 'বাস চলাচল বন্ধ; রিকশায় +৫০% ভাড়া বৃদ্ধি' : 'Buses stalled; +50% rickshaw surge'}
               </span>
             ) : (
               <span>➔ {lang === 'bn' ? 'বৃষ্টি বিপর্যয় পরীক্ষা করতে ট্যাপ করুন' : 'Tap to simulate rain flood'}</span>

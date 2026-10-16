@@ -5,14 +5,9 @@ import {
   STATIC_HUBS, 
   MRT6_ALIGNMENT, 
   MRT6_STATIONS_DATA,
-  MRT6_DENSE_POLYLINE,
-  BIKOLPO_DENSE_POLYLINE,
-  UTTARA_BUS_DENSE_POLYLINE,
-  BIKOLPO_STOPS,
-  UTTARA_BUS_STOPS
+  MRT6_DENSE_POLYLINE
 } from '../data/staticData';
-import { Compass, Train, Navigation, AlertTriangle, Layers, Filter } from 'lucide-react';
-import { toBnDigits } from '../utils/localization';
+import { Compass, Train, AlertTriangle, Layers } from 'lucide-react';
 
 export default function MapView({ 
   hubs = STATIC_HUBS, 
@@ -28,10 +23,9 @@ export default function MapView({
   const mapInstanceRef = useRef(null);
   const markersRef = useRef({});
   const metroTrackLayersRef = useRef([]);
-  const busLayersRef = useRef([]);
   const activeRoutePolylineRef = useRef(null);
   const userLocationMarkerRef = useRef(null);
-  const [filterMode, setFilterMode] = useState('all'); // 'all', 'metro_only', 'bikolpo_bus', 'uttara_bus', 'alerts_only'
+  const [filterMode, setFilterMode] = useState('all'); // 'all', 'metro_only', 'alerts_only'
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -68,10 +62,10 @@ export default function MapView({
         if (mapContainerRef.current._leaflet_id) {
           delete mapContainerRef.current._leaflet_id;
         }
-        // Center tightly around Dhaka City transit core: Lat 23.7920, Lng 90.3950, Zoom: 12.8
+        // Center tightly around Dhaka City transit core: Lat 23.7900, Lng 90.3950, Zoom: 12.6
         const map = L.map(mapContainerRef.current, {
-          center: [23.7920, 90.3950],
-          zoom: 12.8,
+          center: [23.7900, 90.3950],
+          zoom: 12.6,
           zoomSnap: 0.1,
           minZoom: 11.5,
           maxBounds: [
@@ -83,7 +77,7 @@ export default function MapView({
           attributionControl: false
         });
 
-        // OpenStreetMap Standard Free Tiles (100% Free, No Watermarks)
+        // OpenStreetMap Standard Free Tiles (100% Free, Clean & Natural map)
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
           subdomains: ['a', 'b', 'c'],
@@ -102,9 +96,6 @@ export default function MapView({
       metroTrackLayersRef.current.forEach((layer) => layer.remove());
       metroTrackLayersRef.current = [];
 
-      busLayersRef.current.forEach((layer) => layer.remove());
-      busLayersRef.current = [];
-
       if (activeRoutePolylineRef.current) {
         activeRoutePolylineRef.current.remove();
         activeRoutePolylineRef.current = null;
@@ -116,321 +107,174 @@ export default function MapView({
       }
 
       // =========================================================================
-      // 1. DRAW DENSE ELEVATED MRT-6 METRO RAIL TRACK (628 Curve Points from CSV)
+      // 1. MRT-6 METRO RAIL ELEVATED TRACK (Clean subtle emerald green line)
       // =========================================================================
       const metroPoints = (MRT6_DENSE_POLYLINE && MRT6_DENSE_POLYLINE.length > 0) 
         ? MRT6_DENSE_POLYLINE 
         : MRT6_ALIGNMENT;
 
       if (filterMode === 'all' || filterMode === 'metro_only') {
-        // Track viaduct outer casing (concrete deck)
-        const viaductCasing = L.polyline(metroPoints, {
-          color: '#064e3b',
-          weight: 9,
+        const metroTrack = L.polyline(metroPoints, {
+          color: '#059669',
+          weight: 4,
           opacity: 0.85,
           lineCap: 'round',
           lineJoin: 'round'
         }).addTo(map);
 
-        // Track elevated rail surface (emerald green line)
-        const viaductInner = L.polyline(metroPoints, {
-          color: '#10b981',
-          weight: 5,
-          opacity: 0.95,
-          lineCap: 'round',
-          lineJoin: 'round'
-        }).addTo(map);
+        const trackTooltip = lang === 'bn' 
+          ? `<strong>এমআরটি-৬ মেট্রোরেল উড়ালপথ</strong><br/><span style="font-size: 11px;">উত্তরা উত্তর (দিয়াবাড়ী) ⇄ মতিঝিল ⇄ কমলাপুর</span>`
+          : `<strong>MRT-6 Metro Rail Elevated Line</strong><br/><span style="font-size: 11px;">Uttara North (Diabari) ⇄ Motijheel ⇄ Kamalapur</span>`;
+        metroTrack.bindTooltip(trackTooltip, { sticky: true, className: 'font-anek' });
 
-        // Illuminated track centerline dash
-        const viaductDash = L.polyline(metroPoints, {
-          color: '#ffffff',
-          weight: 1.5,
-          opacity: 0.9,
-          dashArray: '6, 10'
-        }).addTo(map);
-
-        const trackTooltip = `🚇 <strong>এমআরটি-৬ মেট্রোরেল এলিভেটেড লাইন</strong><br/><span style="font-size: 11px;">উত্তরা উত্তর (দিয়াবাড়ী) ⇄ মতিঝিল ⇄ কমলাপুর • ১৭টি স্টেশন (৬২৮ ডেটা পয়েন্ট)</span>`;
-        viaductInner.bindTooltip(trackTooltip, { sticky: true, className: 'font-anek' });
-
-        metroTrackLayersRef.current.push(viaductCasing, viaductInner, viaductDash);
+        metroTrackLayersRef.current.push(metroTrack);
       }
 
       // =========================================================================
-      // 2. DRAW DENSE BUS CORRIDORS (Bikolpo 604 points & Uttara Bus 353 points)
+      // 2. PLOT CLEAN PLACE NAME PINS (NO vehicle emojis, NO order codes)
       // =========================================================================
-      // A. BIKOLPO BUS (Royal Blue Route)
-      if ((filterMode === 'all' || filterMode === 'bikolpo_bus') && BIKOLPO_DENSE_POLYLINE && BIKOLPO_DENSE_POLYLINE.length > 0) {
-        const isFocus = filterMode === 'bikolpo_bus';
-        const bikolpoLine = L.polyline(BIKOLPO_DENSE_POLYLINE, {
-          color: '#2563eb',
-          weight: isFocus ? 6 : 4,
-          opacity: isFocus ? 0.95 : 0.65,
-          dashArray: isFocus ? null : '6, 6',
-          lineCap: 'round',
-          lineJoin: 'round'
-        }).addTo(map);
+      Object.entries(hubs).forEach(([name, data]) => {
+        const isMetro = Boolean(data.is_metro_station);
+        const isWaterlogged = activeAlerts.some(a => a.hub === name && a.type === 'waterlogging' && a.is_active);
+        const isBlockaded = activeAlerts.some(a => a.hub === name && a.type === 'blockade' && a.is_active);
 
-        bikolpoLine.bindTooltip(
-          `🚌 <strong>বিকল্প অটো সার্ভিস</strong><br/><span style="font-size: 11px;">মিরপুর ১২ ⇄ টিএসসি (১৮টি স্টপ • ৬০৪ রোড পয়েন্ট)</span>`,
-          { sticky: true, className: 'font-anek' }
-        );
-        busLayersRef.current.push(bikolpoLine);
-      }
+        // Filter check
+        if (filterMode === 'metro_only' && !isMetro) return;
+        if (filterMode === 'alerts_only' && !isWaterlogged && !isBlockaded) return;
 
-      // B. UTTARA BUS (Vibrant Orange Route)
-      if ((filterMode === 'all' || filterMode === 'uttara_bus') && UTTARA_BUS_DENSE_POLYLINE && UTTARA_BUS_DENSE_POLYLINE.length > 0) {
-        const isFocus = filterMode === 'uttara_bus';
-        const uttaraLine = L.polyline(UTTARA_BUS_DENSE_POLYLINE, {
-          color: '#ea580c',
-          weight: isFocus ? 6 : 4,
-          opacity: isFocus ? 0.95 : 0.65,
-          dashArray: isFocus ? null : '6, 6',
-          lineCap: 'round',
-          lineJoin: 'round'
-        }).addTo(map);
+        const placeName = lang === 'bn' ? (data.name_bn || data.name || name) : (data.name || name);
+        const stationOrder = data.station_order || (MRT6_STATIONS_DATA.find(s => s.name === name || s.name_bn === data.name_bn)?.order) || 1;
+        const isEven = stationOrder % 2 === 0;
 
-        uttaraLine.bindTooltip(
-          `🚌 <strong>উত্তরা বাস সার্ভিস</strong><br/><span style="font-size: 11px;">উত্তরা বিআরটিসি ⇄ বাংলাদেশ সচিবালয় (২০টি স্টপ • ৩৫৩ রোড পয়েন্ট)</span>`,
-          { sticky: true, className: 'font-anek' }
-        );
-        busLayersRef.current.push(uttaraLine);
-      }
+        // Visual properties
+        const dotColor = isWaterlogged ? '#ef4444' : isBlockaded ? '#f59e0b' : (isMetro ? '#10b981' : '#f59e0b');
+        const textColor = isWaterlogged ? '#fca5a5' : isBlockaded ? '#fde047' : (isMetro ? '#34d399' : '#fef08a');
+        const borderColor = isWaterlogged ? 'rgba(239, 68, 68, 0.6)' : (isMetro ? 'rgba(16, 185, 129, 0.45)' : 'rgba(245, 158, 11, 0.4)');
 
-      // =========================================================================
-      // 3. PLOT STATION & HUB MARKERS
-      // =========================================================================
-      // In specific bus route views, plot the exact stops from the benchmark dataset
-      if (filterMode === 'bikolpo_bus' && BIKOLPO_STOPS && BIKOLPO_STOPS.length > 0) {
-        BIKOLPO_STOPS.forEach((stop, idx) => {
-          const orderPill = `B-${String(idx + 1).padStart(2, '0')}`;
-          const customIcon = L.divIcon({
-            className: 'custom-hub-icon',
-            html: `
-              <div style="position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer;">
-                <div style="position: relative; background: #1d4ed8; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; border: 2.5px solid #60a5fa; box-shadow: 0 4px 14px rgba(0,0,0,0.65);">
-                  🚌
-                  <div style="position: absolute; top: -8px; right: -12px; background: #1e3a8a; color: #93c5fd; font-family: monospace; font-size: 9px; font-weight: 900; padding: 1px 4px; border-radius: 6px; border: 1px solid #3b82f6; box-shadow: 0 2px 4px rgba(0,0,0,0.4);">
-                    ${orderPill}
-                  </div>
-                </div>
-                <div style="background: #14100c; color: #93c5fd; font-family: 'Anek Bangla', sans-serif; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 8px; margin-top: 3px; white-space: nowrap; border: 1.5px solid #2563eb; box-shadow: 0 3px 8px rgba(0,0,0,0.6);">
-                  ${stop.name}
-                </div>
-              </div>
-            `,
-            iconSize: [110, 56],
-            iconAnchor: [55, 28]
-          });
+        // Alternating label side for metro stations along the north-south viaduct to eliminate label overlap
+        let labelPositionStyle = '';
+        if (isMetro) {
+          if (isEven) {
+            labelPositionStyle = 'top: -11px; left: 10px;';
+          } else {
+            labelPositionStyle = 'top: -11px; right: 10px; text-align: right;';
+          }
+        } else {
+          labelPositionStyle = 'top: -11px; left: 10px;';
+        }
 
-          const marker = L.marker([stop.lat, stop.lng], { icon: customIcon }).addTo(map);
-          marker.bindPopup(`
-            <div style="min-width: 200px; font-family: 'Anek Bangla', sans-serif;" class="p-1 text-slate-900">
-              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
-                <span style="font-weight: 900; font-size: 15px; color: #1d4ed8;">${stop.name}</span>
-                <span style="font-size: 10px; font-weight: 900; background: #1e3a8a; color: #93c5fd; padding: 2px 6px; border-radius: 6px;">${orderPill}</span>
-              </div>
-              <div style="font-size: 11px; color: #475569; font-weight: 600; margin-bottom: 6px;">
-                ${lang === 'bn' ? 'বিকল্প বাস স্টপেজ • মিরপুর ১২ - টিএসসি' : 'Bikolpo Bus Stop • Mirpur 12 - TSC'}
-              </div>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding-top: 6px; border-top: 1px dashed #cbd5e1;">
-                <button onclick="window.dhakaPathSetOrigin && window.dhakaPathSetOrigin('${stop.name}')" style="background: #0f766e; color: white; border: none; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-align: center;">${lang === 'bn' ? '📍 যাত্রা শুরু' : '📍 Set Origin'}</button>
-                <button onclick="window.dhakaPathSetDestination && window.dhakaPathSetDestination('${stop.name}')" style="background: #b45309; color: white; border: none; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-align: center;">${lang === 'bn' ? '🏁 গন্তব্য' : '🏁 Set Destination'}</button>
+        const customIcon = L.divIcon({
+          className: 'dhaka-clean-place-marker',
+          html: `
+            <div style="position: relative; width: 0; height: 0; cursor: pointer; user-select: none;">
+              <!-- Pin Dot centered at (0,0) -->
+              <div style="
+                position: absolute;
+                top: -4px;
+                left: -4px;
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: ${dotColor};
+                border: 1.5px solid #ffffff;
+                box-shadow: 0 0 5px rgba(0,0,0,0.7);
+                z-index: 10;
+              "></div>
+
+              <!-- Clean Place Name Tag -->
+              <div style="
+                position: absolute;
+                ${labelPositionStyle}
+                background: rgba(18, 14, 11, 0.94);
+                color: ${textColor};
+                font-family: 'Anek Bangla', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-size: 11px;
+                font-weight: 700;
+                padding: 2px 7px;
+                border-radius: 6px;
+                border: 1px solid ${borderColor};
+                box-shadow: 0 2px 6px rgba(0,0,0,0.55);
+                white-space: nowrap;
+                letter-spacing: 0.2px;
+                z-index: 20;
+                pointer-events: auto;
+              ">
+                ${placeName}
               </div>
             </div>
-          `);
-          markersRef.current[stop.id] = marker;
+          `,
+          iconSize: [0, 0],
+          iconAnchor: [0, 0]
         });
 
-        // Fit bounds to Bikolpo polyline
-        if (BIKOLPO_DENSE_POLYLINE.length > 0) {
-          map.fitBounds(L.polyline(BIKOLPO_DENSE_POLYLINE).getBounds(), { padding: [40, 40] });
-        }
-      } else if (filterMode === 'uttara_bus' && UTTARA_BUS_STOPS && UTTARA_BUS_STOPS.length > 0) {
-        UTTARA_BUS_STOPS.forEach((stop, idx) => {
-          const orderPill = `U-${String(idx + 1).padStart(2, '0')}`;
-          const customIcon = L.divIcon({
-            className: 'custom-hub-icon',
-            html: `
-              <div style="position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer;">
-                <div style="position: relative; background: #c2410c; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; border: 2.5px solid #fb923c; box-shadow: 0 4px 14px rgba(0,0,0,0.65);">
-                  🚌
-                  <div style="position: absolute; top: -8px; right: -12px; background: #7c2d12; color: #fed7aa; font-family: monospace; font-size: 9px; font-weight: 900; padding: 1px 4px; border-radius: 6px; border: 1px solid #ea580c; box-shadow: 0 2px 4px rgba(0,0,0,0.4);">
-                    ${orderPill}
-                  </div>
-                </div>
-                <div style="background: #14100c; color: #fed7aa; font-family: 'Anek Bangla', sans-serif; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 8px; margin-top: 3px; white-space: nowrap; border: 1.5px solid #ea580c; box-shadow: 0 3px 8px rgba(0,0,0,0.6);">
-                  ${stop.name}
-                </div>
-              </div>
-            `,
-            iconSize: [110, 56],
-            iconAnchor: [55, 28]
-          });
+        const marker = L.marker([data.lat, data.lng], { icon: customIcon }).addTo(map);
 
-          const marker = L.marker([stop.lat, stop.lng], { icon: customIcon }).addTo(map);
-          marker.bindPopup(`
-            <div style="min-width: 200px; font-family: 'Anek Bangla', sans-serif;" class="p-1 text-slate-900">
-              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
-                <span style="font-weight: 900; font-size: 15px; color: #c2410c;">${stop.name}</span>
-                <span style="font-size: 10px; font-weight: 900; background: #7c2d12; color: #fed7aa; padding: 2px 6px; border-radius: 6px;">${orderPill}</span>
-              </div>
-              <div style="font-size: 11px; color: #475569; font-weight: 600; margin-bottom: 6px;">
-                ${lang === 'bn' ? 'উত্তরা বাস স্টপেজ • বিআরটিসি - সচিবালয়' : 'Uttara Bus Stop • BRTC - Secretariat'}
-              </div>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding-top: 6px; border-top: 1px dashed #cbd5e1;">
-                <button onclick="window.dhakaPathSetOrigin && window.dhakaPathSetOrigin('${stop.name}')" style="background: #0f766e; color: white; border: none; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-align: center;">${lang === 'bn' ? '📍 যাত্রা শুরু' : '📍 Set Origin'}</button>
-                <button onclick="window.dhakaPathSetDestination && window.dhakaPathSetDestination('${stop.name}')" style="background: #b45309; color: white; border: none; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-align: center;">${lang === 'bn' ? '🏁 গন্তব্য' : '🏁 Set Destination'}</button>
-              </div>
+        marker.on('click', () => {
+          if (onSelectHub) onSelectHub(name);
+        });
+
+        const statusText = isWaterlogged 
+          ? (lang === 'bn' ? '⚠️ জলজট সতর্কতা: নিচু রাস্তায় যান চলাচল ব্যাহত' : '⚠️ Waterlogging: Surface transport stalled')
+          : isBlockaded 
+          ? (lang === 'bn' ? '🚫 ব্যারিকেড সতর্কতা: বিকল্প সড়ক বা মেট্রোরেল ব্যবহার করুন' : '🚫 Blockade: Use Metro or detour')
+          : isMetro 
+          ? (lang === 'bn' ? 'এমআরটি-৬ মেট্রোরেল স্টেশন • প্রতি ৬ মিনিটে ট্রেন' : 'MRT-6 Metro Station • AC Train every 6 mins')
+          : (lang === 'bn' ? 'সচল ট্রানজিট স্থান' : 'Active Transit Location');
+
+        marker.bindPopup(`
+          <div style="min-width: 210px; font-family: 'Anek Bangla', sans-serif;" class="p-1 text-slate-900">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
+              <span style="font-weight: 900; font-size: 15px; color: ${isMetro ? '#065f46' : '#b83a2e'};">
+                ${placeName}
+              </span>
             </div>
-          `);
-          markersRef.current[stop.id] = marker;
-        });
 
-        // Fit bounds to Uttara Bus polyline
-        if (UTTARA_BUS_DENSE_POLYLINE.length > 0) {
-          map.fitBounds(L.polyline(UTTARA_BUS_DENSE_POLYLINE).getBounds(), { padding: [40, 40] });
-        }
-      } else {
-        // Plot standard hubs & MRT stations for 'all', 'metro_only', or 'alerts_only'
-        Object.entries(hubs).forEach(([name, data]) => {
-          const isMetro = Boolean(data.is_metro_station);
-          const isWaterlogged = activeAlerts.some(a => a.hub === name && a.type === 'waterlogging' && a.is_active);
-          const isBlockaded = activeAlerts.some(a => a.hub === name && a.type === 'blockade' && a.is_active);
-
-          // Apply view filter
-          if (filterMode === 'metro_only' && !isMetro) return;
-          if (filterMode === 'alerts_only' && !isWaterlogged && !isBlockaded) return;
-
-          const isRiverport = name === 'Sadarghat';
-          const isLalbagh = name === 'Lalbagh';
-
-          // Badge styling
-          let badgeBg = isWaterlogged 
-            ? '#b83a2e' 
-            : isBlockaded 
-            ? '#e2b448' 
-            : isMetro 
-            ? '#059669' 
-            : isRiverport 
-            ? '#1c4568' 
-            : '#292019';
-
-          let badgeIcon = isWaterlogged ? '💧' : isBlockaded ? '⚠️' : isMetro ? '🚇' : isRiverport ? '⛵' : isLalbagh ? '🏛️' : '🛺';
-          let pulseClass = (isWaterlogged || isBlockaded) ? 'animate-ping' : '';
-
-          // Order badge for metro stations (M-01, M-02, ..., M-17)
-          const stationOrder = data.station_order || (MRT6_STATIONS_DATA.find(s => s.name === name || s.name_bn === data.name_bn)?.order);
-          const orderPill = stationOrder ? `M-${String(stationOrder).padStart(2, '0')}` : '';
-
-          const customIcon = L.divIcon({
-            className: 'custom-hub-icon',
-            html: `
-              <div style="position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer;">
-                ${(isWaterlogged || isBlockaded) ? `
-                  <div style="position: absolute; width: 38px; height: 38px; border-radius: 50%; background: ${badgeBg}; opacity: 0.45;" class="${pulseClass}"></div>
-                ` : ''}
-                
-                <div style="position: relative; background: ${badgeBg}; color: white; width: ${isMetro ? '32px' : '28px'}; height: ${isMetro ? '32px' : '28px'}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: ${isMetro ? '15px' : '13px'}; font-weight: bold; border: 2.5px solid ${isMetro ? '#34d399' : '#f6d16f'}; box-shadow: 0 4px 14px rgba(0,0,0,0.65);">
-                  ${badgeIcon}
-                  ${orderPill ? `
-                    <div style="position: absolute; top: -8px; right: -12px; background: #064e3b; color: #34d399; font-family: monospace; font-size: 9px; font-weight: 900; padding: 1px 4px; border-radius: 6px; border: 1px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.4);">
-                      ${orderPill}
-                    </div>
-                  ` : ''}
-                </div>
-
-                <div style="background: #14100c; color: ${isMetro ? '#34d399' : '#f6d16f'}; font-family: 'Anek Bangla', sans-serif; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 8px; margin-top: 3px; white-space: nowrap; border: 1.5px solid ${isMetro ? '#10b981' : '#c69429'}; box-shadow: 0 3px 8px rgba(0,0,0,0.6);">
-                  ${lang === 'bn' ? (data.name_bn || data.name) : data.name}
-                </div>
-              </div>
-            `,
-            iconSize: [110, 56],
-            iconAnchor: [55, 28]
-          });
-
-          const marker = L.marker([data.lat, data.lng], { icon: customIcon }).addTo(map);
-
-          marker.on('click', () => {
-            if (onSelectHub) onSelectHub(name);
-          });
-
-          const statusText = isWaterlogged 
-            ? (lang === 'bn' ? '⚠️ জলজট সতর্কতা: নিচু রাস্তায় যান চলাচল ব্যাহত' : '⚠️ Waterlogging: Surface transport stalled')
-            : isBlockaded 
-            ? (lang === 'bn' ? '🚫 ব্যারিকেড সতর্কতা: মেট্রোরেল বা গলিপথে রিকশা চালু' : '🚫 Blockade: Metro & Rickshaws operational')
-            : isMetro 
-            ? (lang === 'bn' ? `🚇 এমআরটি-৬ মেট্রোরেল স্টেশন ${orderPill ? `(${orderPill})` : ''} • প্রতি ৬ মিনিটে ট্রেন` : `MRT-6 Metro Station ${orderPill ? `(${orderPill})` : ''} • AC Train every 6 mins`)
-            : isRiverport
-            ? (lang === 'bn' ? '⛵ সদরঘাট লঞ্চ ও বুড়িগঙ্গা খেয়া ঘাট' : 'Sadarghat Launch & Riverport')
-            : (lang === 'bn' ? 'সচল রোড ট্রানজিট হাব' : 'Surface Road Transit Hub');
-
-          const metroCodeText = data.metro_code || data.metro_station_code || '';
-
-          marker.bindPopup(`
-            <div style="min-width: 220px; font-family: 'Anek Bangla', sans-serif;" class="p-1 text-slate-900">
-              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
-                <span style="font-weight: 900; font-size: 15px; color: ${isMetro ? '#065f46' : '#b83a2e'};">
-                  ${lang === 'bn' ? (data.name_bn || data.name) : data.name}
-                </span>
-                ${orderPill ? `
-                  <span style="font-size: 10px; font-weight: 900; background: #064e3b; color: #a7f3d0; padding: 2px 6px; border-radius: 6px;">
-                    ${orderPill}
-                  </span>
-                ` : ''}
-              </div>
-
-              <div style="font-size: 11px; color: #475569; font-weight: 600; margin-bottom: 6px;">
-                ${data.zone || (lang === 'bn' ? 'ঢাকা মেট্রোপলিটন এরিয়া' : 'Dhaka Metropolitan Area')} ${metroCodeText ? `• ${metroCodeText}` : ''}
-              </div>
-
-              <div style="font-size: 11px; font-weight: 800; color: ${isMetro ? '#065f46' : '#1e293b'}; background: ${isMetro ? '#ecfdf5' : '#f1f5f9'}; padding: 6px; border-radius: 8px; border: 1px solid ${isMetro ? '#a7f3d0' : '#cbd5e1'}; margin-bottom: 8px;">
-                ${statusText}
-              </div>
-
-              ${isMetro ? `
-                <div style="font-size: 11px; color: #047857; margin-bottom: 8px; line-height: 1.4;">
-                  ${lang === 'bn' 
-                    ? '✦ <strong>ভাড়া:</strong> সর্বনিম্ন ২০ ৳ • র‍্যাপিড পাস/MRT Pass-এ ১০% ছাড় (১৮ ৳)<br/>✦ ১০০ মিনিট পেইড এরিয়ায় টিকিট কার্যকর'
-                    : '✦ <strong>Fare:</strong> Min 20 BDT • 10% discount on Rapid/MRT Pass (18 BDT)<br/>✦ Valid for 100 mins in paid area'}
-                </div>
-              ` : ''}
-
-              <div style="font-size: 11px; color: #334155; margin-bottom: 10px;">
-                <strong>${lang === 'bn' ? 'ল্যান্ডমার্ক:' : 'Landmarks:'}</strong> ${data.landmarks ? data.landmarks.join(', ') : (lang === 'bn' ? 'প্রধান সড়ক' : 'Main Road')}
-              </div>
-
-              <!-- Set as Origin / Destination Actions -->
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding-top: 6px; border-top: 1px dashed #cbd5e1;">
-                <button 
-                  onclick="window.dhakaPathSetOrigin && window.dhakaPathSetOrigin('${name}')"
-                  style="background: #0f766e; color: white; border: none; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-align: center;"
-                >
-                  ${lang === 'bn' ? '📍 যাত্রা শুরু' : '📍 Set Origin'}
-                </button>
-                <button 
-                  onclick="window.dhakaPathSetDestination && window.dhakaPathSetDestination('${name}')"
-                  style="background: #b45309; color: white; border: none; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-align: center;"
-                >
-                  ${lang === 'bn' ? '🏁 গন্তব্য' : '🏁 Set Destination'}
-                </button>
-              </div>
+            <div style="font-size: 11px; color: #475569; font-weight: 600; margin-bottom: 6px;">
+              ${data.zone || (lang === 'bn' ? 'ঢাকা মেট্রোপলিটন এরিয়া' : 'Dhaka Metropolitan Area')}
             </div>
-          `);
 
-          markersRef.current[name] = marker;
-        });
+            <div style="font-size: 11px; font-weight: 800; color: ${isMetro ? '#065f46' : '#1e293b'}; background: ${isMetro ? '#ecfdf5' : '#f1f5f9'}; padding: 6px; border-radius: 8px; border: 1px solid ${isMetro ? '#a7f3d0' : '#cbd5e1'}; margin-bottom: 8px;">
+              ${statusText}
+            </div>
 
-        if (filterMode === 'metro_only' && metroPoints.length > 0) {
-          map.fitBounds(L.polyline(metroPoints).getBounds(), { padding: [40, 40] });
-        } else if (filterMode === 'all' && (!activeRoute || !activeRoute.legs || activeRoute.legs.length === 0)) {
-          // Precise bounding box framing Dhaka City transit corridor (Uttara North down to Sadarghat/Old Dhaka)
-          const dhakaBounds = L.latLngBounds([23.7040, 90.3500], [23.8780, 90.4350]);
-          map.fitBounds(dhakaBounds, { padding: [30, 30] });
-        }
+            ${isMetro ? `
+              <div style="font-size: 11px; color: #047857; margin-bottom: 8px; line-height: 1.4;">
+                ${lang === 'bn' 
+                  ? '✦ <strong>ভাড়া:</strong> সর্বনিম্ন ২০ ৳ • র‍্যাপিড পাস বা এমআরটি পাসে ১০% ছাড় (১৮ ৳)<br/>✦ ১০০ মিনিট পেইড এরিয়ায় টিকিট কার্যকর'
+                  : '✦ <strong>Fare:</strong> Min 20 BDT • 10% discount on Rapid Pass or MRT Pass (18 BDT)<br/>✦ Valid for 100 mins in paid area'}
+              </div>
+            ` : ''}
+
+            <!-- Set as Origin / Destination Actions -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding-top: 6px; border-top: 1px dashed #cbd5e1;">
+              <button 
+                onclick="window.dhakaPathSetOrigin && window.dhakaPathSetOrigin('${name}')"
+                style="background: #0f766e; color: white; border: none; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-align: center;"
+              >
+                ${lang === 'bn' ? '📍 যাত্রা শুরু' : '📍 Set Origin'}
+              </button>
+              <button 
+                onclick="window.dhakaPathSetDestination && window.dhakaPathSetDestination('${name}')"
+                style="background: #b45309; color: white; border: none; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-align: center;"
+              >
+                ${lang === 'bn' ? '🏁 গন্তব্য' : '🏁 Set Destination'}
+              </button>
+            </div>
+          </div>
+        `);
+
+        markersRef.current[name] = marker;
+      });
+
+      // View Framing
+      if (filterMode === 'metro_only' && metroPoints.length > 0) {
+        map.fitBounds(L.polyline(metroPoints).getBounds(), { padding: [40, 40] });
+      } else if (filterMode === 'all' && (!activeRoute || !activeRoute.legs || activeRoute.legs.length === 0)) {
+        map.setView([23.7900, 90.3950], 12.6);
       }
 
       // =========================================================================
-      // 4. DRAW ACTIVE ROUTE POLYLINE (Follows True Metro Viaduct Curve)
+      // 3. DRAW ACTIVE SEARCHED ROUTE POLYLINE (If user executed route plan)
       // =========================================================================
       if (activeRoute && activeRoute.legs && activeRoute.legs.length > 0) {
         const fullRouteLatLngs = [];
@@ -441,7 +285,6 @@ export default function MapView({
           const isMetroLeg = leg.mode === 'metro';
 
           if (isMetroLeg) {
-            // Find indices of from_hub and to_hub along the 17-station alignment
             const idx1 = MRT6_STATIONS_DATA.findIndex(s => s.name === fromName || s.name_bn === fromName);
             const idx2 = MRT6_STATIONS_DATA.findIndex(s => s.name === toName || s.name_bn === toName);
 
@@ -456,12 +299,10 @@ export default function MapView({
                 }
               }
             } else {
-              // Fallback to hub coordinates if index missing
               if (hubs[fromName]) fullRouteLatLngs.push([hubs[fromName].lat, hubs[fromName].lng]);
               if (hubs[toName]) fullRouteLatLngs.push([hubs[toName].lat, hubs[toName].lng]);
             }
           } else {
-            // Surface legs (bus, leguna, rickshaw)
             if (hubs[fromName]) fullRouteLatLngs.push([hubs[fromName].lat, hubs[fromName].lng]);
             if (hubs[toName]) fullRouteLatLngs.push([hubs[toName].lat, hubs[toName].lng]);
           }
@@ -469,10 +310,9 @@ export default function MapView({
 
         if (fullRouteLatLngs.length >= 2) {
           activeRoutePolylineRef.current = L.polyline(fullRouteLatLngs, {
-            color: activeRoute.is_detour ? '#dc2626' : '#f59e0b',
-            weight: 6,
-            opacity: 0.95,
-            dashArray: activeRoute.is_detour ? '8, 8' : null
+            color: '#10b981',
+            weight: 5,
+            opacity: 0.95
           }).addTo(map);
 
           map.fitBounds(activeRoutePolylineRef.current.getBounds(), { padding: [60, 60] });
@@ -480,24 +320,24 @@ export default function MapView({
       }
 
       // =========================================================================
-      // 5. DRAW USER CURRENT GPS LOCATION PIN (IF DETECTED)
+      // 4. USER CURRENT GPS LOCATION PIN
       // =========================================================================
       if (userLocation && typeof userLocation.lat === 'number' && typeof userLocation.lng === 'number') {
         const userPinIcon = L.divIcon({
           className: 'user-gps-location-pin',
           html: `
             <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
-              <div style="width: 22px; height: 22px; border-radius: 50%; background: #0284c7; border: 3px solid #ffffff; box-shadow: 0 0 14px #38bdf8; display: flex; align-items: center; justify-content: center; position: relative;">
-                <div style="width: 8px; height: 8px; border-radius: 50%; background: #ffffff;"></div>
-                <div style="position: absolute; width: 44px; height: 44px; border-radius: 50%; background: rgba(56, 189, 248, 0.4); animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+              <div style="width: 20px; height: 20px; border-radius: 50%; background: #0284c7; border: 3px solid #ffffff; box-shadow: 0 0 12px #38bdf8; display: flex; align-items: center; justify-content: center; position: relative;">
+                <div style="width: 6px; height: 6px; border-radius: 50%; background: #ffffff;"></div>
+                <div style="position: absolute; width: 38px; height: 38px; border-radius: 50%; background: rgba(56, 189, 248, 0.4); animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
               </div>
-              <div style="background: #082f49; color: #7dd3fc; font-family: 'Anek Bangla', sans-serif; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 8px; margin-top: 4px; white-space: nowrap; border: 1.5px solid #38bdf8; box-shadow: 0 4px 10px rgba(0,0,0,0.6);">
+              <div style="background: #082f49; color: #7dd3fc; font-family: 'Anek Bangla', sans-serif; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 6px; margin-top: 3px; white-space: nowrap; border: 1.5px solid #38bdf8; box-shadow: 0 3px 8px rgba(0,0,0,0.6);">
                 ${lang === 'bn' ? '📍 আপনার অবস্থান' : '📍 You are here'}
               </div>
             </div>
           `,
-          iconSize: [120, 56],
-          iconAnchor: [60, 16]
+          iconSize: [110, 50],
+          iconAnchor: [55, 14]
         });
 
         const userMarker = L.marker([userLocation.lat, userLocation.lng], {
@@ -515,7 +355,6 @@ export default function MapView({
         userLocationMarkerRef.current = userMarker;
       }
 
-      // Ensure proper tile sizing and eliminate grey areas on mount or tab switch
       setTimeout(() => {
         if (mapInstanceRef.current) {
           mapInstanceRef.current.invalidateSize();
@@ -540,21 +379,18 @@ export default function MapView({
           </div>
           <div>
             <h3 className="font-rickshaw text-xl sm:text-2xl text-[#f6d16f] rickshaw-text-pop flex items-center gap-2">
-              <span>{lang === 'bn' ? 'ঢাকা লাইভ ট্রানজিট ও মেট্রোরেল এমআরটি-৬ ম্যাপ' : 'Dhaka Transit & MRT-6 Metro Rail Alignment'}</span>
-              <span className="text-xs font-mono font-black bg-[#064e3b] text-[#34d399] px-2.5 py-0.5 rounded-lg border border-[#10b981]/40">
-                {lang === 'bn' ? '১৭টি স্টেশন সম্পূর্ণ' : '17 Stations'}
-              </span>
+              <span>{lang === 'bn' ? 'ঢাকা সিটি ট্রানজিট ম্যাপ' : 'Dhaka City Transit Map'}</span>
             </h3>
             <p className="font-anek text-xs sm:text-sm text-[#dfcfb2]">
               {lang === 'bn' 
-                ? 'উত্তরা উত্তর (দিয়াবাড়ী) থেকে মতিঝিল ও কমলাপুর পর্যন্ত সুনির্দিষ্ট জিপিএস কোঅর্ডিনেটসে এলিভেটেড লাইন ও রোড নেটওয়ার্ক' 
-                : 'Accurate elevated viaduct alignment from Uttara North (Diabari) to Kamalapur with connected bus/rickshaw hubs'}
+                ? 'মেট্রোরেল ও প্রধান ট্রানজিট স্থানসমূহ • স্থানে ক্লিক করে সরাসরি রুট প্ল্যান করুন' 
+                : 'Metro rail & major transit locations • Click any place to plan your route'}
             </p>
           </div>
         </div>
 
-        {/* View Filter Switcher */}
-        <div className="flex flex-wrap items-center gap-1.5 bg-[#120e0b] p-1 rounded-2xl border border-[#c69429]/40 shadow-inner">
+        {/* View Filter Switcher (Clean & Minimal) */}
+        <div className="flex items-center gap-1.5 bg-[#120e0b] p-1 rounded-2xl border border-[#c69429]/40 shadow-inner">
           <button
             type="button"
             onClick={() => setFilterMode('all')}
@@ -564,7 +400,7 @@ export default function MapView({
                 : 'text-[#dfcfb2] hover:text-[#fbf8f1]'
             }`}
           >
-            {lang === 'bn' ? 'সকল নোড' : 'All Hubs'}
+            {lang === 'bn' ? 'সকল স্থান' : 'All Places'}
           </button>
 
           <button
@@ -576,34 +412,7 @@ export default function MapView({
                 : 'text-[#dfcfb2] hover:text-[#34d399]'
             }`}
           >
-            <span>🚇</span>
-            <span>{lang === 'bn' ? 'মেট্রোরেল (MRT-6)' : 'MRT-6 Metro'}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setFilterMode('bikolpo_bus')}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-anek font-bold transition-all ${
-              filterMode === 'bikolpo_bus'
-                ? 'bg-[#1e3a8a] text-[#93c5fd] border border-[#3b82f6] shadow-md'
-                : 'text-[#dfcfb2] hover:text-[#93c5fd]'
-            }`}
-          >
-            <span>🚌</span>
-            <span>{lang === 'bn' ? 'বিকল্প বাস (১৮ স্টপ)' : 'Bikolpo Bus'}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setFilterMode('uttara_bus')}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-anek font-bold transition-all ${
-              filterMode === 'uttara_bus'
-                ? 'bg-[#7c2d12] text-[#fed7aa] border border-[#ea580c] shadow-md'
-                : 'text-[#dfcfb2] hover:text-[#fed7aa]'
-            }`}
-          >
-            <span>🚌</span>
-            <span>{lang === 'bn' ? 'উত্তরা বাস (২০ স্টপ)' : 'Uttara Bus'}</span>
+            <span>{lang === 'bn' ? 'মেট্রোরেল' : 'Metro Rail'}</span>
           </button>
 
           <button
@@ -615,7 +424,6 @@ export default function MapView({
                 : 'text-[#dfcfb2] hover:text-[#fca5a5]'
             }`}
           >
-            <span>⚠️</span>
             <span>{lang === 'bn' ? 'সতর্কতা' : 'Disruptions'}</span>
           </button>
         </div>
@@ -624,7 +432,7 @@ export default function MapView({
       {/* Map Canvas Container */}
       <div 
         ref={mapContainerRef} 
-        style={{ height: 'min(82vh, 740px)', minHeight: '560px', width: '100%' }}
+        style={{ height: 'min(82vh, 740px)', minHeight: '580px', width: '100%' }}
         className="rounded-xl border-2 border-[#c69429]/40 overflow-hidden shadow-2xl relative z-0 w-full"
       />
     </div>

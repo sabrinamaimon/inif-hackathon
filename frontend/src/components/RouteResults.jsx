@@ -43,25 +43,171 @@ export default function RouteResults({
   const getModeLabel = (mode, currentLang) => {
     if (currentLang === 'bn') {
       switch (mode) {
-        case 'metro': return '🚇 মেট্রোরেল / ট্রেন';
+        case 'metro': return '🚇 মেট্রোরেল';
         case 'bus': return '🚌 লোকাল বাস';
-        case 'cng': return '🚕 সিএনজি';
-        case 'bike': return '🏍️ বাইক / মোটরসাইকেল';
-        case 'car': return '🚗 কার / ক্যাব';
+        case 'cng': return '🚕 সিএনজি অটোরিকশা';
+        case 'bike': return '🏍️ মোটরসাইকেল';
+        case 'car': return '🚗 প্রাইভেট কার';
         case 'leguna': return '🚐 লেগুনা';
         case 'rickshaw': return '🛺 রিকশা';
         default: return mode;
       }
     }
     switch (mode) {
-      case 'metro': return '🚇 Metro / Train';
+      case 'metro': return '🚇 Metro Rail';
       case 'bus': return '🚌 Local Bus';
       case 'cng': return '🚕 CNG Auto';
       case 'bike': return '🏍️ Motorbike';
-      case 'car': return '🚗 Car / Cab';
+      case 'car': return '🚗 Private Car';
       case 'leguna': return '🚐 Leguna';
       case 'rickshaw': return '🛺 Rickshaw';
       default: return mode;
+    }
+  };
+
+  const getTypeBadge = (route, currentLang) => {
+    if (currentLang === 'bn') {
+      if (route.type_badge_bn) return route.type_badge_bn;
+      if (route.type_badge && /[^\x00-\x7F]/.test(route.type_badge)) return route.type_badge;
+      const mode = route.mode || (route.legs && route.legs[0]?.mode);
+      switch (mode) {
+        case 'metro': return '১০০% বাধামুক্ত ও দ্রুততম';
+        case 'bus': return 'সবচেয়ে সাশ্রয়ী ও হাফ-পাস';
+        case 'cng': return 'ব্যক্তিগত মিটার বাহন';
+        case 'bike': return 'সড়কপথে দ্রুততম';
+        case 'car': return 'আরামদায়ক ও এসি';
+        case 'rickshaw': return 'লোকাল ও গলিপথ';
+        default: return 'যাচাইকৃত রুট';
+      }
+    }
+    // English mode: strictly no Bengali text
+    if (route.type_badge && !/[^\x00-\x7F]/.test(route.type_badge)) {
+      return route.type_badge;
+    }
+    const mode = route.mode || (route.legs && route.legs[0]?.mode);
+    switch (mode) {
+      case 'metro': return 'Fastest & Obstacle-Free';
+      case 'bus': return 'Student & Budget Pick';
+      case 'cng': return 'Personal Metered Transit';
+      case 'bike': return 'Fastest Surface Transit';
+      case 'car': return 'Comfortable & AC';
+      case 'rickshaw': return 'Local Feeder Transit';
+      default: return 'Verified Route';
+    }
+  };
+
+  const getRouteTitle = (route, currentLang) => {
+    const origBn = STATIC_HUBS[origin]?.name_bn || origin;
+    const destBn = STATIC_HUBS[destination]?.name_bn || destination;
+
+    if (currentLang === 'bn') {
+      if (route.title_bn) return route.title_bn;
+      const mode = route.mode || (route.legs && route.legs[0]?.mode);
+      switch (mode) {
+        case 'metro': return `এমআরটি-৬ মেট্রোরেল এক্সপ্রেস (${origBn} ➔ ${destBn})`;
+        case 'bus': return `লোকাল বাস সার্ভিস (${origBn} ➔ ${destBn})`;
+        case 'cng': return `সরাসরি সিএনজি অটোরিকশা (${origBn} ➔ ${destBn})`;
+        case 'bike': return `মোটরসাইকেল রাইডশেয়ার (${origBn} ➔ ${destBn})`;
+        case 'car': return `প্রাইভেট কার ক্যাব (${origBn} ➔ ${destBn})`;
+        case 'rickshaw': return `ঐতিহ্যবাহী রিকশা (${origBn} ➔ ${destBn})`;
+        default: return `সরাসরি রুট (${origBn} ➔ ${destBn})`;
+      }
+    }
+    // English mode: strictly no Bengali text or mixed slashes
+    if (route.title && !/[^\x00-\x7F]/.test(route.title) && !route.title.includes(' / ')) {
+      return route.title;
+    }
+    const mode = route.mode || (route.legs && route.legs[0]?.mode);
+    switch (mode) {
+      case 'metro': return `MRT-6 Metro Rail (${origin} ➔ ${destination})`;
+      case 'bus': return `Local Bus Transit (${origin} ➔ ${destination})`;
+      case 'cng': return `Direct CNG Auto-Rickshaw (${origin} ➔ ${destination})`;
+      case 'bike': return `Ride-Share Motorbike (${origin} ➔ ${destination})`;
+      case 'car': return `Private Car (${origin} ➔ ${destination})`;
+      case 'rickshaw': return `Traditional Rickshaw (${origin} ➔ ${destination})`;
+      default: return `Direct Transit Corridor (${origin} ➔ ${destination})`;
+    }
+  };
+
+  const getObstaclesBadge = (route, currentLang) => {
+    if (currentLang === 'bn') {
+      if (route.obstacles_badge_bn) return route.obstacles_badge_bn;
+      if (route.obstacles_badge && /[^\x00-\x7F]/.test(route.obstacles_badge)) return route.obstacles_badge;
+      if (route.mode === 'metro') return '🟢 বাধামুক্ত উড়ালপথ (০% যানজট ও জলজট)';
+      return '🟡 সাধারণ সড়ক ট্রাফিক';
+    }
+    // English mode
+    if (route.obstacles_badge && !/[^\x00-\x7F]/.test(route.obstacles_badge)) {
+      return route.obstacles_badge;
+    }
+    if (route.mode === 'metro') return '🟢 Elevated Viaduct (0% Congestion)';
+    return '🟡 Surface Road Traffic';
+  };
+
+  const getObstaclesDetail = (route, currentLang) => {
+    if (currentLang === 'bn') {
+      if (route.mode === 'metro') return 'উড়াল ভায়াডাক্ট পথ, সিগন্যালমুক্ত';
+      if (route.obstacles_status === 'warning') return 'বৃষ্টি বা ভিড়ের কারণে ধীরগতি';
+      return 'স্বাভাবিক ঢাকা সড়ক ট্রাফিক';
+    }
+    if (route.mode === 'metro') return 'Elevated viaduct, signal-free';
+    if (route.obstacles_status === 'warning') return 'Slow moving due to weather or peak rush';
+    return 'Normal Dhaka surface traffic';
+  };
+
+  const getLegLineName = (leg, currentLang) => {
+    if (currentLang === 'bn') {
+      if (leg.line_name_bn) return leg.line_name_bn;
+      switch (leg.mode) {
+        case 'metro': return 'এমআরটি-৬ মেট্রোরেল';
+        case 'bus': return 'ঢাকা সিটি বাস';
+        case 'cng': return 'সিএনজি অটোরিকশা';
+        case 'bike': return 'মোটরসাইকেল রাইডশেয়ার';
+        case 'car': return 'প্রাইভেট কার / ক্যাব';
+        case 'rickshaw': return 'ঢাকা ঐতিহ্যবাহী রিকশা';
+        case 'leguna': return 'লেগুনা করিডোর';
+        default: return leg.line_name;
+      }
+    }
+    // English: strip any Bengali letters or slashes
+    const clean = (leg.line_name || '')
+      .replace(/\s*\([^)]*[\u0980-\u09FF][^)]*\)/g, '')
+      .replace(/\s*\/\s*[\u0980-\u09FF]+/g, '')
+      .trim();
+    return clean || (leg.mode === 'metro' ? 'MRT-6 Metro Rail' : 'Dhaka Transit Line');
+  };
+
+  const getLegLandmark = (leg, currentLang) => {
+    const fromName = currentLang === 'bn' ? (STATIC_HUBS[leg.from_hub]?.name_bn || leg.from_hub) : leg.from_hub;
+    const toName = currentLang === 'bn' ? (STATIC_HUBS[leg.to_hub]?.name_bn || leg.to_hub) : leg.to_hub;
+
+    if (currentLang === 'bn') {
+      if (leg.landmark_instructions_bn) return leg.landmark_instructions_bn;
+      if (leg.landmark_instructions && /[^\x00-\x7F]/.test(leg.landmark_instructions)) {
+        return leg.landmark_instructions;
+      }
+      switch (leg.mode) {
+        case 'metro': return `${fromName} মেট্রোরেল কনকোর্স দিয়ে উঠে ${toName} প্ল্যাটফর্মে নামুন।`;
+        case 'bus': return `${fromName} বাস স্টপ থেকে সরাসরি বাসে উঠে ${toName} নামুন। বাসে ৫০% শিক্ষার্থী হাফ-পাস প্রযোজ্য।`;
+        case 'cng': return `${fromName} সিএনজি স্ট্যান্ড থেকে সরাসরি ${toName}। কোনো পরিবর্তন ছাড়া দ্রুত যাতায়াত।`;
+        case 'bike': return `${fromName} থেকে ওয়ান-অন-ওয়ান বাইক পিকআপ নিয়ে যানজট এড়িয়ে দ্রুত পৌঁছান।`;
+        case 'car': return `${fromName} থেকে ডোর-টু-ডোর কার ক্যাব। আরামদায়ক এসি যাত্রা।`;
+        case 'rickshaw': return `${fromName} থেকে হুড তোলা রিকশা নিয়ে গলিপথ দিয়ে নিরিবিলি যাতায়াত।`;
+        default: return `${fromName} থেকে যাত্রা শুরু করে ${toName} এ পৌঁছান।`;
+      }
+    }
+    // English mode: strictly no Bengali text
+    if (leg.landmark_instructions && !/[^\x00-\x7F]/.test(leg.landmark_instructions)) {
+      return leg.landmark_instructions;
+    }
+    switch (leg.mode) {
+      case 'metro': return `Enter ${fromName} Metro Station concourse. Direct elevated express to ${toName}.`;
+      case 'bus': return `Board bus at ${fromName} bus stop and alight at ${toName}. 50% student half-pass applies.`;
+      case 'cng': return `Direct CNG from ${fromName} stand to ${toName}. Door-to-door transit without transfers.`;
+      case 'bike': return `1-on-1 motorbike pickup at ${fromName}. Fastest route weaving through traffic gaps to ${toName}.`;
+      case 'car': return `Door-to-door car cab pickup at ${fromName}. Full AC comfort protected from rain and heat to ${toName}.`;
+      case 'rickshaw': return `Board hooded cycle rickshaw at ${fromName}. Peaceful navigation through inner alleys to ${toName}.`;
+      default: return `Board transit at ${fromName} towards ${toName}.`;
     }
   };
 
@@ -69,7 +215,7 @@ export default function RouteResults({
     const originName = STATIC_HUBS[origin]?.name_bn || origin;
     const destName = STATIC_HUBS[destination]?.name_bn || destination;
     const distText = route.total_distance_km ? `${toBnDigits(route.total_distance_km)} কিলোমিটার` : '';
-    const obstacleText = route.obstacles_badge ? `যাত্রাপথে অবস্থা: ${route.obstacles_badge}।` : '';
+    const obstacleText = route.obstacles_badge_bn || route.obstacles_badge ? `যাত্রাপথে অবস্থা: ${route.obstacles_badge_bn || route.obstacles_badge}।` : '';
     const studentText = route.total_regular_fare !== route.total_student_fare 
       ? `এবং শিক্ষার্থীদের নির্ধারিত হাফ-পাস ভাড়া ${toBnDigits(route.total_student_fare)} টাকা` 
       : '';
@@ -118,7 +264,7 @@ export default function RouteResults({
         };
       case 'car':
         return {
-          badgeTitle: lang === 'bn' ? '🚗 প্রাইভেট কার / ক্যাব' : '🚗 Private Car / Cab',
+          badgeTitle: lang === 'bn' ? '🚗 প্রাইভেট কার' : '🚗 Private Car',
           badgeBg: 'bg-[#4338ca] text-white border-[#818cf8]',
           accent: '#4338ca',
           border: 'border-[#6366f1]'
@@ -279,7 +425,7 @@ export default function RouteResults({
                     {routeTheme.badgeTitle}
                   </span>
                   <span className="text-xs sm:text-sm font-anek font-bold text-[#f6d16f] uppercase tracking-wider hidden md:inline">
-                    {route.type_badge || (lang === 'bn' ? 'যাচাইকৃত রুট' : 'Verified Route')}
+                    {getTypeBadge(route, lang)}
                   </span>
                 </div>
 
@@ -313,7 +459,7 @@ export default function RouteResults({
                       </h4>
 
                       <p className="font-anek text-base sm:text-lg font-bold text-[#b83a2e] mt-1">
-                        {lang === 'bn' ? route.title_bn : route.title}
+                        {getRouteTitle(route, lang)}
                       </p>
                     </div>
 
@@ -370,8 +516,8 @@ export default function RouteResults({
                           🛡️ {lang === 'bn' ? 'পথে বাধা' : 'Obstacles'}
                         </div>
                         <div className="flex items-center justify-center text-[11px] sm:text-xs font-anek font-black text-[#120e0b] leading-tight">
-                          <span className="px-1.5 py-0.5 rounded bg-[#fcf9f2] border border-[#c69429]/50 shadow-xs truncate max-w-[110px]" title={route.obstacles_badge || (route.mode === 'metro' ? (lang === 'bn' ? 'বাধামুক্ত উড়ালপথ' : 'Viaduct') : (lang === 'bn' ? 'সড়ক পথ' : 'Surface Road'))}>
-                            {route.obstacles_badge || (route.mode === 'metro' ? (lang === 'bn' ? '🟢 বাধামুক্ত' : '🟢 Clear') : (lang === 'bn' ? '🟡 স্বাভাবিক' : '🟡 Normal'))}
+                          <span className="px-1.5 py-0.5 rounded bg-[#fcf9f2] border border-[#c69429]/50 shadow-xs truncate max-w-[110px]" title={getObstaclesBadge(route, lang)}>
+                            {getObstaclesBadge(route, lang)}
                           </span>
                         </div>
                       </div>
@@ -388,10 +534,10 @@ export default function RouteResults({
                       <span className="text-base">{route.mode === 'metro' ? '🚇' : '🚦'}</span>
                       <span className="font-extrabold">{lang === 'bn' ? 'পথে বাধা ও ট্রাফিক স্থিতি:' : 'Traffic & Obstacle Condition:'}</span>
                       <span className="px-2 py-0.5 rounded-md bg-white border border-[#c69429]/40 shadow-xs text-xs font-black text-[#120e0b]">
-                        {route.obstacles_badge || (route.mode === 'metro' ? (lang === 'bn' ? '🟢 বাধামুক্ত উড়ালপথ (০% যানজট)' : '🟢 Elevated Viaduct (0% Congestion)') : (lang === 'bn' ? '🟡 সড়কে যানজটের ঝুঁকি' : '🟡 Surface Traffic Delay'))}
+                        {getObstaclesBadge(route, lang)}
                       </span>
                       <span className="text-xs sm:text-sm font-semibold opacity-90">
-                        ({route.obstacles_status || (route.mode === 'metro' ? (lang === 'bn' ? 'উড়াল ভায়াডাক্ট পথ, সিগন্যালমুক্ত' : 'Elevated viaduct, signal-free') : (lang === 'bn' ? 'স্বাভাবিক ঢাকা সড়ক ট্রাফিক' : 'Normal Dhaka surface traffic'))})
+                        ({getObstaclesDetail(route, lang)})
                       </span>
                     </div>
 
@@ -443,7 +589,7 @@ export default function RouteResults({
                               <div>
                                 <div className="flex items-center gap-2.5 flex-wrap">
                                   <span className="font-anek font-black text-lg sm:text-xl text-[#120e0b]">
-                                    {leg.line_name}
+                                    {getLegLineName(leg, lang)}
                                   </span>
                                   <span className="text-xs sm:text-sm px-3 py-0.5 rounded-md bg-[#15453b]/15 text-[#15453b] font-anek font-bold border border-[#15453b]/30">
                                     {getModeLabel(leg.mode, lang)}
@@ -455,8 +601,8 @@ export default function RouteResults({
 
                                 {/* Large Boarding Landmark for Easy Reading */}
                                 <div className="font-anek text-base sm:text-lg font-bold text-[#b83a2e] mt-1.5 pl-1.5 border-l-2 border-[#b83a2e]">
-                                  <span>{lang === 'bn' ? 'ওঠার স্থান / ল্যান্ডমার্ক: ' : 'Boarding Landmark: '}</span>
-                                  <span className="text-[#120e0b] font-semibold">{leg.landmark_instructions}</span>
+                                  <span>{lang === 'bn' ? 'ওঠার স্থান: ' : 'Boarding Landmark: '}</span>
+                                  <span className="text-[#120e0b] font-semibold">{getLegLandmark(leg, lang)}</span>
                                 </div>
                               </div>
                             </div>

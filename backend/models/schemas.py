@@ -31,6 +31,7 @@ class StreetAlertModel(BaseModel):
     title: str
     title_bn: str
     description: str
+    description_bn: Optional[str] = None
     severity: int  # 0 to 100
     affected_modes: List[str]
     upvotes: int = 1
@@ -73,6 +74,8 @@ class RouteLeg(BaseModel):
     student_fare_bdt: int
     surge_multiplier: float = 1.0
     landmark_instructions: str
+    line_name_bn: Optional[str] = None
+    landmark_instructions_bn: Optional[str] = None
     is_affected_by_alert: bool = False
 
 class RouteOption(BaseModel):
@@ -81,11 +84,13 @@ class RouteOption(BaseModel):
     title: str
     title_bn: str
     type_badge: str  # "Fastest", "Cheapest", "Student Pick", "Rain Detour"
+    type_badge_bn: Optional[str] = None
     total_duration_mins: int
     total_regular_fare: int
     total_student_fare: int
     total_distance_km: Optional[float] = None
     obstacles_badge: Optional[str] = None
+    obstacles_badge_bn: Optional[str] = None
     obstacles_status: Optional[str] = None
     transfers: int
     legs: List[RouteLeg]

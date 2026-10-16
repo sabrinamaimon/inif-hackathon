@@ -33,9 +33,9 @@ export default function DhakaCommuteHeritageShowcase({ lang = 'bn' }) {
     },
     {
       id: 'leguna',
-      name: lang === 'bn' ? 'লেগুনা / হিউম্যান হলার' : 'Leguna (Human Hauler)',
+      name: lang === 'bn' ? 'লেগুনা' : 'Leguna (Human Hauler)',
       name_en: 'High-Speed Goli Arterial Connectors',
-      tagline: lang === 'bn' ? 'চকবাজার-গুলিস্তান ও ফার্মগেট কানেক্টর' : 'Chawkbazar & Farmgate Feeder',
+      tagline: lang === 'bn' ? 'চকবাজার-গুলিস্তান ও ফার্মগেট ফিডার' : 'Chawkbazar & Farmgate Feeder',
       badge: lang === 'bn' ? 'দ্রুততম সংযোগ' : 'Fast Feeder',
       badgeColor: 'bg-[#1c4568] text-[#7dd3fc]',
       image: '/assets/shapla_chattar_motijheel.jpg',
@@ -81,7 +81,7 @@ export default function DhakaCommuteHeritageShowcase({ lang = 'bn' }) {
             <span className="text-xs px-3 py-1 rounded-full bg-[#b83a2e] text-[#f6d16f] font-anek font-bold border border-[#f6d16f] shadow-sm">
               ★ {lang === 'bn' ? 'ঢাকার গণপরিবহন ও ট্রানজিট বাহন' : 'Dhaka Transit Vehicles & Commute Lifelines'} ★
             </span>
-            <span className="text-xs font-mono text-[#c69429]">DHAKA TRANSIT DIRECTORY</span>
+            <span className="text-xs font-mono text-[#c69429]">{lang === 'bn' ? 'ঢাকা ট্রানজিট ডিরেক্টরি' : 'DHAKA TRANSIT DIRECTORY'}</span>
           </div>
           <h2 className="font-rickshaw text-3xl sm:text-4xl text-[#f6d16f] rickshaw-text-pop tracking-wide">
             {lang === 'bn' ? 'ঢাকার প্রধান গণপরিবহন ও ট্রানজিট বাহনসমূহ' : 'Dhaka Transit Vehicles & Commute Lifelines'}
@@ -126,7 +126,7 @@ export default function DhakaCommuteHeritageShowcase({ lang = 'bn' }) {
               </div>
 
               <div className="pt-3 border-t border-[#c69429]/30 flex items-center justify-between font-anek text-xs sm:text-sm text-[#fbf8f1]">
-                <span className="text-[#c69429] font-bold">ভাড়া চার্ট:</span>
+                <span className="text-[#c69429] font-bold">{lang === 'bn' ? 'ভাড়া চার্ট:' : 'Fare Chart:'}</span>
                 <span className="font-semibold text-right text-[#f6d16f]">{item.fareInfo}</span>
               </div>
             </div>

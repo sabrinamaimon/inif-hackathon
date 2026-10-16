@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { Bus, Train, Search, Clock, DollarSign, MapPin, Check, X, ArrowRight, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 import { I18N, formatFare, toBnDigits } from '../utils/localization';
 import { ALL_LOCAL_BUSES } from '../data/allLocalBusesData.js';
+import { STATIC_HUBS } from '../data/staticData';
 
 // Metro Rail MRT-6 Official Feature Route
 const MRT6_ROUTE = {
@@ -26,6 +27,84 @@ const MRT6_ROUTE = {
   route_summary: "Uttara North ⇄ Pallabi ⇄ Mirpur 10 ⇄ Agargaon ⇄ Farmgate ⇄ Shahbagh ⇄ Motijheel ⇄ Kamalapur",
   bus_type: "উড়াল মেট্রো এক্সপ্রেস (১০০% যানজটমুক্ত)"
 };
+
+export const STATIC_TRANSIT_ROUTES = [
+  {
+    id: "route-mrt6",
+    name: "MRT-6 Metro Rail",
+    name_bn: "এমআরটি-৬ মেট্রোরেল",
+    type: "metro",
+    operator: "DMTCL",
+    operator_bn: "ডিএমটিসিএল",
+    color: "#059669",
+    student_pass_allowed: false,
+    frequency_mins: 6,
+    hubs: ["Uttara", "Mirpur 10", "Agargaon", "Farmgate", "Shahbagh", "Motijheel"],
+    base_fare_bdt: 20,
+    max_fare_bdt: 100,
+    landmark_instructions: "Elevated concourse turnstiles. Rapid Pass or single journey ticket."
+  },
+  {
+    id: "route-bikolpo",
+    name: "Bikolpo Auto Service",
+    name_bn: "বিকল্প অটো সার্ভিস",
+    type: "bus",
+    operator: "Bikolpo Transport Ltd",
+    operator_bn: "বিকল্প পরিবহন লিমিটেড",
+    color: "#2563eb",
+    student_pass_allowed: true,
+    frequency_mins: 8,
+    hubs: ["Mirpur 10", "Agargaon", "Farmgate", "Shahbagh", "Motijheel"],
+    base_fare_bdt: 10,
+    max_fare_bdt: 40,
+    landmark_instructions: "Mirpur 10 roundabout, Farmgate Ananda Cinema, Shahbagh Museum gate."
+  },
+  {
+    id: "route-shikor",
+    name: "Shikor Paribahan",
+    name_bn: "শিকর পরিবহন",
+    type: "bus",
+    operator: "Shikor Paribahan Co",
+    operator_bn: "শিকর পরিবহন কোম্পানি",
+    color: "#d97706",
+    student_pass_allowed: true,
+    frequency_mins: 10,
+    hubs: ["Mirpur 10", "Agargaon", "Science Lab", "Shahbagh", "Jatrabari"],
+    base_fare_bdt: 10,
+    max_fare_bdt: 45,
+    landmark_instructions: "Opposite Dhaka City College, under Hanif Flyover ramp."
+  },
+  {
+    id: "route-thikana",
+    name: "Thikana Paribahan",
+    name_bn: "ঠিকানা পরিবহন",
+    type: "bus",
+    operator: "Thikana Express",
+    operator_bn: "ঠিকানা এক্সপ্রেস",
+    color: "#7c3aed",
+    student_pass_allowed: true,
+    frequency_mins: 12,
+    hubs: ["Mohammadpur", "Dhanmondi", "Science Lab", "Shahbagh", "Malibagh", "Banasree"],
+    base_fare_bdt: 10,
+    max_fare_bdt: 35,
+    landmark_instructions: "Mohammadpur Town Hall, Dhanmondi Rapa Plaza, Banasree Block C."
+  },
+  {
+    id: "route-leguna-farm-mdpur",
+    name: "Farmgate - Mohammadpur Leguna",
+    name_bn: "ফার্মগেট - মোহাম্মদপুর লেগুনা",
+    type: "leguna",
+    operator: "Dhaka Human Hauler Co-op",
+    operator_bn: "ঢাকা হিউম্যান হোলার কো-অপারেটিভ",
+    color: "#0284c7",
+    student_pass_allowed: false,
+    frequency_mins: 4,
+    hubs: ["Farmgate", "Mohammadpur"],
+    base_fare_bdt: 20,
+    max_fare_bdt: 20,
+    landmark_instructions: "Khamarbari road corner & Town Hall market."
+  }
+];
 
 export default function TransitCMS({ lang = 'bn', onSelectBusRoute }) {
   const [filterType, setFilterType] = useState('all');
@@ -121,29 +200,27 @@ export default function TransitCMS({ lang = 'bn', onSelectBusRoute }) {
     <div className="heritage-card p-4 sm:p-7 border-2 border-[#c69429]/50 my-6 shadow-2xl bg-[#18130f]">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 mb-6 border-b border-[#c69429]/30">
-        <div>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#b83a2e] to-[#e2b448] flex items-center justify-center text-xl shadow-md shrink-0">
-              🚌
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#b83a2e] to-[#e2b448] flex items-center justify-center text-xl shadow-md shrink-0">
+            🚌
+          </div>
+          <div>
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h3 className="font-rickshaw text-2xl sm:text-3xl font-bold text-[#f6d16f] rickshaw-text-pop tracking-wide">
+                {lang === 'bn' ? 'ঢাকা বাস ও ট্রানজিট রুট ডিরেক্টরি' : 'Dhaka Transit & Bus Directory'}
+              </h3>
+              <span 
+                className="transit-verified-badge text-xs px-3 py-1 rounded-full bg-[#15453b] font-anek font-extrabold border border-[#2a6f62] shadow-md tracking-wide"
+                style={{ color: '#a5f3fc' }}
+              >
+                {lang === 'bn' ? 'বিআরটিএ ও ডিএমটিসিএল অনুমোদিত' : 'Verified BRTA & DMTCL'}
+              </span>
             </div>
-            <div>
-              <div className="flex items-center gap-2.5 flex-wrap">
-                <h3 className="font-rickshaw text-2xl sm:text-3xl font-bold text-[#f6d16f] rickshaw-text-pop tracking-wide">
-                  {lang === 'bn' ? 'ঢাকা বাস ও ট্রানজিট রুট ডিরেক্টরি' : 'Dhaka Transit & Bus Directory'}
-                </h3>
-                <span 
-                  className="transit-verified-badge text-xs px-3 py-1 rounded-full bg-[#15453b] font-anek font-extrabold border border-[#2a6f62] shadow-md tracking-wide"
-                  style={{ color: '#a5f3fc' }}
-                >
-                  {lang === 'bn' ? 'BRTA ও DMTCL অনুমোদিত' : 'Verified BRTA & DMTCL'}
-                </span>
-              </div>
-              <p className="font-anek text-xs sm:text-sm text-[#dfcfb2] mt-0.5 font-medium">
-                {lang === 'bn' 
-                  ? '১৮৩+ সিটি বাস ও মেট্রোরেলের স্টপেজ, সময়সূচী এবং সরকারি গেজেট অনুযায়ী পূর্ণাঙ্গ ভাড়ার তালিকা' 
-                  : '183+ Verified City Buses and MRT-6 Metro stops with official fares and timetables'}
-              </p>
-            </div>
+            <p className="font-anek text-xs sm:text-sm text-[#dfcfb2] mt-0.5 font-medium">
+              {lang === 'bn' 
+                ? '১৮৩+ সিটি বাস ও মেট্রোরেলের স্টপেজ, সময়সূচী এবং সরকারি গেজেট অনুযায়ী পূর্ণাঙ্গ ভাড়ার তালিকা' 
+                : '183+ Verified City Buses and MRT-6 Metro stops with official fares and timetables'}
+            </p>
           </div>
         </div>
 
@@ -151,10 +228,10 @@ export default function TransitCMS({ lang = 'bn', onSelectBusRoute }) {
         <div className="flex items-center gap-2 flex-wrap">
           <div className="px-3 py-1.5 rounded-xl bg-[#15453b]/40 border border-[#2a6f62] text-xs font-anek font-bold text-[#6ee7b7] flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-[#6ee7b7] animate-pulse" />
-            <span>১৮৩+ বাস রুট অন্তর্ভুক্ত</span>
+            <span>{lang === 'bn' ? '১৮৩+ বাস রুট অন্তর্ভুক্ত' : '183+ Bus Routes'}</span>
           </div>
           <div className="px-3 py-1.5 rounded-xl bg-[#c69429]/20 border border-[#c69429]/50 text-xs font-anek font-bold text-[#f6d16f]">
-            🎓 ৫০% শিক্ষার্থী হাফ-পাস
+            {lang === 'bn' ? '🎓 ৫০% শিক্ষার্থী হাফ-পাস' : '🎓 50% Student Half-Pass'}
           </div>
         </div>
       </div>
@@ -335,7 +412,7 @@ export default function TransitCMS({ lang = 'bn', onSelectBusRoute }) {
                     </span>
                     {bus.student_pass_allowed && (
                       <span className="text-xs font-bold text-[#6ee7b7] bg-[#15453b]/40 px-2 py-0.5 rounded border border-[#2a6f62]">
-                        🎓 হাফ: {formatFare(bus.student_fare_bdt, lang)}
+                        {lang === 'bn' ? `🎓 হাফ: ${formatFare(bus.student_fare_bdt, lang)}` : `🎓 Half: ${formatFare(bus.student_fare_bdt, lang)}`}
                       </span>
                     )}
                   </div>
@@ -352,7 +429,7 @@ export default function TransitCMS({ lang = 'bn', onSelectBusRoute }) {
                     }}
                     className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-[#b83a2e] to-[#891e17] hover:from-[#c93f32] hover:to-[#9a231b] text-white text-xs font-bold border border-[#f6d16f] shadow-md flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
                   >
-                    <span>এই রুটে চলুন</span>
+                    <span>{lang === 'bn' ? 'এই রুটে চলুন' : 'Plan on Route'}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 )}

@@ -258,7 +258,7 @@ export const STATIC_HUBS = {
   "Uttara": {
     "id": "hub-uttara",
     "name": "Uttara",
-    "name_bn": "উত্তরা (আজমপুর / রাজলক্ষ্মী)",
+    "name_bn": "উত্তরা (আজমপুর ও রাজলক্ষ্মী)",
     "lat": 23.8755,
     "lng": 90.3807,
     "landmarks": ["House Building", "Rajlakshmi Complex", "Azampur Bus Stand", "Metro North Station"],
@@ -508,6 +508,7 @@ export const STATIC_ALERTS = [
     title: "Severe Waterlogging at Malibagh Railgate",
     title_bn: "মালিবাগ রেলগেটে হাঁটু পানি ও জলজট",
     description: "Knee-deep water accumulating after heavy rainfall. Local buses and legunas stalled. Commuters advised to bypass via Kakrail or Shahbagh.",
+    description_bn: "ভারী বৃষ্টির পর হাঁটু পানি জমেছে। লোকাল বাস ও লেগুনা চলাচল বিঘ্নিত। যাত্রীদের কাকরাইল বা শাহবাগ হয়ে যাতায়াত করতে পরামর্শ দেওয়া হচ্ছে।",
     severity: 85,
     affected_modes: ["bus", "leguna", "rickshaw"],
     upvotes: 28,
@@ -524,6 +525,7 @@ export const STATIC_ALERTS = [
     title: "Student Movement Blockade at Shahbagh Roundabout",
     title_bn: "শাহবাগ মোড়ে সমাবেশ ও ব্যারিকেড",
     description: "Shahbagh central intersection occupied by student demonstration. Surface vehicles rerouted. MRT-6 Metro Rail operating normally.",
+    description_bn: "শাহবাগ মোড়ে সমাবেশের কারণে যান চলাচল ব্যাহত। সড়কপথের যানবাহন ঘুরিয়ে দেওয়া হচ্ছে। এমআরটি-৬ মেট্রোরেল সম্পূর্ণ স্বাভাবিকভাবে সচল।",
     severity: 92,
     affected_modes: ["bus", "rickshaw"],
     upvotes: 44,
@@ -540,6 +542,7 @@ export const STATIC_ALERTS = [
     title: "Peak Hour Gridlock at Ananda Cinema Crossway",
     title_bn: "ফার্মগেটে আনন্দ সিনেমা হলের সামনে তীব্র যানজট",
     description: "Heavy bottle-neck heading towards Science Lab. Metro Rail recommended for North-South transit.",
+    description_bn: "সায়েন্স ল্যাবের দিকে তীব্র যানজট। উত্তর-দক্ষিণ রুটে চলাচলে সড়কপথ এড়িয়ে মেট্রোরেল ব্যবহার করার পরামর্শ দেওয়া হচ্ছে।",
     severity: 68,
     affected_modes: ["bus", "rickshaw"],
     upvotes: 15,
@@ -556,6 +559,7 @@ export const STATIC_ALERTS = [
     title: "Old Dhaka Heritage Goli Gridlock near Ahsan Manzil",
     title_bn: "আহসান মঞ্জিল ও শাঁখারীবাজার গলিতে রিকশা জট",
     description: "Heavy pedestrian and connector rickshaw movement near Sadarghat Ghat. Walking recommended from Bahadur Shah Park.",
+    description_bn: "সদরঘাট লঞ্চ টার্মিনাল সংলগ্ন এলাকায় পথচারী ও রিকশার অতিরিক্ত চাপ। বাহাদুর শাহ পার্ক থেকে হেঁটে পার হওয়া দ্রুততর।",
     severity: 62,
     affected_modes: ["rickshaw", "leguna"],
     upvotes: 31,
@@ -568,10 +572,10 @@ export const STATIC_ALERTS = [
 ];
 
 export const STATIC_EMERGENCY_CONTACTS = [
-  { name: "Dhaka Traffic Control", name_bn: "ঢাকা ট্রাফিক কন্ট্রোল রুম", phone: "01713398500", desc: "Live Traffic Updates & Police Assistance" },
-  { name: "DMP Central Helpline", name_bn: "ডিএমপি জরুরি সেবা", phone: "999", desc: "National Emergency Service (Police, Fire, Ambulance)" },
-  { name: "BIWTA Sadarghat Port Safety", name_bn: "বিআইডব্লিউটিএ সদরঘাট রিভার কন্ট্রোল", phone: "01715012345", desc: "Buriganga Riverways, Launch & Ghat Assistance" },
-  { name: "MRT-6 Metro Helpline", name_bn: "মেট্রোরেল কন্ট্রোল রুম", phone: "16111", desc: "Train schedule, Rapid Pass issues & station assistance" }
+  { name: "Dhaka Traffic Control", name_bn: "ঢাকা ট্রাফিক কন্ট্রোল রুম", phone: "01713398500", desc: "Live Traffic Updates & Police Assistance", desc_bn: "লাইভ ট্রাফিক আপডেট ও পুলিশ সহায়তা" },
+  { name: "DMP Central Helpline", name_bn: "ডিএমপি জরুরি সেবা", phone: "999", desc: "National Emergency Service (Police, Fire, Ambulance)", desc_bn: "জাতীয় জরুরি সেবা (পুলিশ, ফায়ার সার্ভিস, অ্যাম্বুলেন্স)" },
+  { name: "BIWTA Sadarghat Port Safety", name_bn: "বিআইডব্লিউটিএ সদরঘাট রিভার কন্ট্রোল", phone: "01715012345", desc: "Buriganga Riverways, Launch & Ghat Assistance", desc_bn: "বুড়িগঙ্গা নদীপথ, লঞ্চ ও ঘাট সহায়তা" },
+  { name: "MRT-6 Metro Helpline", name_bn: "মেট্রোরেল কন্ট্রোল রুম", phone: "16111", desc: "Train schedule, Rapid Pass issues & station assistance", desc_bn: "ট্রেন শিডিউল, র‍্যাপিড পাস ও স্টেশন সহায়তা" }
 ];
 
 export const STATIC_RIDESHARE = [

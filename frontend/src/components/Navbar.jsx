@@ -78,7 +78,7 @@ export default function Navbar({
               {lang === 'bn' ? 'ঢাকার পথ' : 'DhakaPath'}
             </span>
             <span className="hidden 2xl:inline font-regal text-xs text-[#dfcfb2] tracking-[0.22em] font-extrabold uppercase">
-              TRANSIT
+              {lang === 'bn' ? 'ট্রানজিট' : 'TRANSIT'}
             </span>
           </div>
         </div>

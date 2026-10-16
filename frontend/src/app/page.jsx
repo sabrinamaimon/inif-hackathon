@@ -505,7 +505,7 @@ export default function Home() {
                   className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#292019] hover:bg-[#3d3026] text-[#fbf8f1] border-2 border-[#c69429]/60 hover:border-[#f6d16f] font-anek font-extrabold text-sm shadow-md hover:scale-[1.02] transition-all cursor-pointer"
                 >
                   <span className="text-base">🧭</span>
-                  <span>{lang === 'bn' ? `খোঁজা রুটগুলো দেখুন (${routes.length}টি অপশন)` : `View Search Results (${routes.length} options)`}</span>
+                  <span>{lang === 'bn' ? `খোঁজা রুটগুলো দেখুন (${toBnDigits(routes.length)}টি বিকল্প)` : `View Search Results (${routes.length} options)`}</span>
                 </button>
               </div>
             )}
