@@ -9,6 +9,27 @@
  */
 
 import { STATIC_HUBS } from '../data/staticData.js';
+import { ALL_LOCAL_BUSES } from '../data/allLocalBusesData.js';
+
+// Helper to round fare strictly to multiples of 5 or 10 in integer round figure
+export function roundTo5(val, min = 10) {
+  const rounded = Math.round(Number(val) / 5) * 5;
+  return Math.max(min, rounded);
+}
+
+// Find actual running buses on the corridor
+export function findMatchingBuses(fromHub, toHub) {
+  if (!fromHub || !toHub) return [];
+  const fromLower = fromHub.toLowerCase().trim();
+  const toLower = toHub.toLowerCase().trim();
+
+  return ALL_LOCAL_BUSES.filter(b => {
+    const stopsLower = (b.stops || []).map(s => s.toLowerCase());
+    const hasFrom = stopsLower.some(s => s.includes(fromLower) || fromLower.includes(s));
+    const hasTo = stopsLower.some(s => s.includes(toLower) || toLower.includes(s));
+    return hasFrom && hasTo;
+  });
+}
 
 export const METRO_FARE_CHART = {
   // Official DMTCL 17x17 Matrix Key Station Fares
@@ -133,44 +154,86 @@ export const BASE_TRANSIT_EDGES = [
   { u: "Gulisthan", v: "Jatrabari", mode: "bus", line: "Mayor Hanif Flyover Bus", dist: 2.8, time: 10, elevated: false }
 ];
 
+// Calculate accurate road distance between two hubs using coordinates
+export function calculateHubDistance(fromHub, toHub) {
+  const h1 = STATIC_HUBS[fromHub];
+  const h2 = STATIC_HUBS[toHub];
+  if (!h1 || !h2) return 5.0;
+  if (fromHub === toHub) return 0;
+
+  const R = 6371; // Earth radius in km
+  const dLat = ((h2.lat - h1.lat) * Math.PI) / 180;
+  const dLng = ((h2.lng - h1.lng) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((h1.lat * Math.PI) / 180) *
+      Math.cos((h2.lat * Math.PI) / 180) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const straightKm = R * c;
+  // Apply Dhaka urban road tortuosity factor (~1.35x)
+  return Math.round(Math.max(1.0, straightKm * 1.35) * 10) / 10;
+}
+
+// Find nearest MRT-6 station for connector calculation
+export function findNearestMetroStation(hubName) {
+  const hub = STATIC_HUBS[hubName];
+  if (!hub) return null;
+  if (hub.is_metro_station) return { name: hubName, dist: 0 };
+
+  const metroStations = Object.entries(STATIC_HUBS).filter(([_, data]) => data.is_metro_station);
+  let best = null;
+  let minDist = Infinity;
+
+  metroStations.forEach(([name, data]) => {
+    const dist = calculateHubDistance(hubName, name);
+    if (dist < minDist) {
+      minDist = dist;
+      best = { name, dist, data };
+    }
+  });
+
+  return best;
+}
+
 export function calculateFare(mode, from, to, distanceKm, weather = "normal", isRushHour = false) {
   if (mode === "metro") {
     const key1 = `${from}-${to}`;
     const key2 = `${to}-${from}`;
-    const fare = METRO_FARE_CHART[key1] || METRO_FARE_CHART[key2] || 30;
+    const fare = METRO_FARE_CHART[key1] || METRO_FARE_CHART[key2] || Math.min(100, Math.max(20, Math.round(distanceKm * 4.5 / 10) * 10));
     // Metro strictly does not accept student pass
     return { regular: fare, student: fare, surge: 1.0 };
   }
 
   if (mode === "bus") {
-    const raw = distanceKm * 2.5;
-    const regular = Math.max(10, Math.ceil(raw));
-    // 50% discount with 10 BDT statutory floor
-    const student = Math.max(10, Math.ceil(regular * 0.5));
+    const regular = roundTo5(distanceKm * 2.50, 10);
+    // 50% discount with 10 BDT statutory floor rounded to multiple of 5
+    const student = roundTo5(regular * 0.50, 10);
     return { regular, student, surge: 1.0 };
   }
 
   if (mode === "cng") {
-    let base = distanceKm <= 2.0 ? 40 : 40 + Math.ceil((distanceKm - 2.0) * 12);
+    let base = distanceKm <= 2.0 ? 40 : 40 + (distanceKm - 2.0) * 12;
     base = Math.max(100, base);
     let surge = 1.0;
     if (weather === "rain") surge += 0.3;
     if (isRushHour) surge += 0.25;
-    const regular = Math.ceil(base * surge);
+    const regular = roundTo5(base * surge, 100);
     return { regular, student: regular, surge: Math.round(surge * 100) / 100 };
   }
 
   if (mode === "leguna") {
-    const fare = Math.max(15, Math.min(30, Math.round(distanceKm * 4.5)));
-    return { regular: fare, student: fare, surge: 1.0 };
+    const regular = roundTo5(distanceKm * 4.5, 15);
+    return { regular, student: regular, surge: 1.0 };
   }
 
   // Rickshaw (Non-metered with surge)
-  let base = Math.max(30, Math.round(distanceKm * 20));
+  let base = Math.max(30, distanceKm * 22);
   let surge = 1.0;
   if (weather === "rain") surge += 0.5; // +50%
   if (isRushHour) surge += 0.25;        // +25%
-  const regular = Math.ceil(base * surge);
+  const regular = roundTo5(base * surge, 30);
   return { regular, student: regular, surge: Math.round(surge * 100) / 100 };
 }
 
@@ -182,7 +245,6 @@ export function runDijkstraRouting({
   isRushHour = false,
   activeAlerts = []
 }) {
-  const hubs = Object.keys(STATIC_HUBS);
   if (!origin || !destination || origin === destination || !STATIC_HUBS[origin] || !STATIC_HUBS[destination]) return [];
 
   // Identify disrupted hubs
@@ -192,258 +254,215 @@ export function runDijkstraRouting({
   const blockedHubs = new Set(
     activeAlerts.filter(a => a.type === "blockade" && a.is_active).map(a => a.hub)
   );
+  const isDetourActive = waterloggedHubs.has(origin) || waterloggedHubs.has(destination) || blockedHubs.has(origin) || blockedHubs.has(destination);
 
-  // Build adjacency graph
-  const graph = {};
-  hubs.forEach(h => { graph[h] = []; });
+  // Exact road distance between origin and destination
+  const roadDist = calculateHubDistance(origin, destination);
+  const isOrigMetro = Boolean(STATIC_HUBS[origin]?.is_metro_station);
+  const isDestMetro = Boolean(STATIC_HUBS[destination]?.is_metro_station);
 
-  BASE_TRANSIT_EDGES.forEach(edge => {
-    let weight = edge.time;
+  const matchedBuses = findMatchingBuses(origin, destination);
+  const resultRoutes = [];
 
-    // Surface traffic disruptions
-    if (!edge.elevated) {
-      if (waterloggedHubs.has(edge.u) || waterloggedHubs.has(edge.v)) {
-        weight *= 4.5; // Severe waterlogging delay
-      }
-      if (blockedHubs.has(edge.u) || blockedHubs.has(edge.v)) {
-        weight = 99999; // Road impassable
-      }
-      if (isRushHour) {
-        weight *= 1.35;
-      }
-      if (weather === "rain") {
-        weight *= 1.4;
-      }
-    } else {
-      // Metro Viaduct remains immune to ground protests & water!
-      weight *= 0.6; // Speed priority
-    }
-
-    graph[edge.u].push({ ...edge, to: edge.v, weight });
-    graph[edge.v].push({ ...edge, to: edge.u, weight });
-  });
-
-  // Shortest path via Dijkstra
-  const distances = {};
-  const prev = {};
-  const edgeUsed = {};
-  const pq = [origin];
-
-  hubs.forEach(h => { distances[h] = Infinity; });
-  distances[origin] = 0;
-
-  while (pq.length > 0) {
-    pq.sort((a, b) => distances[a] - distances[b]);
-    const curr = pq.shift();
-
-    if (curr === destination) break;
-
-    (graph[curr] || []).forEach(edge => {
-      const alt = distances[curr] + edge.weight;
-      if (alt < distances[edge.to]) {
-        distances[edge.to] = alt;
-        prev[edge.to] = curr;
-        edgeUsed[edge.to] = edge;
-        if (!pq.includes(edge.to)) pq.push(edge.to);
-      }
-    });
-  }
-
-  // Reconstruct path
-  const path = [];
-  let step = destination;
-  while (prev[step]) {
-    path.unshift({ from: prev[step], to: step, edge: edgeUsed[step] });
-    step = prev[step];
-  }
-
-  if (path.length === 0) {
-    // Fallback direct route
-    const fallbackFare = calculateFare("rickshaw", origin, destination, 6.0, weather, isRushHour);
-    return [
-      {
-        id: "opt-fastest",
-        title: `Direct Connector (${origin} ➔ ${destination})`,
-        title_bn: `সরাসরি সংযোগ (${STATIC_HUBS[origin].name_bn} ➔ ${STATIC_HUBS[destination].name_bn})`,
-        type_badge: "Direct Route",
-        total_duration_mins: 30,
-        total_regular_fare: fallbackFare.regular,
-        total_student_fare: fallbackFare.student,
-        transfers: 0,
-        is_recommended: true,
-        is_detour: false,
-        legs: [
-          {
-            leg_number: 1,
-            mode: "rickshaw",
-            line_name: "Connector Rickshaw",
-            from_hub: origin,
-            to_hub: destination,
-            distance_km: 6.0,
-            duration_mins: 30,
-            regular_fare_bdt: fallbackFare.regular,
-            student_fare_bdt: fallbackFare.student,
-            surge_multiplier: fallbackFare.surge,
-            landmark_instructions: `Board connector near ${STATIC_HUBS[origin].landmarks[0]}.`
-          }
-        ]
-      }
-    ];
-  }
-
-  // Consolidate consecutive legs of same line/mode (especially MRT-6)
-  const consolidated = [];
-  path.forEach((p) => {
-    const e = p.edge;
-    const duration = Math.round(e.time * (weather === "rain" && !e.elevated ? 1.3 : 1.0));
-    if (consolidated.length > 0 && consolidated[consolidated.length - 1].mode === e.mode && consolidated[consolidated.length - 1].line === e.line) {
-      const last = consolidated[consolidated.length - 1];
-      last.to = p.to;
-      last.dist += e.dist;
-      last.duration += duration;
-      last.intermediate.push(p.from);
-    } else {
-      consolidated.push({
-        from: p.from,
-        to: p.to,
-        mode: e.mode,
-        line: e.line,
-        dist: e.dist,
-        duration: duration,
-        intermediate: []
-      });
-    }
-  });
-
-  let totalTime = 0;
-  let totalRegular = 0;
-  let totalStudent = 0;
-  const isDetourActive = waterloggedHubs.size > 0 || blockedHubs.size > 0;
-
-  const legs = consolidated.map((c, idx) => {
-    const fare = calculateFare(c.mode, c.from, c.to, c.dist, weather, isRushHour);
-    totalTime += c.duration;
-    totalRegular += fare.regular;
-    totalStudent += fare.student;
-
-    let landmark = c.mode === "metro"
-      ? `Board MRT-6 at ${c.from} Station. Alight at ${c.to} Platform.`
-      : `Board ${c.line} at ${c.from} near ${STATIC_HUBS[c.from]?.landmarks?.[0] || 'Bus Stop'}.`;
-
-    if (c.intermediate.length > 0) {
-      landmark += ` (${c.intermediate.length} intermediate stops via ${c.intermediate.slice(0, 3).join(', ')}${c.intermediate.length > 3 ? '...' : ''})`;
-    }
-
-    return {
-      leg_number: idx + 1,
-      mode: c.mode,
-      line_name: c.line,
-      from_hub: c.from,
-      to_hub: c.to,
-      distance_km: Math.round(c.dist * 10) / 10,
-      duration_mins: c.duration,
-      regular_fare_bdt: fare.regular,
-      student_fare_bdt: fare.student,
-      surge_multiplier: fare.surge,
-      landmark_instructions: landmark
-    };
-  });
-
-  // Calculate base road distance
-  const baseDist = Math.max(1.8, legs.reduce((acc, l) => acc + l.distance_km, 0) || 5.0);
-  const roundedDist = Math.round(baseDist * 10) / 10;
-
-  // 1. METRO RAIL / TRAIN (Fastest & Zero Surface Obstacles)
-  const hasMetroLeg = legs.some(l => l.mode === 'metro');
-  const metroDist = roundedDist;
-  const metroTime = hasMetroLeg ? totalTime : Math.max(16, Math.round(baseDist * 1.5));
-  const metroFare = Math.min(100, Math.max(20, Math.round(baseDist * 4.5)));
-
-  const metroRoute = {
-    id: "opt-metro",
-    mode: "metro",
-    title: `MRT-6 Metro Rail / ট্রেন (${origin} ➔ ${destination})`,
-    title_bn: `এমআরটি-৬ মেট্রোরেল (এক্সপ্রেস)`,
-    type_badge: "১০০% বাধামুক্ত ও দ্রুততম",
-    total_duration_mins: metroTime,
-    total_regular_fare: metroFare,
-    total_student_fare: metroFare,
-    total_distance_km: metroDist,
-    obstacles_badge: "🟢 বাধামুক্ত উড়ালপথ (০% যানজট ও জলজট)",
-    obstacles_status: "safe",
-    transfers: hasMetroLeg ? Math.max(0, path.length - 1) : 0,
-    is_recommended: true,
-    is_detour: false,
-    disruption_warning: null,
-    legs: hasMetroLeg ? legs : [
-      {
-        leg_number: 1,
-        mode: "metro",
-        line_name: "MRT-6 Metro Rail",
-        from_hub: origin,
-        to_hub: destination,
-        distance_km: metroDist,
-        duration_mins: metroTime,
-        regular_fare_bdt: metroFare,
-        student_fare_bdt: metroFare,
-        surge_multiplier: 1.0,
-        landmark_instructions: `${origin} মেট্রোরেল কনকোর্স দিয়ে উঠে মতিঝিল/উত্তরা ট্র্যাকে সরাসরি যাত্রা।`
-      }
-    ]
-  };
-
-  // 2. LOCAL BUS (Cheapest / Student Half-Pass)
-  let busTime = Math.max(20, Math.round(baseDist * 3.0));
+  // =========================================================================
+  // 1. LOCAL BUS ROUTE (DIRECT-FIRST: 0 TRANSFERS WHEN RUNNING BUSES EXIST)
+  // =========================================================================
+  let busTime = Math.max(16, Math.round(roadDist * 2.8));
   if (isRushHour) busTime = Math.round(busTime * 1.35);
   if (weather === "rain") busTime = Math.round(busTime * 1.3);
 
-  const busRegularFare = Math.max(20, Math.round(baseDist * 2.5));
-  const busStudentFare = Math.max(10, Math.round(busRegularFare * 0.5)); // 50% statutory student pass
+  // Official BRTA Gazette Rate: 2.50 BDT/km rounded to multiple of 5, minimum statutory 10 BDT
+  const busRegularFare = roundTo5(roadDist * 2.50, 10);
+  const busStudentFare = roundTo5(busRegularFare * 0.50, 10); // 50% statutory student pass
+  
+  const busLineName = matchedBuses.length > 0 
+    ? matchedBuses.slice(0, 3).map(b => b.name_bn || b.name).join(' / ')
+    : "ঢাকা অনুমোদিত সিটি বাস (বিকল্প / বিআরটিসি / স্বাধীন)";
+
   const busObstacles = weather === "rain"
-    ? "🔴 সড়কে ভারী বৃষ্টির জলজট ও ধীরগতি"
-    : (isRushHour ? "🟡 বিকেল ৫:৩০ অফিস ছুটি পিক-আওয়ার ট্রাফিক" : "🟡 সাধারণ সড়ক ট্রাফিক");
+    ? "🔴 সড়কে বৃষ্টির পানি ও কিছুটা ধীরগতি"
+    : (isRushHour ? "🟡 অফিস ছুটি পিক-আওয়ার সাধারণ ট্রাফিক" : "🟢 নিয়মিত সড়ক ট্রাফিক স্বাভাবিক");
 
   const busRoute = {
     id: "opt-bus",
     mode: "bus",
     title: `Direct / Local Bus Transit (${origin} ➔ ${destination})`,
-    title_bn: `লোকাল ও ডাইরেক্ট বাস সার্ভিস`,
-    type_badge: "সবচেয়ে সাশ্রয়ী ও হাফ-পাস",
+    title_bn: `সরাসরি সিটি বাস: ${busLineName}`,
+    type_badge: "সরাসরি ও সাশ্রয়ী (হাফ-পাস)",
     total_duration_mins: busTime,
     total_regular_fare: busRegularFare,
     total_student_fare: busStudentFare,
-    total_distance_km: Math.round(baseDist * 1.05 * 10) / 10,
+    total_distance_km: roadDist,
     obstacles_badge: busObstacles,
     obstacles_status: weather === "rain" || isRushHour ? "warning" : "traffic",
     transfers: 0,
-    is_recommended: false,
+    is_recommended: true, // Direct buses are default top pick unless both hubs are on Metro
     is_detour: isDetourActive,
-    disruption_warning: isDetourActive ? "Route navigates around surface blockades." : null,
+    disruption_warning: isDetourActive ? "যাত্রাপথে কিছু অংশে ধীরগতি থাকতে পারে।" : null,
     legs: [
       {
         leg_number: 1,
         mode: "bus",
-        line_name: "Dhaka City Bus (বিকল্প / বিআরটিসি / স্বাধীন)",
+        line_name: busLineName,
         from_hub: origin,
         to_hub: destination,
-        distance_km: Math.round(baseDist * 1.05 * 10) / 10,
+        distance_km: roadDist,
         duration_mins: busTime,
         regular_fare_bdt: busRegularFare,
         student_fare_bdt: busStudentFare,
         surge_multiplier: 1.0,
-        landmark_instructions: `${origin} বাস স্টপ থেকে সরাসরি বাসে উঠে ${destination} এ নামুন। বাসে ৫০% শিক্ষার্থী হাফ-পাস প্রযোজ্য।`
+        landmark_instructions: `${origin} বাস স্টপ থেকে সরাসরি বাসে উঠে কোনো বদল ছাড়াই ${destination} নামুন। শিক্ষার্থীদের ৫০% হাফ-পাস প্রযোজ্য।`
       }
     ]
   };
+  resultRoutes.push(busRoute);
 
-  // 3. CNG AUTO-RICKSHAW (Direct BRTA Metered Auto)
-  let cngBase = baseDist <= 2.0 ? 40 : 40 + Math.ceil((baseDist - 2.0) * 12);
+  // =========================================================================
+  // 2. METRO RAIL ROUTE (STRICT ELIGIBILITY: ONLY WHEN SENSIBLE)
+  // =========================================================================
+  if (isOrigMetro && isDestMetro) {
+    // Both hubs are official MRT-6 stations: 100% Direct Rapid Metro
+    const metroKey1 = `${origin}-${destination}`;
+    const metroKey2 = `${destination}-${origin}`;
+    const metroFare = METRO_FARE_CHART[metroKey1] || METRO_FARE_CHART[metroKey2] || Math.min(100, Math.max(20, Math.round(roadDist * 4.5 / 10) * 10));
+    const metroTime = Math.max(4, Math.round(roadDist * 1.6));
+
+    const metroRoute = {
+      id: "opt-metro",
+      mode: "metro",
+      title: `MRT-6 Metro Rail (${origin} ➔ ${destination})`,
+      title_bn: `এমআরটি-৬ মেট্রোরেল (এক্সপ্রেস)`,
+      type_badge: "১০০% বাধামুক্ত ও দ্রুততম",
+      total_duration_mins: metroTime,
+      total_regular_fare: metroFare,
+      total_student_fare: metroFare,
+      total_distance_km: roadDist,
+      obstacles_badge: "🟢 বাধামুক্ত উড়ালপথ (০% যানজট ও জলজট)",
+      obstacles_status: "safe",
+      transfers: 0,
+      is_recommended: true, // If both are metro, metro is #1
+      is_detour: false,
+      disruption_warning: null,
+      legs: [
+        {
+          leg_number: 1,
+          mode: "metro",
+          line_name: "MRT-6 Metro Rail",
+          from_hub: origin,
+          to_hub: destination,
+          distance_km: roadDist,
+          duration_mins: metroTime,
+          regular_fare_bdt: metroFare,
+          student_fare_bdt: metroFare,
+          surge_multiplier: 1.0,
+          landmark_instructions: `${origin} মেট্রোরেল স্টেশনের কনকোর্স দিয়ে উঠে ট্র্যাকে সরাসরি যাত্রা।`
+        }
+      ]
+    };
+    busRoute.is_recommended = false;
+    resultRoutes.unshift(metroRoute); // Put metro at top
+  } else {
+    // Check if one hub is on metro and the other is within 2.5 km of a metro station
+    const nearOrig = isOrigMetro ? { name: origin, dist: 0 } : findNearestMetroStation(origin);
+    const nearDest = isDestMetro ? { name: destination, dist: 0 } : findNearestMetroStation(destination);
+
+    // Only suggest metro if at most 1 short surface connector (<= 2.5 km) is needed
+    const totalConnectorDist = (nearOrig?.dist || 0) + (nearDest?.dist || 0);
+    if (totalConnectorDist <= 2.5 && (nearOrig?.name !== nearDest?.name)) {
+      const metroKey1 = `${nearOrig.name}-${nearDest.name}`;
+      const metroKey2 = `${nearDest.name}-${nearOrig.name}`;
+      const metroSegmentDist = calculateHubDistance(nearOrig.name, nearDest.name);
+      const metroFare = METRO_FARE_CHART[metroKey1] || METRO_FARE_CHART[metroKey2] || Math.min(100, Math.max(20, Math.round(metroSegmentDist * 4.5 / 10) * 10));
+      const metroTime = Math.max(4, Math.round(metroSegmentDist * 1.6));
+
+      const metroLegs = [];
+      let legCounter = 1;
+
+      if (!isOrigMetro && nearOrig.dist > 0.3) {
+        const connFare = roundTo5(nearOrig.dist * 22, 30);
+        metroLegs.push({
+          leg_number: legCounter++,
+          mode: "rickshaw",
+          line_name: "রিকশা / কানেক্টর সংযোগ",
+          from_hub: origin,
+          to_hub: nearOrig.name,
+          distance_km: nearOrig.dist,
+          duration_mins: Math.max(6, Math.round(nearOrig.dist * 4.5)),
+          regular_fare_bdt: connFare,
+          student_fare_bdt: connFare,
+          surge_multiplier: 1.0,
+          landmark_instructions: `${origin} থেকে রিকশাযোগে ${nearOrig.name} মেট্রোরেল স্টেশনে পৌঁছান।`
+        });
+      }
+
+      metroLegs.push({
+        leg_number: legCounter++,
+        mode: "metro",
+        line_name: "MRT-6 Metro Rail",
+        from_hub: nearOrig.name,
+        to_hub: nearDest.name,
+        distance_km: metroSegmentDist,
+        duration_mins: metroTime,
+        regular_fare_bdt: metroFare,
+        student_fare_bdt: metroFare,
+        surge_multiplier: 1.0,
+        landmark_instructions: `${nearOrig.name} স্টেশন থেকে মেট্রোরেলে চড়ে ${nearDest.name} নামুন।`
+      });
+
+      if (!isDestMetro && nearDest.dist > 0.3) {
+        const connFare = roundTo5(nearDest.dist * 22, 30);
+        metroLegs.push({
+          leg_number: legCounter++,
+          mode: "rickshaw",
+          line_name: "রিকশা / কানেক্টর সংযোগ",
+          from_hub: nearDest.name,
+          to_hub: destination,
+          distance_km: nearDest.dist,
+          duration_mins: Math.max(6, Math.round(nearDest.dist * 4.5)),
+          regular_fare_bdt: connFare,
+          student_fare_bdt: connFare,
+          surge_multiplier: 1.0,
+          landmark_instructions: `${nearDest.name} মেট্রোরেল স্টেশন থেকে রিকশায় সরাসরি ${destination} পৌঁছান।`
+        });
+      }
+
+      if (metroLegs.length <= 2) {
+        const totalMetroReg = metroLegs.reduce((sum, l) => sum + l.regular_fare_bdt, 0);
+        const totalMetroTime = metroLegs.reduce((sum, l) => sum + l.duration_mins, 0) + (metroLegs.length > 1 ? 4 : 0);
+
+        const metroOption = {
+          id: "opt-metro",
+          mode: "metro",
+          title: `Metro Connection (${origin} ➔ ${destination})`,
+          title_bn: `মেট্রোরেল সংযোগ (${nearOrig.name} হয়ে)`,
+          type_badge: "উড়ালপথ ও দ্রুত সংযোগ",
+          total_duration_mins: totalMetroTime,
+          total_regular_fare: totalMetroReg,
+          total_student_fare: totalMetroReg,
+          total_distance_km: Math.round((nearOrig.dist + metroSegmentDist + nearDest.dist) * 10) / 10,
+          obstacles_badge: "🟢 প্রধান অংশ উড়ালপথে সম্পূর্ণ যানজটমুক্ত",
+          obstacles_status: "safe",
+          transfers: metroLegs.length - 1,
+          is_recommended: false, // Direct bus is preferred when transfers needed
+          is_detour: false,
+          disruption_warning: null,
+          legs: metroLegs
+        };
+        resultRoutes.push(metroOption);
+      }
+    }
+  }
+
+  // =========================================================================
+  // 3. CNG AUTO-RICKSHAW (DIRECT BRTA METERED AUTO)
+  // =========================================================================
+  let cngBase = roadDist <= 2.0 ? 40 : 40 + (roadDist - 2.0) * 12;
   cngBase = Math.max(100, cngBase);
   let cngSurge = 1.0;
   if (weather === "rain") cngSurge += 0.3;
   if (isRushHour) cngSurge += 0.25;
-  const cngFare = Math.ceil(cngBase * cngSurge);
-  let cngTime = Math.max(14, Math.round(baseDist * 2.3));
+  const cngFare = roundTo5(cngBase * cngSurge, 100);
+  let cngTime = Math.max(14, Math.round(roadDist * 2.2));
   if (isRushHour) cngTime = Math.round(cngTime * 1.25);
   if (weather === "rain") cngTime = Math.round(cngTime * 1.2);
 
@@ -456,7 +475,7 @@ export function runDijkstraRouting({
     total_duration_mins: cngTime,
     total_regular_fare: cngFare,
     total_student_fare: cngFare,
-    total_distance_km: roundedDist,
+    total_distance_km: roadDist,
     obstacles_badge: "🟡 মাঝারি ট্রাফিক, অলিগলি ব্যবহারের সুবিধা",
     obstacles_status: "traffic",
     transfers: 0,
@@ -469,7 +488,7 @@ export function runDijkstraRouting({
         line_name: "CNG Auto-Rickshaw (মিটার / চুক্তি)",
         from_hub: origin,
         to_hub: destination,
-        distance_km: roundedDist,
+        distance_km: roadDist,
         duration_mins: cngTime,
         regular_fare_bdt: cngFare,
         student_fare_bdt: cngFare,
@@ -478,11 +497,15 @@ export function runDijkstraRouting({
       }
     ]
   };
+  resultRoutes.push(cngRoute);
 
-  // 4. RIDE-SHARE BIKE / MOTORCYCLE (Fastest Surface Road Transit)
-  let bikeTime = Math.max(9, Math.round(baseDist * 1.6));
+  // =========================================================================
+  // 4. RIDE-SHARE BIKE / MOTORCYCLE (FASTEST SURFACE ROAD TRANSIT)
+  // =========================================================================
+  let bikeTime = Math.max(9, Math.round(roadDist * 1.5));
   if (isRushHour) bikeTime = Math.round(bikeTime * 1.15);
-  const bikeBase = Math.max(35, Math.round(30 + (baseDist - 1) * 12 * (weather === "rain" ? 1.2 : 1.0)));
+  const rawBike = 30 + (roadDist - 1) * 12 * (weather === "rain" ? 1.2 : 1.0);
+  const bikeFare = roundTo5(rawBike, 35);
   const bikeObstacles = weather === "rain"
     ? "🌧️ বৃষ্টিতে পিচ্ছিল সড়ক ও সতর্ক রাইড"
     : "🟢 জ্যামের ফাঁক দিয়ে দ্রুত বের হওয়ার সুযোগ";
@@ -490,13 +513,13 @@ export function runDijkstraRouting({
   const bikeRoute = {
     id: "opt-bike",
     mode: "bike",
-    title: `Ride-Share Bike / মোটরসাইকেল (${origin} ➔ ${destination})`,
+    title: `Ride-Share Bike (${origin} ➔ ${destination})`,
     title_bn: `মোটরসাইকেল / বাইক রাইডশেয়ার`,
     type_badge: "সড়কপথে দ্রুততম",
     total_duration_mins: bikeTime,
-    total_regular_fare: bikeBase,
-    total_student_fare: bikeBase,
-    total_distance_km: roundedDist,
+    total_regular_fare: bikeFare,
+    total_student_fare: bikeFare,
+    total_distance_km: roadDist,
     obstacles_badge: bikeObstacles,
     obstacles_status: weather === "rain" ? "warning" : "safe",
     transfers: 0,
@@ -509,21 +532,25 @@ export function runDijkstraRouting({
         line_name: "Motorcycle Ride-Share (Pathao / Uber Moto)",
         from_hub: origin,
         to_hub: destination,
-        distance_km: roundedDist,
+        distance_km: roadDist,
         duration_mins: bikeTime,
-        regular_fare_bdt: bikeBase,
-        student_fare_bdt: bikeBase,
+        regular_fare_bdt: bikeFare,
+        student_fare_bdt: bikeFare,
         surge_multiplier: 1.0,
         landmark_instructions: `${origin} থেকে ওয়ান-অন-ওয়ান বাইক পিকআপ। যানজট এড়িয়ে দ্রুততম সড়ক পরিবহন।`
       }
     ]
   };
+  resultRoutes.push(bikeRoute);
 
-  // 5. PRIVATE CAR / RIDE-SHARE CAB (Uber / Taxi)
-  let carTime = Math.max(16, Math.round(baseDist * 2.6));
-  if (isRushHour) carTime = Math.round(carTime * 1.4);
-  if (weather === "rain") carTime = Math.round(carTime * 1.25);
-  const carBase = Math.max(140, Math.round(100 + (baseDist - 1) * 24 * (isRushHour ? 1.2 : 1.0)));
+  // =========================================================================
+  // 5. PRIVATE CAR / RIDE-SHARE CAB (UBER / TAXI)
+  // =========================================================================
+  let carTime = Math.max(16, Math.round(roadDist * 2.5));
+  if (isRushHour) carTime = Math.round(carTime * 1.35);
+  if (weather === "rain") carTime = Math.round(carTime * 1.2);
+  const rawCar = 100 + (roadDist - 1) * 24 * (isRushHour ? 1.2 : 1.0);
+  const carFare = roundTo5(rawCar, 140);
   const carObstacles = isRushHour
     ? "🔴 পিক-আওয়ারে প্রধান সড়কে যানজটের সম্ভাবনা"
     : "🟡 স্বাভাবিক সড়ক ট্রাফিক (এসি ও আরামদায়ক)";
@@ -535,9 +562,9 @@ export function runDijkstraRouting({
     title_bn: `প্রাইভেট কার / রাইডশেয়ার ক্যাব`,
     type_badge: "আরামদায়ক ও এসি",
     total_duration_mins: carTime,
-    total_regular_fare: carBase,
-    total_student_fare: carBase,
-    total_distance_km: Math.round(baseDist * 1.06 * 10) / 10,
+    total_regular_fare: carFare,
+    total_student_fare: carFare,
+    total_distance_km: Math.round(roadDist * 1.05 * 10) / 10,
     obstacles_badge: carObstacles,
     obstacles_status: isRushHour ? "warning" : "traffic",
     transfers: 0,
@@ -550,32 +577,34 @@ export function runDijkstraRouting({
         line_name: "Private Cab / Ride-Share Car",
         from_hub: origin,
         to_hub: destination,
-        distance_km: Math.round(baseDist * 1.06 * 10) / 10,
+        distance_km: Math.round(roadDist * 1.05 * 10) / 10,
         duration_mins: carTime,
-        regular_fare_bdt: carBase,
-        student_fare_bdt: carBase,
+        regular_fare_bdt: carFare,
+        student_fare_bdt: carFare,
         surge_multiplier: 1.0,
         landmark_instructions: `${origin} থেকে ডোর-টু-ডোর কার ক্যাব। বৃষ্টি ও রোদে সম্পূর্ণ আরামদায়ক এসি যাত্রা।`
       }
     ]
   };
+  resultRoutes.push(carRoute);
 
-  // 6. RICKSHAW (For Short/Medium Distances <= 6.5 km)
-  const resultRoutes = [metroRoute, busRoute, cngRoute, bikeRoute, carRoute];
-
-  if (baseDist <= 6.5) {
-    const rickshawFare = Math.max(30, Math.round(baseDist * 22 * (weather === "rain" ? 1.4 : 1.0)));
-    const rickshawTime = Math.max(10, Math.round(baseDist * 5.2));
+  // =========================================================================
+  // 6. TRADITIONAL RICKSHAW (FOR SHORT TRIPS <= 6.5 KM)
+  // =========================================================================
+  if (roadDist <= 6.5) {
+    const rawRickshaw = roadDist * 22 * (weather === "rain" ? 1.4 : 1.0);
+    const rickshawFare = roundTo5(rawRickshaw, 30);
+    const rickshawTime = Math.max(10, Math.round(roadDist * 5.0));
     const rickshawRoute = {
       id: "opt-rickshaw",
       mode: "rickshaw",
-      title: `Traditional Rickshaw / রিকশা (${origin} ➔ ${destination})`,
+      title: `Traditional Rickshaw (${origin} ➔ ${destination})`,
       title_bn: `ঐতিহ্যবাহী রিকশা ভ্রমণ`,
       type_badge: "লোকাল ও গলিপথ",
       total_duration_mins: rickshawTime,
       total_regular_fare: rickshawFare,
       total_student_fare: rickshawFare,
-      total_distance_km: roundedDist,
+      total_distance_km: roadDist,
       obstacles_badge: "🟢 অভ্যন্তরীণ অলিগলিতে বাধাহীন চলাচল",
       obstacles_status: "safe",
       transfers: 0,
@@ -588,7 +617,7 @@ export function runDijkstraRouting({
           line_name: "Dhaka Traditional Rickshaw",
           from_hub: origin,
           to_hub: destination,
-          distance_km: roundedDist,
+          distance_km: roadDist,
           duration_mins: rickshawTime,
           regular_fare_bdt: rickshawFare,
           student_fare_bdt: rickshawFare,
@@ -599,6 +628,16 @@ export function runDijkstraRouting({
     };
     resultRoutes.push(rickshawRoute);
   }
+
+  // =========================================================================
+  // 7. FINAL 100% MATHEMATICAL CONSISTENCY RECONCILIATION
+  // =========================================================================
+  resultRoutes.forEach(r => {
+    r.total_regular_fare = r.legs.reduce((sum, leg) => sum + (leg.regular_fare_bdt || 0), 0);
+    r.total_student_fare = r.legs.reduce((sum, leg) => sum + (leg.student_fare_bdt || 0), 0);
+    const legDurationSum = r.legs.reduce((sum, leg) => sum + (leg.duration_mins || 0), 0);
+    r.total_duration_mins = legDurationSum + ((r.transfers || 0) * 3);
+  });
 
   return resultRoutes;
 }

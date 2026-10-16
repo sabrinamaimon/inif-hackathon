@@ -8,6 +8,7 @@ import {
 import { I18N, formatFare, formatDuration, toBnDigits } from '../utils/localization';
 import { speakText } from '../utils/speech';
 import { generateOfflineRouteCard } from '../utils/offlineCard';
+import { STATIC_HUBS } from '../data/staticData';
 
 export default function RouteResults({ 
   routes = [], 
@@ -65,11 +66,20 @@ export default function RouteResults({
   };
 
   const handleAudioBriefing = (route) => {
-    const distText = route.total_distance_km ? `${route.total_distance_km} কিলোমিটার` : '';
-    const obstacleText = route.obstacles_badge ? `পথে অবস্থা: ${route.obstacles_badge}।` : '';
+    const originName = STATIC_HUBS[origin]?.name_bn || origin;
+    const destName = STATIC_HUBS[destination]?.name_bn || destination;
+    const distText = route.total_distance_km ? `${toBnDigits(route.total_distance_km)} কিলোমিটার` : '';
+    const obstacleText = route.obstacles_badge ? `যাত্রাপথে অবস্থা: ${route.obstacles_badge}।` : '';
+    const studentText = route.total_regular_fare !== route.total_student_fare 
+      ? `এবং শিক্ষার্থীদের নির্ধারিত হাফ-পাস ভাড়া ${toBnDigits(route.total_student_fare)} টাকা` 
+      : '';
+    const transferText = (route.transfers === 0 || !route.transfers)
+      ? 'কোনো প্রকার পরিবর্তন বা বদল ছাড়াই এটি সরাসরি যাত্রাপথ।'
+      : `এতে মোট ${toBnDigits(route.transfers)} বার বাহন পরিবর্তন করতে হবে।`;
+
     const speechScript = lang === 'bn'
-      ? `${origin} থেকে ${destination} পৌঁছাতে আনুমানিক সময় লাগবে ${route.total_duration_mins} মিনিট। দূরত্ব প্রায় ${distText}। ${obstacleText} মোট সাধারণ ভাড়া ${route.total_regular_fare} টাকা, শিক্ষার্থীদের হাফ-পাস ভাড়া ${route.total_student_fare} টাকা। বাহন: ${route.title_bn || route.legs[0]?.line_name}। সাবধানে চলাচল করুন।`
-      : `Transit itinerary from ${origin} to ${destination}. Estimated duration is ${route.total_duration_mins} minutes, distance ${route.total_distance_km || ''} km. Total regular fare is ${route.total_regular_fare} BDT, student half-pass is ${route.total_student_fare} BDT. Mode: ${route.title}. Have a safe journey.`;
+      ? `আসসালামু আলাইকুম। ${originName} থেকে ${destName} পৌঁছাতে আনুমানিক সময় লাগবে ${toBnDigits(route.total_duration_mins)} মিনিট। দূরত্ব প্রায় ${distText}। ${transferText} নির্ধারিত মোট ভাড়া ${toBnDigits(route.total_regular_fare)} টাকা ${studentText}। ${obstacleText} আপনার নিরাপদ ও স্বাচ্ছন্দ্যময় যাত্রা কামনা করছি।`
+      : `Assalamu Alaikum. Traveling from ${origin} to ${destination} will take approximately ${route.total_duration_mins} minutes over a distance of ${route.total_distance_km || ''} km. ${route.transfers === 0 ? 'This is a direct journey with no transfers.' : `This route requires ${route.transfers} transfers.`} The fare is ${route.total_regular_fare} Taka${route.total_regular_fare !== route.total_student_fare ? `, with student concession at ${route.total_student_fare} Taka.` : '.'} Wishing you a safe and pleasant journey.`;
 
     speakText(speechScript, lang);
   };
@@ -273,10 +283,10 @@ export default function RouteResults({
                   </span>
                 </div>
 
-                {/* Grounded Graph Badge */}
-                <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#6ee7b7] bg-[#15453b]/40 px-3 py-1 rounded-xl border border-[#2a6f62]">
+                {/* Verified Transit Badge */}
+                <div className="flex items-center gap-2 text-xs font-anek font-bold text-[#6ee7b7] bg-[#15453b]/40 px-3 py-1 rounded-xl border border-[#2a6f62]">
                   <span className="w-2 h-2 rounded-full bg-[#6ee7b7] animate-ping" />
-                  <span>{lang === 'bn' ? 'সরাসরি যাচাইকৃত রুট' : 'GROUNDED GRAPH ROUTE'}</span>
+                  <span>{lang === 'bn' ? 'সরাসরি যাচাইকৃত যাত্রাপথ' : 'VERIFIED DIRECT ROUTE'}</span>
                 </div>
               </div>
 
@@ -297,9 +307,9 @@ export default function RouteResults({
                       
                       {/* HUGE ROUTE DISPLAY */}
                       <h4 className="font-anek text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#120e0b] tracking-tight flex items-center flex-wrap gap-2.5">
-                        <span>{origin}</span>
+                        <span>{lang === 'bn' ? (STATIC_HUBS[origin]?.name_bn || origin) : origin}</span>
                         <span className="text-[#b83a2e] text-2xl sm:text-3xl font-black">➔</span>
-                        <span className="text-[#15453b]">{destination}</span>
+                        <span className="text-[#15453b]">{lang === 'bn' ? (STATIC_HUBS[destination]?.name_bn || destination) : destination}</span>
                       </h4>
 
                       <p className="font-anek text-base sm:text-lg font-bold text-[#b83a2e] mt-1">
@@ -360,8 +370,8 @@ export default function RouteResults({
                           🛡️ {lang === 'bn' ? 'পথে বাধা' : 'Obstacles'}
                         </div>
                         <div className="flex items-center justify-center text-[11px] sm:text-xs font-anek font-black text-[#120e0b] leading-tight">
-                          <span className="px-1.5 py-0.5 rounded bg-[#fcf9f2] border border-[#c69429]/50 shadow-xs truncate max-w-[110px]" title={route.obstacles_badge || (route.mode === 'metro' ? 'বাধামুক্ত উড়ালপথ' : 'সড়ক পথ')}>
-                            {route.obstacles_badge || (route.mode === 'metro' ? '🟢 বাধামুক্ত' : '🟡 স্বাভাবিক')}
+                          <span className="px-1.5 py-0.5 rounded bg-[#fcf9f2] border border-[#c69429]/50 shadow-xs truncate max-w-[110px]" title={route.obstacles_badge || (route.mode === 'metro' ? (lang === 'bn' ? 'বাধামুক্ত উড়ালপথ' : 'Viaduct') : (lang === 'bn' ? 'সড়ক পথ' : 'Surface Road'))}>
+                            {route.obstacles_badge || (route.mode === 'metro' ? (lang === 'bn' ? '🟢 বাধামুক্ত' : '🟢 Clear') : (lang === 'bn' ? '🟡 স্বাভাবিক' : '🟡 Normal'))}
                           </span>
                         </div>
                       </div>
@@ -378,10 +388,10 @@ export default function RouteResults({
                       <span className="text-base">{route.mode === 'metro' ? '🚇' : '🚦'}</span>
                       <span className="font-extrabold">{lang === 'bn' ? 'পথে বাধা ও ট্রাফিক স্থিতি:' : 'Traffic & Obstacle Condition:'}</span>
                       <span className="px-2 py-0.5 rounded-md bg-white border border-[#c69429]/40 shadow-xs text-xs font-black text-[#120e0b]">
-                        {route.obstacles_badge || (route.mode === 'metro' ? '🟢 বাধামুক্ত উড়ালপথ (০% যানজট)' : '🟡 সড়কে যানজটের ঝুঁকি')}
+                        {route.obstacles_badge || (route.mode === 'metro' ? (lang === 'bn' ? '🟢 বাধামুক্ত উড়ালপথ (০% যানজট)' : '🟢 Elevated Viaduct (0% Congestion)') : (lang === 'bn' ? '🟡 সড়কে যানজটের ঝুঁকি' : '🟡 Surface Traffic Delay'))}
                       </span>
                       <span className="text-xs sm:text-sm font-semibold opacity-90">
-                        ({route.obstacles_status || (route.mode === 'metro' ? 'উড়াল ভায়াডাক্ট পথ, সিগন্যালমুক্ত' : 'স্বাভাবিক ঢাকা সড়ক ট্রাফিক')})
+                        ({route.obstacles_status || (route.mode === 'metro' ? (lang === 'bn' ? 'উড়াল ভায়াডাক্ট পথ, সিগন্যালমুক্ত' : 'Elevated viaduct, signal-free') : (lang === 'bn' ? 'স্বাভাবিক ঢাকা সড়ক ট্রাফিক' : 'Normal Dhaka surface traffic'))})
                       </span>
                     </div>
 
@@ -391,7 +401,7 @@ export default function RouteResults({
                       </span>
                       {route.total_student_fare < route.total_regular_fare && (
                         <span className="font-anek font-extrabold text-[#0e6e41] bg-[#0e6e41]/10 px-2 py-0.5 rounded border border-[#0e6e41]/30">
-                          🎓 হাফ-পাস: {lang === 'bn' ? toBnDigits(route.total_student_fare) : route.total_student_fare} ৳
+                          🎓 {lang === 'bn' ? 'হাফ-পাস:' : 'Half-Pass:'} {lang === 'bn' ? toBnDigits(route.total_student_fare) : route.total_student_fare} {lang === 'bn' ? '৳' : 'Tk'}
                         </span>
                       )}
                     </div>
@@ -401,10 +411,10 @@ export default function RouteResults({
                   {hasSavings && (
                     <div className="mt-3.5 py-2.5 px-4 rounded-xl bg-[#0e6e41]/10 border border-[#0e6e41]/40 flex flex-wrap items-center justify-between gap-2 text-sm sm:text-base font-anek font-bold text-[#0e6e41]">
                       <span className="flex items-center gap-1.5">
-                        <span>🎓 সরকারি শিক্ষার্থী ৫০% হাফ-পাস ছাড় প্রযোজ্য (বাসে সর্বনিম্ন ভাড়া ১০ ৳)।</span>
+                        <span>{lang === 'bn' ? '🎓 সরকারি শিক্ষার্থী ৫০% হাফ-পাস ছাড় প্রযোজ্য (বাসে সর্বনিম্ন ভাড়া ১০ ৳)।' : '🎓 Statutory 50% student discount applies (10 BDT min fare on buses).'}</span>
                       </span>
                       <span className="text-sm sm:text-base font-anek font-extrabold bg-[#0e6e41] text-white px-3 py-1 rounded-lg shadow-sm">
-                        সাশ্রয়: {formatFare(savingsAmount, lang)}
+                        {lang === 'bn' ? 'সাশ্রয়:' : 'Saves:'} {formatFare(savingsAmount, lang)}
                       </span>
                     </div>
                   )}
@@ -439,13 +449,13 @@ export default function RouteResults({
                                     {getModeLabel(leg.mode, lang)}
                                   </span>
                                   <span className="text-sm font-mono font-semibold text-[#7a6654]">
-                                    ({leg.from_hub} ➔ {leg.to_hub})
+                                    ({lang === 'bn' ? (STATIC_HUBS[leg.from_hub]?.name_bn || leg.from_hub) : leg.from_hub} ➔ {lang === 'bn' ? (STATIC_HUBS[leg.to_hub]?.name_bn || leg.to_hub) : leg.to_hub})
                                   </span>
                                 </div>
 
                                 {/* Large Boarding Landmark for Easy Reading */}
                                 <div className="font-anek text-base sm:text-lg font-bold text-[#b83a2e] mt-1.5 pl-1.5 border-l-2 border-[#b83a2e]">
-                                  <span>ওঠার স্থান / ল্যান্ডমার্ক: </span>
+                                  <span>{lang === 'bn' ? 'ওঠার স্থান / ল্যান্ডমার্ক: ' : 'Boarding Landmark: '}</span>
                                   <span className="text-[#120e0b] font-semibold">{leg.landmark_instructions}</span>
                                 </div>
                               </div>

@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Menu, Navigation, AlertTriangle, Cpu, Users, Bus, Globe, Sparkles, Sun, Moon, Download, Map } from 'lucide-react';
+import Link from 'next/link';
+import { Menu, Navigation, AlertTriangle, Cpu, Users, Bus, Globe, Sparkles, Sun, Moon, Download, Map, Shield } from 'lucide-react';
 import { I18N, toBnDigits } from '../utils/localization';
 
 export default function Navbar({ 
@@ -39,9 +40,10 @@ export default function Navbar({
     },
     { 
       id: 'cms', 
-      label: lang === 'bn' ? 'ডিরেক্টরি' : 'Directory', 
+      label: lang === 'bn' ? 'বাস ডিরেক্টরি' : 'Bus Directory', 
       shortLabel: lang === 'bn' ? 'ডিরেক্টরি' : 'Directory', 
-      icon: Bus 
+      icon: Bus,
+      badge: 183
     },
     { 
       id: 'rideshare', 
@@ -131,6 +133,16 @@ export default function Navbar({
             <span>{lang === 'bn' ? '১৬টি হাব সচল' : '16 Hubs Active'}</span>
           </div>
 
+          {/* Admin CMS Portal Link */}
+          <Link
+            href="/admin"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-[#292019] to-[#1e1712] hover:bg-[#3d3026] text-[#f6d16f] border border-[#c69429]/60 text-xs font-anek font-bold transition-all shadow-md group shrink-0"
+            title={lang === 'bn' ? 'অ্যাডমিন কন্ট্রোল প্যানেল' : 'Admin Control Panel'}
+          >
+            <Shield className="w-3.5 h-3.5 text-[#f6d16f] group-hover:scale-110 transition-transform shrink-0" />
+            <span className="hidden xl:inline">{lang === 'bn' ? 'অ্যাডমিন' : 'Admin'}</span>
+          </Link>
+
           {/* Theme Toggle Button (Dark / Light Mode - Icon Only) */}
           <button
             onClick={() => setTheme && setTheme(theme === 'dark' ? 'light' : 'dark')}
@@ -199,6 +211,16 @@ export default function Navbar({
           >
             <Download className="w-4 h-4 text-[#6ee7b7]" />
           </button>
+
+          {/* Mobile Admin Link */}
+          <Link
+            href="/admin"
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-[#292019] border border-[#c69429]/60 text-[#f6d16f] active:scale-95 transition-all shadow-md"
+            title="Admin CMS"
+            aria-label="Admin CMS"
+          >
+            <Shield className="w-4 h-4 text-[#f6d16f]" />
+          </Link>
 
           {/* Mobile Theme Toggle */}
           <button

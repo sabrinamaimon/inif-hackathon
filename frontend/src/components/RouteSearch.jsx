@@ -28,11 +28,14 @@ export default function RouteSearch({
 }) {
   const t = I18N[lang] || I18N.bn;
 
-  // All Dhaka Hubs / Locations (Unified without mode segregation)
+  // All Dhaka Hubs / Locations (Sorted according to active language)
   const allHubList = Object.keys(STATIC_HUBS).sort((a, b) => {
-    const nameA = STATIC_HUBS[a]?.name_bn || a;
-    const nameB = STATIC_HUBS[b]?.name_bn || b;
-    return nameA.localeCompare(nameB, 'bn');
+    if (lang === 'bn') {
+      const nameA = STATIC_HUBS[a]?.name_bn || a;
+      const nameB = STATIC_HUBS[b]?.name_bn || b;
+      return nameA.localeCompare(nameB, 'bn');
+    }
+    return a.localeCompare(b, 'en');
   });
 
   const [naturalQuery, setNaturalQuery] = useState('');
@@ -229,8 +232,8 @@ export default function RouteSearch({
                   disabled={isSelectedAsDest}
                   className={isSelectedAsDest ? "bg-[#1a1410] text-[#7a6654] italic" : "bg-[#1a1410] text-[#fbf8f1]"}
                 >
-                  {isSelectedAsDest ? '🚫 [গন্তব্যে নির্বাচিত] ' : '📍 '}
-                  {hub?.name_bn ? `${hub.name_bn} (${name})` : name}
+                  {isSelectedAsDest ? (lang === 'bn' ? '🚫 [গন্তব্যে নির্বাচিত] ' : '🚫 [Selected as Destination] ') : '📍 '}
+                  {lang === 'bn' ? (hub?.name_bn || name) : name}
                 </option>
               );
             })}
@@ -315,8 +318,8 @@ export default function RouteSearch({
                   disabled={isSelectedAsOrig}
                   className={isSelectedAsOrig ? "bg-[#1a1410] text-[#7a6654] italic" : "bg-[#1a1410] text-[#fbf8f1]"}
                 >
-                  {isSelectedAsOrig ? '🚫 [শুরুতে নির্বাচিত] ' : '📍 '}
-                  {hub?.name_bn ? `${hub.name_bn} (${name})` : name}
+                  {isSelectedAsOrig ? (lang === 'bn' ? '🚫 [শুরুতে নির্বাচিত] ' : '🚫 [Selected as Origin] ') : '📍 '}
+                  {lang === 'bn' ? (hub?.name_bn || name) : name}
                 </option>
               );
             })}

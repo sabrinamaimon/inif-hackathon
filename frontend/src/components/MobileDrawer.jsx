@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { X, Navigation, AlertTriangle, Cpu, Users, Bus, FileScan, ShieldAlert, Globe, Sun, Moon, Download, Map } from 'lucide-react';
+import Link from 'next/link';
+import { X, Navigation, AlertTriangle, Cpu, Users, Bus, FileScan, ShieldAlert, Globe, Sun, Moon, Download, Map, Shield } from 'lucide-react';
 import { I18N, toBnDigits } from '../utils/localization';
 
 export default function MobileDrawer({ 
@@ -24,7 +25,7 @@ export default function MobileDrawer({
     { id: 'home', label: lang === 'bn' ? 'রুট প্ল্যানার' : 'Route Planner', icon: Navigation },
     { id: 'alerts', label: lang === 'bn' ? 'সড়ক বিঘ্ন' : 'Street Alerts', icon: AlertTriangle, badge: activeAlertCount },
     { id: 'simulator', label: lang === 'bn' ? 'ম্যাপ ও সিমুলেটর' : 'Map & Simulator', icon: Map },
-    { id: 'cms', label: lang === 'bn' ? 'ডিরেক্টরি' : 'Directory', icon: Bus },
+    { id: 'cms', label: lang === 'bn' ? 'বাস রুট ডিরেক্টরি' : 'Bus Directory', icon: Bus, badge: 183 },
     { id: 'rideshare', label: lang === 'bn' ? 'রাইড শেয়ার' : 'Ride Share', icon: Users },
   ];
 
@@ -112,6 +113,21 @@ export default function MobileDrawer({
               <FileScan className="w-4 h-4 text-[#f6d16f]" />
               <span>{lang === 'bn' ? 'সাইনর্বোড / ভাড়ার চার্ট স্ক্যান' : 'Scan Bus Signboard (OCR)'}</span>
             </button>
+
+            {/* Admin CMS Portal Link */}
+            <Link
+              href="/admin"
+              onClick={onClose}
+              className="w-full mt-2 flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-bold bg-gradient-to-r from-[#292019] to-[#1a1410] border border-[#f6d16f]/60 text-[#f6d16f] hover:bg-[#3d3026] transition-all shadow-md"
+            >
+              <div className="flex items-center gap-3">
+                <Shield className="w-4 h-4 text-[#f6d16f]" />
+                <span>{lang === 'bn' ? 'অ্যাডমিন সিএমএস পোর্টাল' : 'Admin CMS Portal'}</span>
+              </div>
+              <span className="text-[10px] font-mono font-bold text-[#6ee7b7] bg-[#15453b] px-2 py-0.5 rounded border border-[#2a6f62]">
+                /admin
+              </span>
+            </Link>
           </nav>
         </div>
 

@@ -286,10 +286,14 @@ class DhakaTransitGraph:
 
         # Enrich existing routes with distance and obstacle badges
         for r in routes:
-            has_metro = any(l.mode == "metro" for l in r.legs)
-            r_dist = sum(l.distance_km for l in r.legs) if r.legs else est_distance
-            r.total_distance_km = round(r_dist, 1)
-            if has_metro:
+            metro_dist = sum(l.distance_km for l in r.legs if l.mode == "metro")
+            total_leg_dist = sum(l.distance_km for l in r.legs) if r.legs else est_distance
+            r.total_distance_km = round(total_leg_dist, 1)
+            
+            # Strict mode definition: only call it metro if at least 70% of journey or both origin & dest are metro
+            is_orig_metro = DHAKA_HUBS.get(origin, {}).get("is_metro_station", False)
+            is_dest_metro = DHAKA_HUBS.get(destination, {}).get("is_metro_station", False)
+            if (metro_dist / max(0.1, total_leg_dist) >= 0.7) or (is_orig_metro and is_dest_metro):
                 r.mode = "metro"
                 r.obstacles_badge = "🟢 বাধামুক্ত উড়ালপথ (০% যানজট ও জলজট)"
                 r.obstacles_status = "safe"
@@ -343,7 +347,8 @@ class DhakaTransitGraph:
         bike_time = max(9, int(round(est_distance * 1.6)))
         if is_rush_hour:
             bike_time = int(bike_time * 1.15)
-        bike_base = max(35, int(round(30 + (est_distance - 1) * 12 * (1.2 if weather in ["rain", "heavy_monsoon"] else 1.0))))
+        raw_bike = 30 + (est_distance - 1) * 12 * (1.2 if weather in ["rain", "heavy_monsoon"] else 1.0)
+        bike_base = max(35, int(round(raw_bike / 5.0) * 5))
         bike_obstacles = "🌧️ বৃষ্টিতে পিচ্ছিল সড়ক ও সতর্ক রাইড" if weather in ["rain", "heavy_monsoon"] else "🟢 জ্যামের ফাঁক দিয়ে দ্রুত বের হওয়ার সুযোগ"
 
         bike_route = RouteOption(
@@ -385,7 +390,8 @@ class DhakaTransitGraph:
             car_time = int(car_time * 1.4)
         if weather in ["rain", "heavy_monsoon"]:
             car_time = int(car_time * 1.25)
-        car_fare = max(140, int(round(100 + (est_distance - 1) * 24 * (1.2 if is_rush_hour else 1.0))))
+        raw_car = 100 + (est_distance - 1) * 24 * (1.2 if is_rush_hour else 1.0)
+        car_fare = max(140, int(round(raw_car / 10.0) * 10))
         car_obstacles = "🔴 পিক-আওয়ারে প্রধান সড়কে যানজটের সম্ভাবনা" if is_rush_hour else "🟡 স্বাভাবিক সড়ক ট্রাফিক (এসি ও আরামদায়ক)"
 
         car_route = RouteOption(
@@ -423,7 +429,8 @@ class DhakaTransitGraph:
 
         # 7. Rickshaw Option (for shorter trips <= 6.5 km)
         if est_distance <= 6.5:
-            rickshaw_fare = max(30, int(round(est_distance * 22 * (1.4 if weather in ["rain", "heavy_monsoon"] else 1.0))))
+            raw_rickshaw = est_distance * 22 * (1.4 if weather in ["rain", "heavy_monsoon"] else 1.0)
+            rickshaw_fare = max(30, int(round(raw_rickshaw / 5.0) * 5))
             rickshaw_time = max(10, int(round(est_distance * 5.2)))
             rickshaw_route = RouteOption(
                 id="opt-rickshaw",
@@ -456,7 +463,11 @@ class DhakaTransitGraph:
                     )
                 ]
             )
-            routes.append(rickshaw_route)
+        # Reconcile exact sum of legs for fares and duration
+        for r in routes:
+            r.total_regular_fare = sum(l.regular_fare_bdt for l in r.legs)
+            r.total_student_fare = sum(l.student_fare_bdt for l in r.legs)
+            r.total_duration_mins = sum(l.duration_mins for l in r.legs) + (r.transfers * 3)
 
         return routes
 

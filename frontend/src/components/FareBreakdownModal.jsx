@@ -38,7 +38,7 @@ export default function FareBreakdownModal({ isOpen, onClose, route, lang = 'bn'
           {route.legs.map((leg) => (
             <div key={leg.leg_number} className="p-3.5 rounded-xl bg-[#16110d] border border-[#c69429]/30">
               <div className="flex items-center justify-between font-bold text-sm text-[#fbf8f1] mb-1.5">
-                <span>পর্ব {toBnDigits(leg.leg_number)}: {leg.line_name} ({leg.mode.toUpperCase()})</span>
+                <span>{lang === 'bn' ? `পর্ব ${toBnDigits(leg.leg_number)}` : `Leg ${leg.leg_number}`}: {leg.line_name} ({leg.mode.toUpperCase()})</span>
                 <span className="font-rickshaw text-base text-[#f6d16f] font-bold">{formatFare(leg.regular_fare_bdt, lang)}</span>
               </div>
 

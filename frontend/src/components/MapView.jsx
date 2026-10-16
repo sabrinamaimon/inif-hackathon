@@ -229,10 +229,12 @@ export default function MapView({
                 <span style="font-weight: 900; font-size: 15px; color: #1d4ed8;">${stop.name}</span>
                 <span style="font-size: 10px; font-weight: 900; background: #1e3a8a; color: #93c5fd; padding: 2px 6px; border-radius: 6px;">${orderPill}</span>
               </div>
-              <div style="font-size: 11px; color: #475569; font-weight: 600; margin-bottom: 6px;">বিকল্প বাস স্টপেজ • Mirpur 12 - TSC</div>
+              <div style="font-size: 11px; color: #475569; font-weight: 600; margin-bottom: 6px;">
+                ${lang === 'bn' ? 'বিকল্প বাস স্টপেজ • মিরপুর ১২ - টিএসসি' : 'Bikolpo Bus Stop • Mirpur 12 - TSC'}
+              </div>
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding-top: 6px; border-top: 1px dashed #cbd5e1;">
-                <button onclick="window.dhakaPathSetOrigin && window.dhakaPathSetOrigin('${stop.name}')" style="background: #0f766e; color: white; border: none; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-align: center;">📍 যাত্রা শুরু</button>
-                <button onclick="window.dhakaPathSetDestination && window.dhakaPathSetDestination('${stop.name}')" style="background: #b45309; color: white; border: none; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-align: center;">🏁 গন্তব্য</button>
+                <button onclick="window.dhakaPathSetOrigin && window.dhakaPathSetOrigin('${stop.name}')" style="background: #0f766e; color: white; border: none; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-align: center;">${lang === 'bn' ? '📍 যাত্রা শুরু' : '📍 Set Origin'}</button>
+                <button onclick="window.dhakaPathSetDestination && window.dhakaPathSetDestination('${stop.name}')" style="background: #b45309; color: white; border: none; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-align: center;">${lang === 'bn' ? '🏁 গন্তব্য' : '🏁 Set Destination'}</button>
               </div>
             </div>
           `);
@@ -272,10 +274,12 @@ export default function MapView({
                 <span style="font-weight: 900; font-size: 15px; color: #c2410c;">${stop.name}</span>
                 <span style="font-size: 10px; font-weight: 900; background: #7c2d12; color: #fed7aa; padding: 2px 6px; border-radius: 6px;">${orderPill}</span>
               </div>
-              <div style="font-size: 11px; color: #475569; font-weight: 600; margin-bottom: 6px;">উত্তরা বাস স্টপেজ • BRTC - Secretariat</div>
+              <div style="font-size: 11px; color: #475569; font-weight: 600; margin-bottom: 6px;">
+                ${lang === 'bn' ? 'উত্তরা বাস স্টপেজ • বিআরটিসি - সচিবালয়' : 'Uttara Bus Stop • BRTC - Secretariat'}
+              </div>
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding-top: 6px; border-top: 1px dashed #cbd5e1;">
-                <button onclick="window.dhakaPathSetOrigin && window.dhakaPathSetOrigin('${stop.name}')" style="background: #0f766e; color: white; border: none; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-align: center;">📍 যাত্রা শুরু</button>
-                <button onclick="window.dhakaPathSetDestination && window.dhakaPathSetDestination('${stop.name}')" style="background: #b45309; color: white; border: none; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-align: center;">🏁 গন্তব্য</button>
+                <button onclick="window.dhakaPathSetOrigin && window.dhakaPathSetOrigin('${stop.name}')" style="background: #0f766e; color: white; border: none; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-align: center;">${lang === 'bn' ? '📍 যাত্রা শুরু' : '📍 Set Origin'}</button>
+                <button onclick="window.dhakaPathSetDestination && window.dhakaPathSetDestination('${stop.name}')" style="background: #b45309; color: white; border: none; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; text-align: center;">${lang === 'bn' ? '🏁 গন্তব্য' : '🏁 Set Destination'}</button>
               </div>
             </div>
           `);
@@ -376,7 +380,7 @@ export default function MapView({
               </div>
 
               <div style="font-size: 11px; color: #475569; font-weight: 600; margin-bottom: 6px;">
-                ${data.zone || 'Dhaka Metropolitan Area'} ${metroCodeText ? `• ${metroCodeText}` : ''}
+                ${data.zone || (lang === 'bn' ? 'ঢাকা মেট্রোপলিটন এরিয়া' : 'Dhaka Metropolitan Area')} ${metroCodeText ? `• ${metroCodeText}` : ''}
               </div>
 
               <div style="font-size: 11px; font-weight: 800; color: ${isMetro ? '#065f46' : '#1e293b'}; background: ${isMetro ? '#ecfdf5' : '#f1f5f9'}; padding: 6px; border-radius: 8px; border: 1px solid ${isMetro ? '#a7f3d0' : '#cbd5e1'}; margin-bottom: 8px;">
@@ -385,13 +389,14 @@ export default function MapView({
 
               ${isMetro ? `
                 <div style="font-size: 11px; color: #047857; margin-bottom: 8px; line-height: 1.4;">
-                  ✦ <strong>ভাড়া:</strong> সর্বনিম্ন ২০ ৳ • র‍্যাপিড পাস/MRT Pass-এ ১০% ছাড় (১৮ ৳)<br/>
-                  ✦ ১০০ মিনিট পেইড এরিয়ায় টিকিট কার্যকর
+                  ${lang === 'bn' 
+                    ? '✦ <strong>ভাড়া:</strong> সর্বনিম্ন ২০ ৳ • র‍্যাপিড পাস/MRT Pass-এ ১০% ছাড় (১৮ ৳)<br/>✦ ১০০ মিনিট পেইড এরিয়ায় টিকিট কার্যকর'
+                    : '✦ <strong>Fare:</strong> Min 20 BDT • 10% discount on Rapid/MRT Pass (18 BDT)<br/>✦ Valid for 100 mins in paid area'}
                 </div>
               ` : ''}
 
               <div style="font-size: 11px; color: #334155; margin-bottom: 10px;">
-                <strong>${lang === 'bn' ? 'ল্যান্ডমার্ক:' : 'Landmarks:'}</strong> ${data.landmarks ? data.landmarks.join(', ') : 'Main Road'}
+                <strong>${lang === 'bn' ? 'ল্যান্ডমার্ক:' : 'Landmarks:'}</strong> ${data.landmarks ? data.landmarks.join(', ') : (lang === 'bn' ? 'প্রধান সড়ক' : 'Main Road')}
               </div>
 
               <!-- Set as Origin / Destination Actions -->
@@ -622,50 +627,6 @@ export default function MapView({
         style={{ height: 'min(82vh, 740px)', minHeight: '560px', width: '100%' }}
         className="rounded-xl border-2 border-[#c69429]/40 overflow-hidden shadow-2xl relative z-0 w-full"
       />
-
-      {/* Bottom Map Legend & Metro Pass Info */}
-      <div className="flex flex-wrap items-center justify-between gap-3 mt-3 pt-2.5 border-t border-[#c69429]/20 text-xs font-anek text-[#1e293b] dark:text-[#dfcfb2]">
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="flex items-center gap-1.5 text-[#047857] dark:text-[#34d399] font-bold">
-            <span className="w-3 h-3 rounded-full bg-[#059669] border border-[#34d399]" />
-            <span>🚇 {lang === 'bn' ? 'এমআরটি-৬ মেট্রোরেল (১৭টি স্টেশন • ৬২৮ পয়েন্ট)' : 'MRT-6 Metro (17 Stations • 628 pts)'}</span>
-          </span>
-          <span className="flex items-center gap-1.5 text-[#1d4ed8] dark:text-[#60a5fa] font-bold">
-            <span className="w-3 h-3 rounded-full bg-[#2563eb] border border-[#60a5fa]" />
-            <span>🚌 {lang === 'bn' ? 'বিকল্প বাস (১৮ স্টপ • ৬০৪ পয়েন্ট)' : 'Bikolpo Bus (18 Stops • 604 pts)'}</span>
-          </span>
-          <span className="flex items-center gap-1.5 text-[#c2410c] dark:text-[#fb923c] font-bold">
-            <span className="w-3 h-3 rounded-full bg-[#ea580c] border border-[#fb923c]" />
-            <span>🚌 {lang === 'bn' ? 'উত্তরা বাস (২০ স্টপ • ৩৫৩ পয়েন্ট)' : 'Uttara Bus (20 Stops • 353 pts)'}</span>
-          </span>
-          <span className="flex items-center gap-1.5 text-[#78350f] dark:text-[#f6d16f] font-bold">
-            <span className="w-3 h-3 rounded-full bg-[#292019] border border-[#f6d16f]" />
-            <span>🛺 {lang === 'bn' ? 'রোড বাস / রিকশা নোড' : 'Road Bus / Rickshaw Hub'}</span>
-          </span>
-          <span className="flex items-center gap-1.5 text-[#b91c1c] dark:text-[#fca5a5] font-bold">
-            <span className="w-3 h-3 rounded-full bg-[#b83a2e] border border-[#fca5a5]" />
-            <span>💧 {lang === 'bn' ? 'জলজট / ব্যারিকেড' : 'Disruptions / Barricades'}</span>
-          </span>
-        </div>
-
-        <div 
-          className="metro-notice-banner flex items-center gap-1.5 text-[11px] sm:text-xs font-anek font-semibold px-3.5 py-1.5 rounded-xl border-2 shadow-sm transition-all"
-          style={{
-            backgroundColor: '#064e3b',
-            borderColor: '#10b981',
-            color: '#ffffff'
-          }}
-        >
-          <span className="font-extrabold tracking-wide text-white" style={{ color: '#ffffff' }}>
-            {lang === 'bn' ? 'ডিএমটিসিএল প্রজ্ঞাপন:' : 'DMTCL Notice:'}
-          </span>
-          <span className="font-medium text-white" style={{ color: '#ffffff' }}>
-            {lang === 'bn' 
-              ? 'সর্বনিম্ন ২০ ৳ • Rapid Pass-এ ১০% ছাড় • ১০০ মিনিট বৈধ' 
-              : 'Min 20 ৳ • 10% off on Rapid Pass • Valid 100 mins'}
-          </span>
-        </div>
-      </div>
     </div>
   );
 }
