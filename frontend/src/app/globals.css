@@ -68,39 +68,135 @@ body.dark-theme .card-sub-bg {
   border: 1px solid #1e293b !important;
 }
 
-/* ==================== LIGHT THEME ==================== */
+/* ==================== LIGHT THEME (HIGH-CONTRAST & CRYSTAL CLEAR) ==================== */
 body.light-theme {
   font-family: var(--font-sans);
-  background-color: #f8fafc !important;
-  color: #09111e !important;
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
   min-height: 100vh;
   line-height: 1.6;
   font-size: 16px;
   overflow-x: hidden;
   background-image: 
-    radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.14) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(5, 150, 105, 0.10) 0px, transparent 50%),
-    radial-gradient(at 50% 50%, rgba(241, 245, 249, 0.95) 0px, transparent 100%);
+    radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(5, 150, 105, 0.08) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(248, 250, 252, 0.96) 0px, transparent 100%);
   background-attachment: fixed;
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
+/* 1. Light Theme Panels & Cards */
 body.light-theme .glass-panel {
   background: #ffffff !important;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1.5px solid rgba(16, 185, 129, 0.45) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  color: #09111e !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  color: #0f172a !important;
   border-radius: 1rem;
 }
 
+/* 2. Overriding all dark slate backgrounds to crisp light cards */
+body.light-theme [class*="bg-slate-950"],
+body.light-theme [class*="bg-slate-900"],
+body.light-theme .bg-slate-950,
+body.light-theme .bg-slate-900 {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+body.light-theme [class*="bg-slate-800"],
+body.light-theme .bg-slate-800 {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-color: #e2e8f0 !important;
+}
+
+body.light-theme [class*="bg-slate-700"] {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+/* 3. Overriding disruption tints for clean contrast */
+body.light-theme [class*="bg-emerald-950"] {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  color: #065f46 !important;
+}
+
+body.light-theme [class*="bg-blue-950"] {
+  background-color: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  color: #1e40af !important;
+}
+
+body.light-theme [class*="bg-amber-950"] {
+  background-color: #fffbeb !important;
+  border-color: #fde68a !important;
+  color: #92400e !important;
+}
+
+body.light-theme [class*="bg-rose-950"] {
+  background-color: #fff1f2 !important;
+  border-color: #fecdd3 !important;
+  color: #9f1239 !important;
+}
+
+/* 4. Overriding all borders */
+body.light-theme [class*="border-slate-800"],
+body.light-theme [class*="border-slate-700"],
+body.light-theme .border-slate-800,
+body.light-theme .border-slate-700 {
+  border-color: #cbd5e1 !important;
+}
+
+/* 5. Crystal-clear high contrast text colors */
+body.light-theme [class*="text-white"],
+body.light-theme .text-white {
+  color: #0f172a !important;
+}
+
+body.light-theme [class*="text-slate-100"],
+body.light-theme [class*="text-slate-200"],
+body.light-theme .text-slate-100,
+body.light-theme .text-slate-200 {
+  color: #1e293b !important;
+}
+
+body.light-theme [class*="text-slate-300"],
+body.light-theme .text-slate-300 {
+  color: #334155 !important;
+}
+
+body.light-theme [class*="text-slate-400"],
+body.light-theme .text-slate-400 {
+  color: #475569 !important;
+}
+
+body.light-theme [class*="text-slate-500"],
+body.light-theme .text-slate-500 {
+  color: #64748b !important;
+}
+
+/* 6. Form Inputs & Selects */
 body.light-theme input, 
 body.light-theme select, 
 body.light-theme textarea {
-  color: #09111e !important;
+  color: #0f172a !important;
   background-color: #ffffff !important;
-  border: 1.5px solid #cbd5e1 !important;
+  border: 1.5px solid #94a3b8 !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+body.light-theme input::placeholder,
+body.light-theme textarea::placeholder {
+  color: #64748b !important;
+}
+
+body.light-theme select option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
 }
 
 body.light-theme input:focus, 
@@ -111,21 +207,53 @@ body.light-theme textarea:focus {
   box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
 }
 
+/* 7. Card Sub-backgrounds */
 body.light-theme .card-sub-bg {
-  background-color: #f1f5f9 !important;
+  background-color: #f8fafc !important;
   border: 1px solid #e2e8f0 !important;
 }
 
-body.light-theme .text-white { color: #09111e !important; }
-body.light-theme .text-slate-100 { color: #0f172a !important; }
-body.light-theme .text-slate-200 { color: #1e293b !important; }
-body.light-theme .text-slate-300 { color: #334155 !important; }
-body.light-theme .text-slate-400 { color: #475569 !important; }
-body.light-theme .bg-slate-900,
-body.light-theme .bg-slate-950 { background-color: #ffffff !important; border-color: #cbd5e1 !important; }
-body.light-theme .bg-slate-800 { background-color: #f1f5f9 !important; color: #09111e !important; }
-body.light-theme .border-slate-800,
-body.light-theme .border-slate-700 { border-color: #e2e8f0 !important; }
+/* 8. Navigation & Header adjustments in Light Theme */
+body.light-theme header.glass-panel {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-bottom: 1.5px solid #cbd5e1 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+body.light-theme nav {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+body.light-theme nav button:not([class*="from-emerald"]) {
+  color: #334155 !important;
+}
+
+body.light-theme nav button:not([class*="from-emerald"]):hover {
+  color: #0f172a !important;
+  background-color: #e2e8f0 !important;
+}
+
+/* 9. Interactive Itinerary Cards in Light Theme */
+body.light-theme .interactive-card {
+  background-color: #ffffff !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+}
+
+body.light-theme .interactive-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* 10. Map View In Light Theme */
+body.light-theme .leaflet-popup-content-wrapper {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+body.light-theme .leaflet-popup-tip {
+  background: #ffffff !important;
+}
 
 /* ==================== BUTTONS & INTERACTIVE ELEMENTS ==================== */
 .btn-primary {
@@ -202,4 +330,11 @@ body.light-theme .btn-secondary {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(16, 185, 129, 0.7);
+}
+
+body.light-theme ::-webkit-scrollbar-track {
+  background: #e2e8f0;
+}
+body.light-theme ::-webkit-scrollbar-thumb {
+  background: #94a3b8;
 }
