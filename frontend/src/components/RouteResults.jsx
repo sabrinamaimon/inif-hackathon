@@ -74,23 +74,13 @@ export default function RouteResults({
 
   return (
     <div className="my-8 space-y-6">
-      {/* Title & Large Print Notice */}
+      {/* Title */}
       <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b-2 border-[#c69429]/40">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">✉️</span>
-            <h3 className="font-rickshaw text-2xl sm:text-3xl md:text-4xl font-bold text-[#f6d16f] tracking-wide rickshaw-text-pop">
-              {lang === 'bn' ? 'বাংলাদেশ পোস্টকার্ড ট্রানজিট কার্ড' : 'Bangladesh Postcard Commute Cards'}
-            </h3>
-            <span className="text-xs px-2.5 py-1 rounded-full bg-[#b83a2e] text-[#fbf8f1] font-anek font-bold border border-[#f6d16f] shadow-md">
-              {lang === 'bn' ? 'বড় অক্ষরে সহজপাঠ্য' : 'Large Print & Clear'}
-            </span>
-          </div>
-          <p className="font-anek text-sm sm:text-base text-[#dfcfb2] mt-1">
-            {lang === 'bn' 
-              ? 'বয়োজ্যেষ্ঠ ও সাধারণ যাত্রীদের সহজে পড়ার জন্য বড় অক্ষরে স্পষ্ট রুট, ভাড়া ও ল্যান্ডমার্ক নির্দেশিকা।' 
-              : 'Clear, high-contrast, large-print transit routes designed for effortless reading by commuters of all ages.'}
-          </p>
+        <div className="flex items-center gap-2">
+          <span className="text-2xl">✉️</span>
+          <h3 className="font-rickshaw text-2xl sm:text-3xl md:text-4xl font-bold text-[#f6d16f] tracking-wide rickshaw-text-pop">
+            {lang === 'bn' ? 'বাংলাদেশ পোস্টকার্ড ট্রানজিট কার্ড' : 'Bangladesh Postcard Commute Cards'}
+          </h3>
         </div>
 
         {/* Listen Audio Callout */}
