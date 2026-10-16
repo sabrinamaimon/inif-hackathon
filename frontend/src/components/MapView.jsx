@@ -18,6 +18,7 @@ export default function MapView({
   hubs = STATIC_HUBS, 
   activeAlerts = [], 
   activeRoute = null, 
+  userLocation = null,
   lang = 'bn',
   onSelectHub,
   onSetOrigin,
@@ -29,6 +30,7 @@ export default function MapView({
   const metroTrackLayersRef = useRef([]);
   const busLayersRef = useRef([]);
   const activeRoutePolylineRef = useRef(null);
+  const userLocationMarkerRef = useRef(null);
   const [filterMode, setFilterMode] = useState('all'); // 'all', 'metro_only', 'bikolpo_bus', 'uttara_bus', 'alerts_only'
   const [isClient, setIsClient] = useState(false);
 
@@ -96,6 +98,11 @@ export default function MapView({
       if (activeRoutePolylineRef.current) {
         activeRoutePolylineRef.current.remove();
         activeRoutePolylineRef.current = null;
+      }
+
+      if (userLocationMarkerRef.current) {
+        userLocationMarkerRef.current.remove();
+        userLocationMarkerRef.current = null;
       }
 
       // =========================================================================
@@ -452,12 +459,48 @@ export default function MapView({
           map.fitBounds(activeRoutePolylineRef.current.getBounds(), { padding: [60, 60] });
         }
       }
+
+      // =========================================================================
+      // 5. DRAW USER CURRENT GPS LOCATION PIN (IF DETECTED)
+      // =========================================================================
+      if (userLocation && typeof userLocation.lat === 'number' && typeof userLocation.lng === 'number') {
+        const userPinIcon = L.divIcon({
+          className: 'user-gps-location-pin',
+          html: `
+            <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
+              <div style="width: 22px; height: 22px; border-radius: 50%; background: #0284c7; border: 3px solid #ffffff; box-shadow: 0 0 14px #38bdf8; display: flex; align-items: center; justify-content: center; position: relative;">
+                <div style="width: 8px; height: 8px; border-radius: 50%; background: #ffffff;"></div>
+                <div style="position: absolute; width: 44px; height: 44px; border-radius: 50%; background: rgba(56, 189, 248, 0.4); animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+              </div>
+              <div style="background: #082f49; color: #7dd3fc; font-family: 'Anek Bangla', sans-serif; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 8px; margin-top: 4px; white-space: nowrap; border: 1.5px solid #38bdf8; box-shadow: 0 4px 10px rgba(0,0,0,0.6);">
+                ${lang === 'bn' ? '📍 আপনার অবস্থান' : '📍 You are here'}
+              </div>
+            </div>
+          `,
+          iconSize: [120, 56],
+          iconAnchor: [60, 16]
+        });
+
+        const userMarker = L.marker([userLocation.lat, userLocation.lng], {
+          icon: userPinIcon,
+          zIndexOffset: 1200
+        }).addTo(map);
+
+        userMarker.bindTooltip(
+          lang === 'bn' 
+            ? `📍 <strong>আপনার বর্তমান অবস্থান</strong><br/><span style="font-size: 11px; color: #6ee7b7;">নিকটস্থ হাব: ${userLocation.hubNameBn || userLocation.hubName || ''}</span>`
+            : `📍 <strong>Your Current Location</strong><br/><span style="font-size: 11px; color: #6ee7b7;">Nearest Hub: ${userLocation.hubName || ''}</span>`,
+          { sticky: true }
+        );
+
+        userLocationMarkerRef.current = userMarker;
+      }
     });
 
     return () => {
       isMounted = false;
     };
-  }, [isClient, hubs, activeAlerts, activeRoute, filterMode, lang]);
+  }, [isClient, hubs, activeAlerts, activeRoute, filterMode, lang, userLocation]);
 
   return (
     <div className="heritage-card p-4 sm:p-5 my-6 border-2 border-[#c69429]/50 shadow-2xl relative overflow-hidden bg-[#18130f]">

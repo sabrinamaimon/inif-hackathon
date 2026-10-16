@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, Mic, Camera, CloudRain, Clock, GraduationCap, User, ArrowRightLeft, MapPin, AlertCircle } from 'lucide-react';
+import { Search, Mic, Camera, CloudRain, Clock, GraduationCap, User, ArrowRightLeft, Sparkles, MapPin, AlertCircle, Navigation, Loader2, CheckCircle2 } from 'lucide-react';
 import { I18N } from '../utils/localization';
 import { STATIC_HUBS } from '../data/staticData';
 import { startSpeechRecognition } from '../utils/speech';
+import { getUserCoordinates, findNearestTransitHub, formatDistance } from '../utils/geolocation.js';
 
 export default function RouteSearch({
   origin,
@@ -20,8 +21,10 @@ export default function RouteSearch({
   onSearch,
   onNlpSearch,
   isLoading,
-  lang,
-  onOpenScanner
+  lang = 'bn',
+  onOpenScanner,
+  onLocationDetected,
+  userLocation
 }) {
   const t = I18N[lang] || I18N.bn;
 
@@ -47,9 +50,55 @@ export default function RouteSearch({
 
   const [naturalQuery, setNaturalQuery] = useState('');
   const [isListening, setIsListening] = useState(false);
+  const [isLocating, setIsLocating] = useState(false);
+  const [detectedLocationInfo, setDetectedLocationInfo] = useState(null);
+  const [locationError, setLocationError] = useState(null);
 
   // Prevention check: Never travel from self to self
   const isSameLocation = origin && destination && origin === destination;
+
+  const handleDetectCurrentLocation = async () => {
+    setIsLocating(true);
+    setLocationError(null);
+    try {
+      const coords = await getUserCoordinates();
+      const nearest = findNearestTransitHub(coords.lat, coords.lng, STATIC_HUBS);
+      if (nearest) {
+        handleOriginChange(nearest.name);
+        const distText = formatDistance(nearest.distanceKm, lang);
+        const info = {
+          hubName: nearest.name,
+          hubNameBn: nearest.name_bn || nearest.name,
+          distanceText: distText,
+          lat: coords.lat,
+          lng: coords.lng
+        };
+        setDetectedLocationInfo(info);
+        if (onLocationDetected) {
+          onLocationDetected(info);
+        }
+      } else {
+        setLocationError(
+          lang === 'bn' 
+            ? 'নিকটস্থ কোনো ট্রানজিট স্টেশন পাওয়া যায়নি।' 
+            : 'No nearby transit stations found.'
+        );
+      }
+    } catch (err) {
+      console.warn('Geolocation error:', err);
+      let msg = lang === 'bn'
+        ? 'লোকেশন পারমিশন পাওয়া যায়নি। আপনি ড্রপডাউন থেকে নির্বাচন করতে পারেন।'
+        : 'Location access denied or unavailable. Please choose from dropdown.';
+      if (err.code === 1) {
+        msg = lang === 'bn'
+          ? 'লোকেশন পারমিশন ব্লক করা রয়েছে। ড্রপডাউন থেকে যেকোনো স্টেশন বেছে নিন।'
+          : 'Location access was blocked. Please select manually from the dropdown.';
+      }
+      setLocationError(msg);
+    } finally {
+      setIsLocating(false);
+    }
+  };
 
   const handleOriginChange = (val) => {
     setOrigin(val);
@@ -155,10 +204,34 @@ export default function RouteSearch({
       <div className="grid grid-cols-1 sm:grid-cols-[1fr,auto,1fr] gap-3 items-center mb-4">
         {/* Origin Selector */}
         <div>
-          <label className="block font-anek text-sm font-bold text-[#f6d16f] mb-1.5 flex items-center gap-1.5">
-            <MapPin className="w-4 h-4 text-[#b83a2e]" />
-            <span>{t.originLabel}</span>
-          </label>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="font-anek text-sm font-bold text-[#f6d16f] flex items-center gap-1.5">
+              <MapPin className="w-4 h-4 text-[#b83a2e]" />
+              <span>{t.originLabel}</span>
+            </label>
+
+            {/* Quick GPS Location Detect Button */}
+            <button
+              type="button"
+              onClick={handleDetectCurrentLocation}
+              disabled={isLocating}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#241a14] hover:bg-[#342419] text-[#6ee7b7] border border-[#10b981]/40 hover:border-[#10b981] text-xs font-anek font-bold transition-all shadow-sm active:scale-95"
+              title={lang === 'bn' ? 'বর্তমান জিপিএস অবস্থান অনুযায়ী নিকটস্থ স্টেশন নির্বাচন করুন' : 'Auto-detect closest station from GPS'}
+            >
+              {isLocating ? (
+                <>
+                  <Loader2 className="w-3 h-3 animate-spin text-[#6ee7b7]" />
+                  <span>{lang === 'bn' ? 'শনাক্ত হচ্ছে...' : 'Locating...'}</span>
+                </>
+              ) : (
+                <>
+                  <Navigation className="w-3 h-3 text-[#38bdf8]" />
+                  <span>{lang === 'bn' ? '📍 বর্তমান অবস্থান' : '📍 My Location'}</span>
+                </>
+              )}
+            </button>
+          </div>
+
           <select
             value={origin}
             onChange={(e) => handleOriginChange(e.target.value)}
@@ -216,6 +289,46 @@ export default function RouteSearch({
               })}
             </optgroup>
           </select>
+
+          {/* Detected Nearest Hub Success Pill */}
+          {detectedLocationInfo && (
+            <div className="mt-2 px-3 py-1.5 rounded-xl bg-[#0f291e] border border-[#10b981]/50 flex items-center justify-between gap-2 text-xs font-anek font-bold text-[#6ee7b7] shadow-sm animate-in fade-in duration-200">
+              <span className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-[#10b981] shrink-0" />
+                <span>
+                  {lang === 'bn'
+                    ? `নিকটস্থ হাব: ${detectedLocationInfo.hubNameBn} (${detectedLocationInfo.distanceText} দূরে) নির্বাচিত। ড্রপডাউন থেকে পরিবর্তনযোগ্য।`
+                    : `Nearest hub: ${detectedLocationInfo.hubName} (${detectedLocationInfo.distanceText} away) selected. Changeable via dropdown.`}
+                </span>
+              </span>
+              <button
+                type="button"
+                onClick={() => setDetectedLocationInfo(null)}
+                className="text-[#a7f3d0] hover:text-white text-xs px-1"
+                title="Dismiss"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+
+          {/* Location Error Pill */}
+          {locationError && (
+            <div className="mt-2 px-3 py-1.5 rounded-xl bg-[#45120f]/60 border border-[#b83a2e]/50 flex items-center justify-between gap-2 text-xs font-anek font-bold text-[#fca5a5] shadow-sm animate-in fade-in duration-200">
+              <span className="flex items-center gap-1.5">
+                <AlertCircle className="w-4 h-4 text-[#f87171] shrink-0" />
+                <span>{locationError}</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => setLocationError(null)}
+                className="text-[#fca5a5] hover:text-white text-xs px-1"
+                title="Dismiss"
+              >
+                ✕
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Swap Button with Rickshaw Bell Accent */}

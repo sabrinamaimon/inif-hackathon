@@ -16,6 +16,7 @@ import RideShareBoard from '../components/RideShareBoard';
 import NoticeScanner from '../components/NoticeScanner';
 import EmergencyHelpline from '../components/EmergencyHelpline';
 import DhakaCommuteHeritageShowcase from '../components/DhakaCommuteHeritageShowcase';
+import LocationPromptBanner from '../components/LocationPromptBanner';
 import { generateOfflineRouteCard } from '../utils/offlineCard';
 import { X } from 'lucide-react';
 
@@ -41,6 +42,7 @@ export default function Home() {
   const [passengerType, setPassengerType] = useState('general');
   const [weather, setWeather] = useState('normal');
   const [isRushHour, setIsRushHour] = useState(false);
+  const [userLocation, setUserLocation] = useState(null);
 
   // Data states
   const [hubs, setHubs] = useState(STATIC_HUBS);
@@ -222,6 +224,20 @@ export default function Home() {
 
     setRoutes(fallbackRoutes);
     setSelectedRoute(fallbackRoutes[0]);
+  };
+
+  const handleLocationDetected = (locInfo) => {
+    setUserLocation(locInfo);
+    if (locInfo && locInfo.hubName) {
+      const nearestHub = locInfo.hubName;
+      setOrigin(nearestHub);
+      let targetDest = destination;
+      if (nearestHub === destination) {
+        targetDest = nearestHub === 'Motijheel' ? 'Mirpur 10' : 'Motijheel';
+        setDestination(targetDest);
+      }
+      performSearch(nearestHub, targetDest, passengerType, weather, isRushHour);
+    }
   };
 
   const handleManualSearch = () => {
@@ -452,6 +468,12 @@ export default function Home() {
         {/* TAB 1: HOME (Focused Smart Transit Search & Itineraries) */}
         {currentTab === 'home' && (
           <div className="space-y-8 my-4 w-full">
+            {/* Geolocation Permission & Nearest Hub Selection Banner */}
+            <LocationPromptBanner
+              onLocationDetected={handleLocationDetected}
+              lang={lang}
+            />
+
             {/* Route Query Engine */}
             <RouteSearch
               origin={origin}
@@ -467,6 +489,8 @@ export default function Home() {
               onSearch={handleManualSearch}
               onNlpSearch={handleNlpSearch}
               isLoading={isLoadingRoutes}
+              onLocationDetected={handleLocationDetected}
+              userLocation={userLocation}
               lang={lang}
               onOpenScanner={() => setIsScannerOpen(true)}
             />
@@ -518,6 +542,7 @@ export default function Home() {
               hubs={hubs}
               activeAlerts={alerts}
               activeRoute={selectedRoute}
+              userLocation={userLocation}
               lang={lang}
               onSetOrigin={(name) => setOrigin(name)}
               onSetDestination={(name) => setDestination(name)}
