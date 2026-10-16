@@ -115,10 +115,14 @@ export default function MobileDrawer({
         <div className="pt-4 border-t border-[#c69429]/30 space-y-3">
           {/* Theme Selector */}
           <div className="flex items-center justify-between px-1 text-xs text-[#dfcfb2]">
-            <span>{lang === 'bn' ? 'থিম নির্বাচন' : 'Theme Mode'}</span>
+            <span className={theme === 'light' ? 'text-[#140e0b] font-bold' : ''}>{lang === 'bn' ? 'থিম নির্বাচন' : 'Theme Mode'}</span>
             <button
               onClick={() => setTheme && setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#292019] text-[#f6d16f] font-bold border border-[#c69429]/40 active:scale-95 transition-all"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold border transition-all active:scale-95 ${
+                theme === 'light'
+                  ? 'bg-white text-[#140e0b] border-[#c69429]/40 shadow-sm'
+                  : 'bg-[#292019] text-[#f6d16f] border-[#c69429]/40'
+              }`}
             >
               {theme === 'dark' ? (
                 <>
@@ -127,8 +131,8 @@ export default function MobileDrawer({
                 </>
               ) : (
                 <>
-                  <Moon className="w-3.5 h-3.5 text-sky-400" />
-                  <span>{lang === 'bn' ? 'ডার্ক' : 'Dark'}</span>
+                  <Moon className="w-3.5 h-3.5 text-indigo-600" />
+                  <span className={theme === 'light' ? 'text-[#140e0b]' : ''}>{lang === 'bn' ? 'ডার্ক' : 'Dark'}</span>
                 </>
               )}
             </button>
@@ -136,13 +140,17 @@ export default function MobileDrawer({
 
           {/* Language Selector */}
           <div className="flex items-center justify-between px-1 text-xs text-[#dfcfb2]">
-            <span>{lang === 'bn' ? 'ভাষা নির্বাচন' : 'Language'}</span>
+            <span className={theme === 'light' ? 'text-[#140e0b] font-bold' : ''}>{lang === 'bn' ? 'ভাষা নির্বাচন' : 'Language'}</span>
             <button
               onClick={() => setLang(lang === 'bn' ? 'en' : 'bn')}
-              className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#292019] text-[#f6d16f] font-bold border border-[#c69429]/40"
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-bold border ${
+                theme === 'light'
+                  ? 'bg-white text-[#140e0b] border-[#c69429]/40 shadow-sm'
+                  : 'bg-[#292019] text-[#f6d16f] border-[#c69429]/40'
+              }`}
             >
-              <Globe className="w-3.5 h-3.5" />
-              <span>{lang === 'bn' ? 'English' : 'বাংলা'}</span>
+              <Globe className={`w-3.5 h-3.5 ${theme === 'light' ? 'text-[#b83a2e]' : 'text-[#f6d16f]'}`} />
+              <span className={theme === 'light' ? 'text-[#140e0b]' : ''}>{lang === 'bn' ? 'English' : 'বাংলা'}</span>
             </button>
           </div>
 

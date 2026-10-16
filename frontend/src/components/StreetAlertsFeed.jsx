@@ -62,11 +62,6 @@ export default function StreetAlertsFeed({
           <p className="font-anek text-xs sm:text-sm text-[#dfcfb2] mt-1 font-medium">
             {lang === 'bn' ? 'যাত্রীভিত্তিক যাচাই ও টাইম-ডিকে অ্যালগরিদম সক্রিয়' : 'Crowdsourced corroboration with time-decay scoring'}
           </p>
-
-          <div className="mt-2.5 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#120e0b] border border-slate-300 dark:border-[#c69429]/40 text-xs font-mono text-slate-900 dark:text-[#f6d16f] shadow-inner">
-            <span className="font-bold text-slate-700 dark:text-[#dfcfb2]">Trust Formula:</span>
-            <span>Trust = (Upvotes × 8 − Downvotes × 12 + 50) × TimeDecay</span>
-          </div>
         </div>
 
         <button

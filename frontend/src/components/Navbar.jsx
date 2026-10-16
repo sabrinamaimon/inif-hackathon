@@ -100,7 +100,11 @@ export default function Navbar({
           {/* Theme Toggle Button (Dark / Light Mode) */}
           <button
             onClick={() => setTheme && setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#2a2019] hover:bg-[#3d3026] text-[#f6d16f] text-sm font-anek font-bold border border-[#c69429]/50 transition-all active:scale-95 shadow-md"
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-anek font-bold transition-all active:scale-95 shadow-sm ${
+              theme === 'light'
+                ? 'bg-[#ffffff] hover:bg-[#fcf9f2] text-[#140e0b] border-2 border-[#c69429]/40 shadow-sm'
+                : 'bg-[#2a2019] hover:bg-[#3d3026] text-[#f6d16f] border border-[#c69429]/50 shadow-md'
+            }`}
             title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
             aria-label="Toggle Theme"
           >
@@ -111,8 +115,8 @@ export default function Navbar({
               </>
             ) : (
               <>
-                <Moon className="w-4 h-4 text-sky-400" />
-                <span className="hidden sm:inline">{lang === 'bn' ? 'ডার্ক' : 'Dark'}</span>
+                <Moon className="w-4 h-4 text-indigo-600" />
+                <span className="hidden sm:inline text-[#140e0b] font-extrabold">{lang === 'bn' ? 'ডার্ক' : 'Dark'}</span>
               </>
             )}
           </button>
@@ -120,11 +124,15 @@ export default function Navbar({
           {/* Language Switcher */}
           <button
             onClick={() => setLang(lang === 'bn' ? 'en' : 'bn')}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#2a2019] hover:bg-[#3d3026] text-[#f6d16f] text-sm font-anek font-bold border border-[#c69429]/50 transition-all active:scale-95 shadow-md"
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-anek font-bold transition-all active:scale-95 shadow-sm ${
+              theme === 'light'
+                ? 'bg-[#ffffff] hover:bg-[#fcf9f2] text-[#140e0b] border-2 border-[#c69429]/40 shadow-sm'
+                : 'bg-[#2a2019] hover:bg-[#3d3026] text-[#f6d16f] border border-[#c69429]/50 shadow-md'
+            }`}
             title="Toggle Language"
           >
-            <Globe className="w-4 h-4 text-[#f6d16f]" />
-            <span>{lang === 'bn' ? 'English' : 'বাংলা'}</span>
+            <Globe className={`w-4 h-4 ${theme === 'light' ? 'text-[#b83a2e]' : 'text-[#f6d16f]'}`} />
+            <span className={theme === 'light' ? 'text-[#140e0b] font-extrabold' : ''}>{lang === 'bn' ? 'English' : 'বাংলা'}</span>
           </button>
         </div>
       </div>
@@ -161,22 +169,30 @@ export default function Navbar({
           {/* Mobile Theme Toggle */}
           <button
             onClick={() => setTheme && setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="flex items-center justify-center w-8 h-8 rounded-full bg-[#292019] border border-[#c69429]/50 text-[#f6d16f] active:scale-95 transition-all"
+            className={`flex items-center justify-center w-8 h-8 rounded-full active:scale-95 transition-all ${
+              theme === 'light'
+                ? 'bg-[#ffffff] border border-[#c69429]/40 text-[#140e0b] shadow-sm'
+                : 'bg-[#292019] border border-[#c69429]/50 text-[#f6d16f]'
+            }`}
             title="Toggle Theme"
             aria-label="Toggle Theme"
           >
             {theme === 'dark' ? (
               <Sun className="w-4 h-4 text-amber-400" />
             ) : (
-              <Moon className="w-4 h-4 text-sky-400" />
+              <Moon className="w-4 h-4 text-indigo-600" />
             )}
           </button>
 
           <button
             onClick={() => setLang(lang === 'bn' ? 'en' : 'bn')}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[#292019] border border-[#c69429]/50 text-[#f6d16f] text-xs font-anek font-bold active:scale-95 transition-all"
+            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-anek font-bold active:scale-95 transition-all ${
+              theme === 'light'
+                ? 'bg-[#ffffff] border border-[#c69429]/40 text-[#140e0b] shadow-sm'
+                : 'bg-[#292019] border border-[#c69429]/50 text-[#f6d16f]'
+            }`}
           >
-            <Globe className="w-3.5 h-3.5 text-[#f6d16f]" />
+            <Globe className={`w-3.5 h-3.5 ${theme === 'light' ? 'text-[#b83a2e]' : 'text-[#f6d16f]'}`} />
             <span>{lang === 'bn' ? 'ENG' : 'বাং'}</span>
           </button>
         </div>
