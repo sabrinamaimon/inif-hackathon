@@ -1,42 +1,50 @@
-// Official MRT-6 Metro Rail Alignment (17 Stations from Uttara North to Kamalapur)
+export { 
+  MRT6_DENSE_POLYLINE, 
+  BIKOLPO_DENSE_POLYLINE, 
+  UTTARA_BUS_DENSE_POLYLINE, 
+  BIKOLPO_STOPS, 
+  UTTARA_BUS_STOPS 
+} from './denseMapData.js';
+
+// Official MRT-6 Metro Rail Alignment from Map Data transit-data.json & Routemap CSVs
 export const MRT6_ALIGNMENT = [
-  [23.8755, 90.3807], // 1. Uttara North (উত্তরা উত্তর)
-  [23.8645, 90.3785], // 2. Uttara Center (উত্তরা সেন্টার)
-  [23.8540, 90.3752], // 3. Uttara South (উত্তরা দক্ষিণ)
-  [23.8340, 90.3660], // 4. Pallabi (পল্লবী)
-  [23.8210, 90.3670], // 5. Mirpur 11 (মিরপুর ১১)
-  [23.8070, 90.3686], // 6. Mirpur 10 (মিরপুর ১০)
-  [23.7950, 90.3720], // 7. Kazipara (কাজীপাড়া)
-  [23.7875, 90.3745], // 8. Shewrapara (শেওড়াপাড়া)
-  [23.7785, 90.3780], // 9. Agargaon (আগারগাঁও)
-  [23.7650, 90.3850], // 10. Bijoy Sarani (বিজয় সরণি)
-  [23.7561, 90.3872], // 11. Farmgate (ফার্মগেট)
-  [23.7485, 90.3920], // 12. Karwan Bazar (কারওয়ান বাজার)
-  [23.7383, 90.3956], // 13. Shahbagh (শাহবাগ)
-  [23.7315, 90.3965], // 14. Dhaka University (ঢাকা বিশ্ববিদ্যালয়)
-  [23.7290, 90.4075], // 15. Bangladesh Secretariat (বাংলাদেশ সচিবালয়)
-  [23.7270, 90.4180], // 16. Motijheel (মতিঝিল)
-  [23.7318, 90.4255]  // 17. Kamalapur (কমলাপুর)
+  [23.86967, 90.36763], // 1. Uttara North (উত্তরা উত্তর)
+  [23.85981, 90.36516], // 2. Uttara Center (উত্তরা সেন্টার)
+  [23.84581, 90.36311], // 3. Uttara South (উত্তরা দক্ষিণ)
+  [23.82615, 90.36427], // 4. Pallabi (পল্লবী)
+  [23.81924, 90.36527], // 5. Mirpur 11 (মিরপুর ১১)
+  [23.80813, 90.36833], // 6. Mirpur 10 (মিরপুর ১০)
+  [23.79950, 90.37190], // 7. Kazipara (কাজীপাড়া)
+  [23.79095, 90.37553], // 8. Shewrapara (শেওড়াপাড়া)
+  [23.77842, 90.38015], // 9. Agargaon (আগারগাঁও)
+  [23.76634, 90.38313], // 10. Bijoy Sarani (বিজয় সরণি)
+  [23.75903, 90.38635], // 11. Farmgate (ফার্মগেট)
+  [23.75154, 90.39266], // 12. Karwan Bazar (কারওয়ান বাজার)
+  [23.73958, 90.39601], // 13. Shahbagh (শাহবাগ)
+  [23.73142, 90.39702], // 14. Dhaka University (ঢাকা বিশ্ববিদ্যালয়)
+  [23.73001, 90.40787], // 15. Bangladesh Secretariat (বাংলাদেশ সচিবালয়)
+  [23.72743, 90.42018], // 16. Motijheel (মতিঝিল)
+  [23.73180, 90.42550]  // 17. Kamalapur (কমলাপুর)
 ];
 
 export const MRT6_STATIONS_DATA = [
-  { code: "MRT6-UTN", name: "Uttara North", name_bn: "উত্তরা উত্তর (দিয়াবাড়ী)", lat: 23.8755, lng: 90.3807, order: 1 },
-  { code: "MRT6-UTC", name: "Uttara Center", name_bn: "উত্তরা সেন্টার", lat: 23.8645, lng: 90.3785, order: 2 },
-  { code: "MRT6-UTS", name: "Uttara South", name_bn: "উত্তরা দক্ষিণ", lat: 23.8540, lng: 90.3752, order: 3 },
-  { code: "MRT6-PAL", name: "Pallabi", name_bn: "পল্লবী", lat: 23.8340, lng: 90.3660, order: 4 },
-  { code: "MRT6-M11", name: "Mirpur 11", name_bn: "মিরপুর ১১", lat: 23.8210, lng: 90.3670, order: 5 },
-  { code: "MRT6-M10", name: "Mirpur 10", name_bn: "মিরপুর ১০", lat: 23.8070, lng: 90.3686, order: 6 },
-  { code: "MRT6-KAZ", name: "Kazipara", name_bn: "কাজীপাড়া", lat: 23.7950, lng: 90.3720, order: 7 },
-  { code: "MRT6-SHW", name: "Shewrapara", name_bn: "শেওড়াপাড়া", lat: 23.7875, lng: 90.3745, order: 8 },
-  { code: "MRT6-AGA", name: "Agargaon", name_bn: "আগারগাঁও", lat: 23.7785, lng: 90.3780, order: 9 },
-  { code: "MRT6-BJS", name: "Bijoy Sarani", name_bn: "বিজয় সরণি", lat: 23.7650, lng: 90.3850, order: 10 },
-  { code: "MRT6-FMG", name: "Farmgate", name_bn: "ফার্মগেট", lat: 23.7561, lng: 90.3872, order: 11 },
-  { code: "MRT6-KBZ", name: "Karwan Bazar", name_bn: "কারওয়ান বাজার", lat: 23.7485, lng: 90.3920, order: 12 },
-  { code: "MRT6-SHB", name: "Shahbagh", name_bn: "শাহবাগ", lat: 23.7383, lng: 90.3956, order: 13 },
-  { code: "MRT6-DU",  name: "Dhaka University", name_bn: "ঢাকা বিশ্ববিদ্যালয়", lat: 23.7315, lng: 90.3965, order: 14 },
-  { code: "MRT6-SEC", name: "Bangladesh Secretariat", name_bn: "বাংলাদেশ সচিবালয়", lat: 23.7290, lng: 90.4075, order: 15 },
-  { code: "MRT6-MJL", name: "Motijheel", name_bn: "মতিঝিল", lat: 23.7270, lng: 90.4180, order: 16 },
-  { code: "MRT6-KMP", name: "Kamalapur", name_bn: "কমলাপুর", lat: 23.7318, lng: 90.4255, order: 17 }
+  { code: "MRT6-UTN", name: "Uttara North", name_bn: "উত্তরা উত্তর (দিয়াবাড়ী)", lat: 23.86967, lng: 90.36763, order: 1 },
+  { code: "MRT6-UTC", name: "Uttara Center", name_bn: "উত্তরা সেন্টার", lat: 23.85981, lng: 90.36516, order: 2 },
+  { code: "MRT6-UTS", name: "Uttara South", name_bn: "উত্তরা দক্ষিণ", lat: 23.84581, lng: 90.36311, order: 3 },
+  { code: "MRT6-PAL", name: "Pallabi", name_bn: "পল্লবী", lat: 23.82615, lng: 90.36427, order: 4 },
+  { code: "MRT6-M11", name: "Mirpur 11", name_bn: "মিরপুর ১১", lat: 23.81924, lng: 90.36527, order: 5 },
+  { code: "MRT6-M10", name: "Mirpur 10", name_bn: "মিরপুর ১০", lat: 23.80813, lng: 90.36833, order: 6 },
+  { code: "MRT6-KAZ", name: "Kazipara", name_bn: "কাজীপাড়া", lat: 23.79950, lng: 90.37190, order: 7 },
+  { code: "MRT6-SHW", name: "Shewrapara", name_bn: "শেওড়াপাড়া", lat: 23.79095, lng: 90.37553, order: 8 },
+  { code: "MRT6-AGA", name: "Agargaon", name_bn: "আগারগাঁও", lat: 23.77842, lng: 90.38015, order: 9 },
+  { code: "MRT6-BJS", name: "Bijoy Sarani", name_bn: "বিজয় সরণি", lat: 23.76634, lng: 90.38313, order: 10 },
+  { code: "MRT6-FMG", name: "Farmgate", name_bn: "ফার্মগেট", lat: 23.75903, lng: 90.38635, order: 11 },
+  { code: "MRT6-KBZ", name: "Karwan Bazar", name_bn: "কারওয়ান বাজার", lat: 23.75154, lng: 90.39266, order: 12 },
+  { code: "MRT6-SHB", name: "Shahbagh", name_bn: "শাহবাগ", lat: 23.73958, lng: 90.39601, order: 13 },
+  { code: "MRT6-DU",  name: "Dhaka University", name_bn: "ঢাকা বিশ্ববিদ্যালয়", lat: 23.73142, lng: 90.39702, order: 14 },
+  { code: "MRT6-SEC", name: "Bangladesh Secretariat", name_bn: "বাংলাদেশ সচিবালয়", lat: 23.73001, lng: 90.40787, order: 15 },
+  { code: "MRT6-MJL", name: "Motijheel", name_bn: "মতিঝিল", lat: 23.72743, lng: 90.42018, order: 16 },
+  { code: "MRT6-KMP", name: "Kamalapur", name_bn: "কমলাপুর", lat: 23.73180, lng: 90.42550, order: 17 }
 ];
 
 export const STATIC_HUBS = {
@@ -45,8 +53,8 @@ export const STATIC_HUBS = {
     "id": "hub-uttara-north",
     "name": "Uttara North",
     "name_bn": "উত্তরা উত্তর (দিয়াবাড়ী)",
-    "lat": 23.8755,
-    "lng": 90.3807,
+    "lat": 23.86967,
+    "lng": 90.36763,
     "landmarks": ["Diabari Metro Terminal", "Sector 15 Playground", "DMTCL Depot", "Metro Gate 1 & 2"],
     "is_metro_station": true,
     "metro_code": "MRT6-UTN",
@@ -57,8 +65,8 @@ export const STATIC_HUBS = {
     "id": "hub-uttara-center",
     "name": "Uttara Center",
     "name_bn": "উত্তরা সেন্টার",
-    "lat": 23.8645,
-    "lng": 90.3785,
+    "lat": 23.85981,
+    "lng": 90.36516,
     "landmarks": ["Sector 16/17 Bridge", "Uttara Sector 17 Avenue", "Metro Gate 1"],
     "is_metro_station": true,
     "metro_code": "MRT6-UTC",
@@ -69,8 +77,8 @@ export const STATIC_HUBS = {
     "id": "hub-uttara-south",
     "name": "Uttara South",
     "name_bn": "উত্তরা দক্ষিণ",
-    "lat": 23.8540,
-    "lng": 90.3752,
+    "lat": 23.84581,
+    "lng": 90.36311,
     "landmarks": ["Sector 18 Connector", "Sonargaon Janapath Road", "Metro Gate 2"],
     "is_metro_station": true,
     "metro_code": "MRT6-UTS",
@@ -81,8 +89,8 @@ export const STATIC_HUBS = {
     "id": "hub-pallabi",
     "name": "Pallabi",
     "name_bn": "পল্লবী",
-    "lat": 23.8340,
-    "lng": 90.3660,
+    "lat": 23.82615,
+    "lng": 90.36427,
     "landmarks": ["Purobi Cinema Hall", "Pallabi Thana", "Mirpur 12 Bus Stand", "Metro Gate A"],
     "is_metro_station": true,
     "metro_code": "MRT6-PAL",
@@ -93,8 +101,8 @@ export const STATIC_HUBS = {
     "id": "hub-mirpur11",
     "name": "Mirpur 11",
     "name_bn": "মিরপুর ১১",
-    "lat": 23.8210,
-    "lng": 90.3670,
+    "lat": 23.81924,
+    "lng": 90.36527,
     "landmarks": ["Avenue 3", "Mirpur 11 Bus Stand", "Bihari Camp Junction", "Metro Gate 1"],
     "is_metro_station": true,
     "metro_code": "MRT6-M11",
@@ -105,8 +113,8 @@ export const STATIC_HUBS = {
     "id": "hub-mirpur10",
     "name": "Mirpur 10",
     "name_bn": "মিরপুর ১০",
-    "lat": 23.8070,
-    "lng": 90.3686,
+    "lat": 23.80813,
+    "lng": 90.36833,
     "landmarks": ["Mirpur 10 Roundabout", "Fire Service Station", "Metro Pillar 184", "Benarosi Palli"],
     "is_metro_station": true,
     "metro_code": "MRT6-M10",
@@ -117,8 +125,8 @@ export const STATIC_HUBS = {
     "id": "hub-kazipara",
     "name": "Kazipara",
     "name_bn": "কাজীপাড়া",
-    "lat": 23.7950,
-    "lng": 90.3720,
+    "lat": 23.79950,
+    "lng": 90.37190,
     "landmarks": ["Kazipara Bus Stand", "Begum Rokeya Sarani", "Metro Gate 2"],
     "is_metro_station": true,
     "metro_code": "MRT6-KAZ",
@@ -129,8 +137,8 @@ export const STATIC_HUBS = {
     "id": "hub-shewrapara",
     "name": "Shewrapara",
     "name_bn": "শেওড়াপাড়া",
-    "lat": 23.7875,
-    "lng": 90.3745,
+    "lat": 23.79095,
+    "lng": 90.37553,
     "landmarks": ["West Kafrul Road", "Shewrapara Bazar", "Metro Gate 1"],
     "is_metro_station": true,
     "metro_code": "MRT6-SHW",
@@ -141,8 +149,8 @@ export const STATIC_HUBS = {
     "id": "hub-agargaon",
     "name": "Agargaon",
     "name_bn": "আগারগাঁও",
-    "lat": 23.7785,
-    "lng": 90.3780,
+    "lat": 23.77842,
+    "lng": 90.38015,
     "landmarks": ["Passport Office Road", "Election Commission", "IDB Bhaban", "Metro Gate 2"],
     "is_metro_station": true,
     "metro_code": "MRT6-AGA",
@@ -153,8 +161,8 @@ export const STATIC_HUBS = {
     "id": "hub-bijoy-sarani",
     "name": "Bijoy Sarani",
     "name_bn": "বিজয় সরণি",
-    "lat": 23.7650,
-    "lng": 90.3850,
+    "lat": 23.76634,
+    "lng": 90.38313,
     "landmarks": ["Old Airport Road", "Rangs Bhaban", "Novo Theatre", "Air Force Museum", "Metro Gate A"],
     "is_metro_station": true,
     "metro_code": "MRT6-BJS",
@@ -165,8 +173,8 @@ export const STATIC_HUBS = {
     "id": "hub-farmgate",
     "name": "Farmgate",
     "name_bn": "ফার্মগেট",
-    "lat": 23.7561,
-    "lng": 90.3872,
+    "lat": 23.75903,
+    "lng": 90.38635,
     "landmarks": ["Ananda Cinema Hall", "Foot-overbridge", "Tejgaon College", "Khamarbari", "Metro Exit A"],
     "is_metro_station": true,
     "metro_code": "MRT6-FMG",
@@ -177,8 +185,8 @@ export const STATIC_HUBS = {
     "id": "hub-karwan-bazar",
     "name": "Karwan Bazar",
     "name_bn": "কারওয়ান বাজার",
-    "lat": 23.7485,
-    "lng": 90.3920,
+    "lat": 23.75154,
+    "lng": 90.39266,
     "landmarks": ["SAARC Fountain", "Pan Pacific Sonargaon", "Petrobangla", "Metro Gate 2"],
     "is_metro_station": true,
     "metro_code": "MRT6-KBZ",
@@ -189,8 +197,8 @@ export const STATIC_HUBS = {
     "id": "hub-shahbagh",
     "name": "Shahbagh",
     "name_bn": "শাহবাগ",
-    "lat": 23.7383,
-    "lng": 90.3956,
+    "lat": 23.73958,
+    "lng": 90.39601,
     "landmarks": ["BSMMU (PG Hospital)", "National Museum", "BIRDEM Hospital", "DU Campus Gate", "Metro Exit 1"],
     "is_metro_station": true,
     "metro_code": "MRT6-SHB",
@@ -201,8 +209,8 @@ export const STATIC_HUBS = {
     "id": "hub-du",
     "name": "Dhaka University",
     "name_bn": "ঢাকা বিশ্ববিদ্যালয় (টিএসসি)",
-    "lat": 23.7315,
-    "lng": 90.3965,
+    "lat": 23.73142,
+    "lng": 90.39702,
     "landmarks": ["TSC (Teacher Student Centre)", "Curzon Hall", "Doyel Chattar", "Central Library", "Metro Gate A"],
     "is_metro_station": true,
     "metro_code": "MRT6-DU",
@@ -213,8 +221,8 @@ export const STATIC_HUBS = {
     "id": "hub-secretariat",
     "name": "Bangladesh Secretariat",
     "name_bn": "বাংলাদেশ সচিবালয় (প্রেস ক্লাব)",
-    "lat": 23.7290,
-    "lng": 90.4075,
+    "lat": 23.73001,
+    "lng": 90.40787,
     "landmarks": ["National Press Club", "Cabinet Division", "Abdul Gani Road", "Topkhana Road", "Metro Gate 1"],
     "is_metro_station": true,
     "metro_code": "MRT6-SEC",
@@ -225,8 +233,8 @@ export const STATIC_HUBS = {
     "id": "hub-motijheel",
     "name": "Motijheel",
     "name_bn": "মতিঝিল",
-    "lat": 23.7270,
-    "lng": 90.4180,
+    "lat": 23.72743,
+    "lng": 90.42018,
     "landmarks": ["Shapla Chattar", "Bangladesh Bank HQ", "Sonali Bank HQ", "Metro Exit B"],
     "is_metro_station": true,
     "metro_code": "MRT6-MJL",
@@ -237,8 +245,8 @@ export const STATIC_HUBS = {
     "id": "hub-kamalapur",
     "name": "Kamalapur",
     "name_bn": "কমলাপুর",
-    "lat": 23.7318,
-    "lng": 90.4255,
+    "lat": 23.73180,
+    "lng": 90.42550,
     "landmarks": ["Kamalapur Central Railway Station", "ICD Container Yard", "Railway Overbridge", "Metro East Terminal"],
     "is_metro_station": true,
     "metro_code": "MRT6-KMP",
