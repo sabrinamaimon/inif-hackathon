@@ -571,47 +571,6 @@ export default function Home() {
         {/* TAB 1: HOME (Focused Smart Transit Search & Itineraries) */}
         {currentTab === 'home' && (
           <div className="space-y-8 my-4 w-full">
-            {/* Live Weather Intelligence & Regional Fare Surge Strip */}
-            {liveWeather && (
-              <div className={`p-4 rounded-2xl border-2 shadow-xl transition-all ${
-                (liveWeather.is_raining || weather === 'rain')
-                  ? 'bg-gradient-to-r from-[#1c2438] via-[#1a2d42] to-[#15453b] border-[#60a5fa] text-white'
-                  : 'bg-gradient-to-r from-[#1c1511] via-[#241a14] to-[#2d2119] border-[#c69429]/50 text-[#fbf8f1]'
-              }`}>
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex items-center gap-3.5">
-                    <span className="text-3xl shrink-0">{liveWeather.icon || (weather === 'rain' ? '🌧️' : '☀️')}</span>
-                    <div>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-rickshaw text-lg sm:text-xl font-bold text-[#f6d16f] tracking-wide">
-                          {lang === 'bn' ? 'ঢাকা লাইভ আবহাওয়া ও এলাকাভিত্তিক ভাড়া সমন্বয়' : 'Dhaka Live Weather & Regional Fare Intelligence'}
-                        </span>
-                        <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#0e6e41] text-white font-anek font-extrabold border border-[#6ee7b7]/50 shadow-xs">
-                          {lang === 'bn' ? 'স্বয়ংক্রিয় লাইভ' : 'Live Auto'}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2.5 sm:gap-4 text-xs sm:text-sm font-anek text-[#dfcfb2] mt-1 flex-wrap">
-                        <span className="font-bold text-white">🌡️ {lang === 'bn' ? `তাপমাত্রা: ${toBnDigits(liveWeather.temperature)}° সে.` : `Temp: ${liveWeather.temperature}°C`}</span>
-                        <span>💧 {lang === 'bn' ? `আর্দ্রতা: ${toBnDigits(liveWeather.humidity)}%` : `Humidity: ${liveWeather.humidity}%`}</span>
-                        <span>🌧️ {lang === 'bn' ? `বৃষ্টিপাত: ${toBnDigits(liveWeather.precipitation_mm)} মিমি` : `Rain: ${liveWeather.precipitation_mm}mm`}</span>
-                        <span className="font-black text-[#f6d16f] bg-black/40 px-2.5 py-0.5 rounded-md border border-[#c69429]/40">
-                          {lang === 'bn' ? liveWeather.condition_bn : liveWeather.condition}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="text-left sm:text-right text-xs sm:text-sm font-anek font-semibold max-w-lg text-[#dfcfb2] leading-snug">
-                    <p>
-                      {lang === 'bn'
-                        ? liveWeather.area_impacts?.impact_summary_bn
-                        : 'Real-time weather analysis automatically regulates regional transit fares.'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Route Query Engine */}
             <RouteSearch
               origin={origin}
