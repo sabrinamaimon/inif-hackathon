@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Mic, Volume2, Bot, User, Sparkles, Navigation } from 'lucide-react';
+import { MessageSquare, X, Send, Mic, Volume2, Bot, User, Navigation } from 'lucide-react';
 import { I18N } from '../utils/localization';
 import { startSpeechRecognition, speakText } from '../utils/speech';
 
@@ -198,29 +198,6 @@ export default function ChatDrawer({
               </div>
             )}
             <div ref={messagesEndRef} />
-          </div>
-
-          {/* Quick Banglish Prompt Suggestions */}
-          <div className="px-3.5 py-2.5 bg-[#18130f] border-t border-[#c69429]/30 flex items-center gap-2 overflow-x-auto">
-            <span className="text-[11px] font-black text-[#f6d16f] uppercase tracking-wider shrink-0 flex items-center gap-1 font-anek">
-              <Sparkles className="w-3 h-3 text-[#f6d16f]" />
-              <span>{lang === 'bn' ? 'লিখুন:' : 'Prompt:'}</span>
-            </span>
-            {[
-              "Mirpur theke motijheel student bhara koto?",
-              "Shahbagh e ki jam ache?",
-              "Brishti hoile rickshaw fare koto barbe?",
-              "Ajke ki metro rail choltese?"
-            ].map((prompt, pIdx) => (
-              <button
-                key={pIdx}
-                type="button"
-                onClick={() => handleSend(prompt)}
-                className="shrink-0 text-xs px-2.5 py-1 rounded-lg bg-[#201712] hover:bg-[#b83a2e] text-[#dfcfb2] hover:text-[#fbf8f1] border border-[#c69429]/30 hover:border-[#f6d16f] transition-all font-anek font-semibold whitespace-nowrap active:scale-95"
-              >
-                {prompt}
-              </button>
-            ))}
           </div>
 
           {/* Input Footer */}
