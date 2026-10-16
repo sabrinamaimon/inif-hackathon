@@ -65,10 +65,20 @@ export default function MapView({
       if (!isMounted || !mapContainerRef.current) return;
 
       if (!mapInstanceRef.current) {
-        // Center around Dhaka center: Lat 23.7850, Lng 90.3950, Zoom: 12
+        if (mapContainerRef.current._leaflet_id) {
+          delete mapContainerRef.current._leaflet_id;
+        }
+        // Center tightly around Dhaka City transit core: Lat 23.7920, Lng 90.3950, Zoom: 12.8
         const map = L.map(mapContainerRef.current, {
-          center: [23.7850, 90.3950],
-          zoom: 12,
+          center: [23.7920, 90.3950],
+          zoom: 12.8,
+          zoomSnap: 0.1,
+          minZoom: 11.5,
+          maxBounds: [
+            [23.6300, 90.2500],
+            [23.9500, 90.5500]
+          ],
+          maxBoundsViscosity: 0.8,
           zoomControl: true,
           attributionControl: false
         });
@@ -407,6 +417,10 @@ export default function MapView({
 
         if (filterMode === 'metro_only' && metroPoints.length > 0) {
           map.fitBounds(L.polyline(metroPoints).getBounds(), { padding: [40, 40] });
+        } else if (filterMode === 'all' && (!activeRoute || !activeRoute.legs || activeRoute.legs.length === 0)) {
+          // Precise bounding box framing Dhaka City transit corridor (Uttara North down to Sadarghat/Old Dhaka)
+          const dhakaBounds = L.latLngBounds([23.7040, 90.3500], [23.8780, 90.4350]);
+          map.fitBounds(dhakaBounds, { padding: [30, 30] });
         }
       }
 
@@ -495,6 +509,13 @@ export default function MapView({
 
         userLocationMarkerRef.current = userMarker;
       }
+
+      // Ensure proper tile sizing and eliminate grey areas on mount or tab switch
+      setTimeout(() => {
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.invalidateSize();
+        }
+      }, 200);
     });
 
     return () => {
@@ -598,8 +619,8 @@ export default function MapView({
       {/* Map Canvas Container */}
       <div 
         ref={mapContainerRef} 
-        style={{ height: '440px', width: '100%' }}
-        className="rounded-xl border border-[#c69429]/30 overflow-hidden shadow-inner relative z-0"
+        style={{ height: 'min(82vh, 740px)', minHeight: '560px', width: '100%' }}
+        className="rounded-xl border-2 border-[#c69429]/40 overflow-hidden shadow-2xl relative z-0 w-full"
       />
 
       {/* Bottom Map Legend & Metro Pass Info */}
