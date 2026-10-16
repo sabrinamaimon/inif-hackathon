@@ -18,17 +18,17 @@ export default function Navbar({
   const t = I18N[lang] || I18N.bn;
 
   const navLinks = [
-    { id: 'home', label: t.tabHome, icon: Navigation },
-    { id: 'alerts', label: t.tabAlerts, icon: AlertTriangle, badge: activeAlertCount },
-    { id: 'simulator', label: t.tabSimulator, icon: Cpu },
-    { id: 'cms', label: t.tabCMS, icon: Bus },
-    { id: 'rideshare', label: t.tabRideShare, icon: Users },
+    { id: 'home', label: lang === 'bn' ? 'রুট প্ল্যানার' : 'Route Planner', icon: Navigation },
+    { id: 'alerts', label: lang === 'bn' ? 'সড়ক বিঘ্ন' : 'Street Alerts', icon: AlertTriangle, badge: activeAlertCount },
+    { id: 'simulator', label: lang === 'bn' ? 'সিমুলেটর' : 'Simulator', icon: Cpu },
+    { id: 'cms', label: lang === 'bn' ? 'ডিরেক্টরি' : 'Directory', icon: Bus },
+    { id: 'rideshare', label: lang === 'bn' ? 'রাইড শেয়ার' : 'Ride Share', icon: Users },
   ];
 
   return (
-    <header className="w-full sticky top-0 z-50 bg-[#16110d]/95 backdrop-blur-md border-b border-[#c69429]/40 shadow-xl">
-      {/* ================= DESKTOP HEADER (>768px) ================= */}
-      <div className="hidden md:flex items-center justify-between gap-3 px-3 sm:px-5 lg:px-6 xl:px-8 py-2.5 w-full max-w-[1920px] mx-auto">
+    <header className="w-full sticky top-0 z-50 bg-[#16110d]/95 backdrop-blur-md border-b border-[#c69429]/40 shadow-xl overflow-x-hidden">
+      {/* ================= DESKTOP HEADER (>=1024px) ================= */}
+      <div className="hidden lg:flex items-center justify-between gap-3 px-3 sm:px-5 lg:px-6 xl:px-8 py-2.5 w-full max-w-[1920px] mx-auto">
         {/* Clean, High-End Brand Logo - Enlarged & Impactful */}
         <div 
           className="flex items-center gap-2.5 cursor-pointer select-none group shrink-0"
@@ -139,8 +139,8 @@ export default function Navbar({
         </div>
       </div>
 
-      {/* ================= MOBILE HEADER (<768px) ================= */}
-      <div className="md:hidden flex items-center justify-between px-4 py-2.5 bg-[#17120e]">
+      {/* ================= MOBILE / TABLET HEADER (<1024px) ================= */}
+      <div className="lg:hidden flex items-center justify-between px-3 sm:px-4 py-2.5 bg-[#17120e]">
         <button
           onClick={() => setIsDrawerOpen(true)}
           aria-label="Open Mobile Menu"

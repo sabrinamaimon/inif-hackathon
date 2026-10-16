@@ -21,11 +21,11 @@ export default function MobileDrawer({
   const t = I18N[lang] || I18N.bn;
 
   const menuItems = [
-    { id: 'home', label: t.tabHome, icon: Navigation },
-    { id: 'alerts', label: t.tabAlerts, icon: AlertTriangle, badge: activeAlertCount },
-    { id: 'simulator', label: t.tabSimulator, icon: Cpu },
-    { id: 'cms', label: t.tabCMS, icon: Bus },
-    { id: 'rideshare', label: t.tabRideShare, icon: Users },
+    { id: 'home', label: lang === 'bn' ? 'রুট প্ল্যানার' : 'Route Planner', icon: Navigation },
+    { id: 'alerts', label: lang === 'bn' ? 'সড়ক বিঘ্ন' : 'Street Alerts', icon: AlertTriangle, badge: activeAlertCount },
+    { id: 'simulator', label: lang === 'bn' ? 'সিমুলেটর' : 'Simulator', icon: Cpu },
+    { id: 'cms', label: lang === 'bn' ? 'ডিরেক্টরি' : 'Directory', icon: Bus },
+    { id: 'rideshare', label: lang === 'bn' ? 'রাইড শেয়ার' : 'Ride Share', icon: Users },
   ];
 
   const handleSelectTab = (tabId) => {
@@ -34,7 +34,7 @@ export default function MobileDrawer({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex md:hidden">
+    <div className="fixed inset-0 z-50 flex lg:hidden">
       {/* Backdrop */}
       <div 
         className="fixed inset-0 bg-[#0a0705]/85 backdrop-blur-md transition-opacity"

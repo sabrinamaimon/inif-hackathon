@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import MobileDrawer from '../components/MobileDrawer';
-import MapView from '../components/MapView';
 import RouteSearch from '../components/RouteSearch';
 import RouteResults from '../components/RouteResults';
 import FareBreakdownModal from '../components/FareBreakdownModal';
@@ -496,18 +495,6 @@ export default function Home() {
               simulationState={simulationState}
               onTriggerScenario={handleTriggerScenario}
               lang={lang}
-            />
-            <MapView
-              hubs={hubs}
-              activeAlerts={alerts}
-              activeRoute={selectedRoute}
-              lang={lang}
-              onSetOrigin={(name) => setOrigin(name)}
-              onSetDestination={(name) => setDestination(name)}
-              onSelectHub={(name) => {
-                if (!origin) setOrigin(name);
-                else setDestination(name);
-              }}
             />
             <EmergencyHelpline lang={lang} isHome={false} />
           </div>
