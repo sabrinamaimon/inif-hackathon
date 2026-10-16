@@ -286,10 +286,14 @@ class DhakaTransitGraph:
 
         # Enrich existing routes with distance and obstacle badges
         for r in routes:
-            has_metro = any(l.mode == "metro" for l in r.legs)
-            r_dist = sum(l.distance_km for l in r.legs) if r.legs else est_distance
-            r.total_distance_km = round(r_dist, 1)
-            if has_metro:
+            metro_dist = sum(l.distance_km for l in r.legs if l.mode == "metro")
+            total_leg_dist = sum(l.distance_km for l in r.legs) if r.legs else est_distance
+            r.total_distance_km = round(total_leg_dist, 1)
+            
+            # Strict mode definition: only call it metro if at least 70% of journey or both origin & dest are metro
+            is_orig_metro = DHAKA_HUBS.get(origin, {}).get("is_metro_station", False)
+            is_dest_metro = DHAKA_HUBS.get(destination, {}).get("is_metro_station", False)
+            if (metro_dist / max(0.1, total_leg_dist) >= 0.7) or (is_orig_metro and is_dest_metro):
                 r.mode = "metro"
                 r.obstacles_badge = "🟢 বাধামুক্ত উড়ালপথ (০% যানজট ও জলজট)"
                 r.obstacles_status = "safe"
@@ -459,7 +463,11 @@ class DhakaTransitGraph:
                     )
                 ]
             )
-            routes.append(rickshaw_route)
+        # Reconcile exact sum of legs for fares and duration
+        for r in routes:
+            r.total_regular_fare = sum(l.regular_fare_bdt for l in r.legs)
+            r.total_student_fare = sum(l.student_fare_bdt for l in r.legs)
+            r.total_duration_mins = sum(l.duration_mins for l in r.legs) + (r.transfers * 3)
 
         return routes
 

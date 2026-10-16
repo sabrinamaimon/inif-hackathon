@@ -66,11 +66,20 @@ export default function RouteResults({
   };
 
   const handleAudioBriefing = (route) => {
-    const distText = route.total_distance_km ? `${route.total_distance_km} কিলোমিটার` : '';
-    const obstacleText = route.obstacles_badge ? `পথে অবস্থা: ${route.obstacles_badge}।` : '';
+    const originName = STATIC_HUBS[origin]?.name_bn || origin;
+    const destName = STATIC_HUBS[destination]?.name_bn || destination;
+    const distText = route.total_distance_km ? `${toBnDigits(route.total_distance_km)} কিলোমিটার` : '';
+    const obstacleText = route.obstacles_badge ? `যাত্রাপথে অবস্থা: ${route.obstacles_badge}।` : '';
+    const studentText = route.total_regular_fare !== route.total_student_fare 
+      ? `এবং শিক্ষার্থীদের নির্ধারিত হাফ-পাস ভাড়া ${toBnDigits(route.total_student_fare)} টাকা` 
+      : '';
+    const transferText = (route.transfers === 0 || !route.transfers)
+      ? 'কোনো প্রকার পরিবর্তন বা বদল ছাড়াই এটি সরাসরি যাত্রাপথ।'
+      : `এতে মোট ${toBnDigits(route.transfers)} বার বাহন পরিবর্তন করতে হবে।`;
+
     const speechScript = lang === 'bn'
-      ? `${origin} থেকে ${destination} পৌঁছাতে আনুমানিক সময় লাগবে ${route.total_duration_mins} মিনিট। দূরত্ব প্রায় ${distText}। ${obstacleText} মোট সাধারণ ভাড়া ${route.total_regular_fare} টাকা, শিক্ষার্থীদের হাফ-পাস ভাড়া ${route.total_student_fare} টাকা। বাহন: ${route.title_bn || route.legs[0]?.line_name}। সাবধানে চলাচল করুন।`
-      : `Transit itinerary from ${origin} to ${destination}. Estimated duration is ${route.total_duration_mins} minutes, distance ${route.total_distance_km || ''} km. Total regular fare is ${route.total_regular_fare} BDT, student half-pass is ${route.total_student_fare} BDT. Mode: ${route.title}. Have a safe journey.`;
+      ? `আসসালামু আলাইকুম। ${originName} থেকে ${destName} পৌঁছাতে আনুমানিক সময় লাগবে ${toBnDigits(route.total_duration_mins)} মিনিট। দূরত্ব প্রায় ${distText}। ${transferText} নির্ধারিত মোট ভাড়া ${toBnDigits(route.total_regular_fare)} টাকা ${studentText}। ${obstacleText} আপনার নিরাপদ ও স্বাচ্ছন্দ্যময় যাত্রা কামনা করছি।`
+      : `Assalamu Alaikum. Traveling from ${origin} to ${destination} will take approximately ${route.total_duration_mins} minutes over a distance of ${route.total_distance_km || ''} km. ${route.transfers === 0 ? 'This is a direct journey with no transfers.' : `This route requires ${route.transfers} transfers.`} The fare is ${route.total_regular_fare} Taka${route.total_regular_fare !== route.total_student_fare ? `, with student concession at ${route.total_student_fare} Taka.` : '.'} Wishing you a safe and pleasant journey.`;
 
     speakText(speechScript, lang);
   };
@@ -274,10 +283,10 @@ export default function RouteResults({
                   </span>
                 </div>
 
-                {/* Grounded Graph Badge */}
-                <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#6ee7b7] bg-[#15453b]/40 px-3 py-1 rounded-xl border border-[#2a6f62]">
+                {/* Verified Transit Badge */}
+                <div className="flex items-center gap-2 text-xs font-anek font-bold text-[#6ee7b7] bg-[#15453b]/40 px-3 py-1 rounded-xl border border-[#2a6f62]">
                   <span className="w-2 h-2 rounded-full bg-[#6ee7b7] animate-ping" />
-                  <span>{lang === 'bn' ? 'সরাসরি যাচাইকৃত রুট' : 'GROUNDED GRAPH ROUTE'}</span>
+                  <span>{lang === 'bn' ? 'সরাসরি যাচাইকৃত যাত্রাপথ' : 'VERIFIED DIRECT ROUTE'}</span>
                 </div>
               </div>
 

@@ -40,7 +40,7 @@ export function startSpeechRecognition({ lang = 'bn-BD', onResult, onError, onEn
 }
 
 export function speakText(text, lang = 'bn') {
-  if (!('speechSynthesis' in window)) {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
     console.warn('Text-to-speech not supported.');
     return;
   }
@@ -52,6 +52,27 @@ export function speakText(text, lang = 'bn') {
   utterance.lang = lang === 'bn' ? 'bn-BD' : 'en-US';
   utterance.rate = 0.95;
   utterance.pitch = 1.0;
+
+  // Attempt to select the most natural voice
+  const voices = window.speechSynthesis.getVoices();
+  if (voices && voices.length > 0) {
+    if (lang === 'bn') {
+      const bnVoice = voices.find(v => 
+        v.lang === 'bn-BD' || 
+        v.lang === 'bn_BD' || 
+        v.lang.startsWith('bn') || 
+        v.name.toLowerCase().includes('bangla') || 
+        v.name.toLowerCase().includes('bengali')
+      );
+      if (bnVoice) utterance.voice = bnVoice;
+    } else {
+      const enVoice = voices.find(v => 
+        (v.lang === 'en-US' || v.lang === 'en-GB') && 
+        (v.name.includes('Natural') || v.name.includes('Google'))
+      );
+      if (enVoice) utterance.voice = enVoice;
+    }
+  }
 
   window.speechSynthesis.speak(utterance);
 }
