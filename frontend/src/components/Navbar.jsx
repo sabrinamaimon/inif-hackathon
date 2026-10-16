@@ -79,16 +79,16 @@ export default function Navbar({
 
         {/* Right Action Controls: Postcard Download + Shapla Badge + Theme Toggle + Language Switcher (shrink-0 to prevent clipping) */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          {/* Postcard Transit Card Download Button (only on very wide screens to prevent overflow) */}
+          {/* Commute Card Download Button (only on very wide screens to prevent overflow) */}
           {onDownloadPostcard && (
             <button
               onClick={onDownloadPostcard}
               className="hidden 2xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-[#15453b] to-[#0e3b32] hover:from-[#1b5e50] hover:to-[#15453b] text-[#fbf8f1] text-xs font-anek font-bold border-2 border-[#2a6f62] transition-all active:scale-95 shadow-md group cursor-pointer shrink-0"
-              title={lang === 'bn' ? 'পোস্টকার্ড ট্রানজিট কার্ড ডাউনলোড করুন' : 'Download Postcard Transit Card'}
+              title={lang === 'bn' ? 'কমিউট কার্ড ডাউনলোড করুন' : 'Download Commute Card'}
             >
               <Download className="w-3.5 h-3.5 text-[#6ee7b7] group-hover:scale-110 transition-transform" />
               <span className="whitespace-nowrap">
-                {lang === 'bn' ? 'ট্রানজিট কার্ড' : 'Transit Card'}
+                {lang === 'bn' ? 'কমিউট কার্ড' : 'Commute Card'}
               </span>
             </button>
           )}
@@ -158,12 +158,12 @@ export default function Navbar({
         </div>
 
         <div className="flex items-center gap-1.5">
-          {/* Mobile Postcard Download Button */}
+          {/* Mobile Commute Card Download Button */}
           <button
             onClick={onDownloadPostcard}
             className="flex items-center justify-center w-8 h-8 rounded-full bg-[#15453b] border border-[#2a6f62] text-[#6ee7b7] active:scale-95 transition-all shadow-md"
-            title={lang === 'bn' ? 'পোস্টকার্ড কার্ড ডাউনলোড' : 'Download Transit Card'}
-            aria-label="Download Transit Card"
+            title={lang === 'bn' ? 'কমিউট কার্ড ডাউনলোড' : 'Download Commute Card'}
+            aria-label="Download Commute Card"
           >
             <Download className="w-4 h-4 text-[#6ee7b7]" />
           </button>

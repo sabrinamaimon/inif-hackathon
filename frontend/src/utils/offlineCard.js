@@ -91,7 +91,7 @@ export function generateOfflineRouteCard(arg1, arg2, arg3, arg4) {
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
   ctx.fillText(
-    isBn ? 'DHAKAPATH • ট্রানজিট রুট কার্ড' : 'DHAKAPATH • TRANSIT COMMUTE CARD',
+    isBn ? 'DHAKAPATH • ডিজিটাল কমিউট কার্ড' : 'DHAKAPATH • DIGITAL COMMUTE CARD',
     bannerX + 18,
     bannerY + bannerH / 2
   );
@@ -334,8 +334,8 @@ export function generateOfflineRouteCard(arg1, arg2, arg3, arg4) {
   ctx.textBaseline = 'bottom';
   ctx.fillText(
     isBn 
-      ? 'DhakaPath Urban Mobility Intelligence • অফলাইনে সহজে পড়ার জন্য ডিজিটাল ট্রানজিট কার্ড'
-      : 'DhakaPath Urban Mobility Intelligence • Digital Transit Commute Pass for Offline Use',
+      ? 'DhakaPath Urban Mobility Intelligence • অফলাইনে সহজে পড়ার জন্য ডিজিটাল কমিউট কার্ড'
+      : 'DhakaPath Urban Mobility Intelligence • Digital Commute Card for Offline Use',
     940 / 2,
     642
   );
