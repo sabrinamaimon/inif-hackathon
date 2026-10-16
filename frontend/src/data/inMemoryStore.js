@@ -35,9 +35,26 @@ export function addAlert(newAlert) {
   return alertWithDefaults;
 }
 
-export function voteAlert(alertId, voteType) {
+// IP-based voting ledger: key `${alertId}:${clientIp}` -> voteType
+const alertIpVotes = new Map();
+
+// Area-specific flood-prone hubs with high waterlogging risk during rain/storm
+export const FLOOD_PRONE_HUBS = ['Malibagh', 'Sadarghat', 'Lalbagh', 'Kazipara', 'Mirpur 10'];
+
+export function voteAlert(alertId, voteType, clientIp = '127.0.0.1') {
   const alert = activeAlerts.find(a => a.id === alertId);
   if (!alert) return null;
+
+  const voteKey = `${alertId}:${clientIp}`;
+  if (alertIpVotes.has(voteKey)) {
+    return {
+      already_voted: true,
+      user_vote: alertIpVotes.get(voteKey),
+      alert
+    };
+  }
+
+  alertIpVotes.set(voteKey, voteType);
 
   if (voteType === 'upvote') {
     alert.upvotes += 1;
@@ -53,7 +70,11 @@ export function voteAlert(alertId, voteType) {
   alert.trust_score = Math.min(100, Math.max(0, Math.round(rawScore * decayFactor)));
   alert.verified = alert.trust_score >= 80;
 
-  return alert;
+  return {
+    already_voted: false,
+    user_vote: voteType,
+    alert
+  };
 }
 
 export function getRideShares() {

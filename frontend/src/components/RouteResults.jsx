@@ -6,7 +6,7 @@ import {
   Volume2, Download, HelpCircle, Train, Bus, Bike, Car, Navigation, Sparkles, MapPin
 } from 'lucide-react';
 import { I18N, formatFare, formatDuration, toBnDigits } from '../utils/localization';
-import { speakText } from '../utils/speech';
+import { speakText, stopSpeech } from '../utils/speech';
 import { generateOfflineRouteCard } from '../utils/offlineCard';
 import { STATIC_HUBS } from '../data/staticData';
 
@@ -22,6 +22,24 @@ export default function RouteResults({
 }) {
   const t = I18N[lang] || I18N.bn;
   const [activeFilter, setActiveFilter] = React.useState('all');
+  const [playingRouteId, setPlayingRouteId] = React.useState(null);
+
+  const BN_NUM_WORDS = {
+    0: 'শূন্য', 1: 'এক', 2: 'দুই', 3: 'তিন', 4: 'চার', 5: 'পাঁচ',
+    6: 'ছয়', 7: 'সাত', 8: 'আট', 9: 'নয়', 10: 'দশ',
+    11: 'এগারো', 12: 'বারো', 13: 'তেরো', 14: 'চৌদ্দ', 15: 'পনেরো',
+    16: 'ষোলো', 17: 'সতেরো', 18: 'আঠারো', 19: 'উনিশ', 20: 'বিশ',
+    21: 'একুশ', 22: 'বাইশ', 23: 'তেইশ', 24: 'চব্বিশ', 25: 'পঁচিশ',
+    26: 'ছাব্বিশ', 27: 'সাতাশ', 28: 'আঠাশ', 29: 'উনত্রিশ', 30: 'ত্রিশ',
+    35: 'পঁয়ত্রিশ', 40: 'চল্লিশ', 45: 'পঁয়তাল্লিশ', 50: 'পঞ্চাশ',
+    55: 'পঞ্চান্ন', 60: 'ষাট', 65: 'পঁয়ষট্টি', 70: 'সত্তর', 75: 'পঁচাত্তর',
+    80: 'আশি', 85: 'পঁচাশি', 90: 'নব্বই', 95: 'পঁচানব্বই', 100: 'একশো'
+  };
+  const toWordBn = (n) => {
+    const roundN = Math.round(Number(n));
+    if (BN_NUM_WORDS[roundN]) return BN_NUM_WORDS[roundN];
+    return toBnDigits(roundN);
+  };
 
   if (!routes || routes.length === 0) {
     return null;
@@ -184,10 +202,16 @@ export default function RouteResults({
     if (currentLang === 'bn') {
       if (leg.landmark_instructions_bn) return leg.landmark_instructions_bn;
       if (leg.landmark_instructions && /[^\x00-\x7F]/.test(leg.landmark_instructions)) {
-        return leg.landmark_instructions;
+        let text = leg.landmark_instructions;
+        Object.entries(STATIC_HUBS).forEach(([enKey, hubObj]) => {
+          if (hubObj.name_bn) {
+            text = text.replaceAll(enKey, hubObj.name_bn);
+          }
+        });
+        return text;
       }
       switch (leg.mode) {
-        case 'metro': return `${fromName} মেট্রোরেল কনকোর্স দিয়ে উঠে ${toName} প্ল্যাটফর্মে নামুন।`;
+        case 'metro': return `${fromName} মেট্রোরেল কনকোর্স দিয়ে উঠে ${toName} প্ল্যাটফর্মে নামুন। সরাসরি ট্র্যাকে যাত্রা।`;
         case 'bus': return `${fromName} বাস স্টপ থেকে সরাসরি বাসে উঠে ${toName} নামুন। বাসে ৫০% শিক্ষার্থী হাফ-পাস প্রযোজ্য।`;
         case 'cng': return `${fromName} সিএনজি স্ট্যান্ড থেকে সরাসরি ${toName}। কোনো পরিবর্তন ছাড়া দ্রুত যাতায়াত।`;
         case 'bike': return `${fromName} থেকে ওয়ান-অন-ওয়ান বাইক পিকআপ নিয়ে যানজট এড়িয়ে দ্রুত পৌঁছান।`;
@@ -212,22 +236,31 @@ export default function RouteResults({
   };
 
   const handleAudioBriefing = (route) => {
+    if (playingRouteId === route.id) {
+      stopSpeech();
+      setPlayingRouteId(null);
+      return;
+    }
+
     const originName = STATIC_HUBS[origin]?.name_bn || origin;
     const destName = STATIC_HUBS[destination]?.name_bn || destination;
-    const distText = route.total_distance_km ? `${toBnDigits(route.total_distance_km)} কিলোমিটার` : '';
-    const obstacleText = route.obstacles_badge_bn || route.obstacles_badge ? `যাত্রাপথে অবস্থা: ${route.obstacles_badge_bn || route.obstacles_badge}।` : '';
+    const distVal = route.total_distance_km ? Math.round(route.total_distance_km) : null;
+    const distText = distVal ? `${toWordBn(distVal)} কিলোমিটার` : '';
     const studentText = route.total_regular_fare !== route.total_student_fare 
-      ? `এবং শিক্ষার্থীদের নির্ধারিত হাফ-পাস ভাড়া ${toBnDigits(route.total_student_fare)} টাকা` 
+      ? `এবং শিক্ষার্থীদের নির্ধারিত হাফ-পাস ভাড়া ${toWordBn(route.total_student_fare)} টাকা` 
       : '';
     const transferText = (route.transfers === 0 || !route.transfers)
-      ? 'কোনো প্রকার পরিবর্তন বা বদল ছাড়াই এটি সরাসরি যাত্রাপথ।'
-      : `এতে মোট ${toBnDigits(route.transfers)} বার বাহন পরিবর্তন করতে হবে।`;
+      ? 'কোনো বদল ছাড়াই এটি সরাসরি যাত্রাপথ।'
+      : `এতে মোট ${toWordBn(route.transfers)} বার বাহন পরিবর্তন করতে হবে।`;
 
     const speechScript = lang === 'bn'
-      ? `আসসালামু আলাইকুম। ${originName} থেকে ${destName} পৌঁছাতে আনুমানিক সময় লাগবে ${toBnDigits(route.total_duration_mins)} মিনিট। দূরত্ব প্রায় ${distText}। ${transferText} নির্ধারিত মোট ভাড়া ${toBnDigits(route.total_regular_fare)} টাকা ${studentText}। ${obstacleText} আপনার নিরাপদ ও স্বাচ্ছন্দ্যময় যাত্রা কামনা করছি।`
+      ? `আসসালামু আলাইকুম। ${originName} থেকে ${destName} পৌঁছাতে আনুমানিক সময় লাগবে ${toWordBn(route.total_duration_mins)} মিনিট। দূরত্ব প্রায় ${distText}। ${transferText} নির্ধারিত মোট ভাড়া ${toWordBn(route.total_regular_fare)} টাকা ${studentText}। আপনার নিরাপদ ও স্বাচ্ছন্দ্যময় যাত্রা কামনা করছি।`
       : `Assalamu Alaikum. Traveling from ${origin} to ${destination} will take approximately ${route.total_duration_mins} minutes over a distance of ${route.total_distance_km || ''} km. ${route.transfers === 0 ? 'This is a direct journey with no transfers.' : `This route requires ${route.transfers} transfers.`} The fare is ${route.total_regular_fare} Taka${route.total_regular_fare !== route.total_student_fare ? `, with student concession at ${route.total_student_fare} Taka.` : '.'} Wishing you a safe and pleasant journey.`;
 
-    speakText(speechScript, lang);
+    setPlayingRouteId(route.id);
+    speakText(speechScript, lang, {
+      onEnd: () => setPlayingRouteId(null)
+    });
   };
 
   // Distinct theme and badge per transit mode
@@ -638,11 +671,19 @@ export default function RouteResults({
                         e.stopPropagation();
                         handleAudioBriefing(route);
                       }}
-                      className="flex items-center gap-2 px-4 sm:px-5 py-3 rounded-xl bg-gradient-to-r from-[#292019] to-[#3d3026] hover:from-[#3d3026] hover:to-[#59473a] text-[#f6d16f] font-anek font-bold text-sm sm:text-base border-2 border-[#c69429] active:scale-95 transition-all shadow-lg cursor-pointer"
+                      className={`flex items-center gap-2 px-4 sm:px-5 py-3 rounded-xl font-anek font-bold text-sm sm:text-base border-2 active:scale-95 transition-all shadow-lg cursor-pointer ${
+                        playingRouteId === route.id
+                          ? 'bg-[#b83a2e] text-white border-[#f6d16f] animate-pulse'
+                          : 'bg-gradient-to-r from-[#292019] to-[#3d3026] hover:from-[#3d3026] hover:to-[#59473a] text-[#f6d16f] border-[#c69429]'
+                      }`}
                       title="Audio voice readout of itinerary"
                     >
-                      <Volume2 className="w-5 h-5 text-[#f6d16f]" />
-                      <span>{lang === 'bn' ? '🔊 পড়ে শোনান (অডিও ব্রিফিং)' : '🔊 Read Aloud (Audio)'}</span>
+                      <Volume2 className={`w-5 h-5 text-[#f6d16f] ${playingRouteId === route.id ? 'animate-bounce' : ''}`} />
+                      <span>
+                        {playingRouteId === route.id
+                          ? (lang === 'bn' ? '⏹️ অডিও বন্ধ করুন' : '⏹️ Stop Audio')
+                          : (lang === 'bn' ? '🔊 পড়ে শোনান (অডিও ব্রিফিং)' : '🔊 Read Aloud (Audio)')}
+                      </span>
                     </button>
 
                     {/* Download Commute Card Button for this Route */}

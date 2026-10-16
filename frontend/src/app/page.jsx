@@ -21,6 +21,7 @@ import { toBnDigits } from '../utils/localization';
 import { X } from 'lucide-react';
 
 import { STATIC_HUBS, STATIC_ALERTS } from '../data/staticData';
+import { parseCommuteQuery } from '../utils/nlpParser';
 
 export default function Home() {
   const [lang, setLang] = useState('bn');
@@ -74,6 +75,24 @@ export default function Home() {
     }
   }, [lang]);
 
+  // Global Escape key listener to close modals
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setIsResultsOpen(false);
+        setFareModalRoute(null);
+        setIsAddAlertOpen(false);
+        setIsScannerOpen(false);
+        setIsChatOpen(false);
+        setIsDrawerOpen(false);
+      }
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, []);
+
   // Search parameters
   const [origin, setOrigin] = useState('Mirpur 10');
   const [destination, setDestination] = useState('Motijheel');
@@ -104,12 +123,42 @@ export default function Home() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isResultsOpen, setIsResultsOpen] = useState(false);
   const [hasUserSearched, setHasUserSearched] = useState(false);
+  const [liveWeather, setLiveWeather] = useState({
+    temperature: 32.5,
+    humidity: 55,
+    precipitation_mm: 0,
+    condition: 'clear',
+    condition_bn: 'পরিষ্কার রোদ ও স্বাভাবিক আবহাওয়া',
+    is_raining: false,
+    icon: '☀️'
+  });
 
-  // Fetch initial alerts & run default search on mount
+  // Fetch initial alerts, live real weather & run default search on mount
   useEffect(() => {
     fetchAlerts();
-    performSearch('Mirpur 10', 'Motijheel', 'general', 'normal', false);
+    fetchLiveWeather().then((autoWeather) => {
+      performSearch('Mirpur 10', 'Motijheel', 'general', autoWeather || 'normal', false);
+    });
+
+    const weatherTimer = setInterval(fetchLiveWeather, 180000); // 3 mins auto refresh
+    return () => clearInterval(weatherTimer);
   }, []);
+
+  const fetchLiveWeather = async () => {
+    try {
+      const res = await fetch('/api/weather');
+      if (res.ok) {
+        const data = await res.json();
+        setLiveWeather(data);
+        const autoWeather = (data.is_raining || simulationState.rain_active) ? 'rain' : 'normal';
+        setWeather(autoWeather);
+        return autoWeather;
+      }
+    } catch (e) {
+      console.warn('Real weather API offline');
+    }
+    return 'normal';
+  };
 
   const fetchAlerts = async () => {
     try {
@@ -288,47 +337,69 @@ export default function Home() {
     setHasUserSearched(true);
     setIsResultsOpen(true);
     setIsLoadingRoutes(true);
+
+    let localParsed = null;
+    try {
+      localParsed = parseCommuteQuery(queryText, origin, destination);
+    } catch (e) {
+      console.warn('Local parse error:', e);
+    }
+
     try {
       const res = await fetch('/api/search/nlp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: queryText })
+        body: JSON.stringify({ 
+          query: queryText,
+          fallbackOrigin: origin,
+          fallbackDest: destination
+        })
       });
 
       if (res.ok) {
         const data = await res.json();
-        if (data.origin) setOrigin(data.origin);
-        if (data.destination) setDestination(data.destination);
-        if (data.passenger_type) setPassengerType(data.passenger_type);
+        const nextOrigin = data.origin || (localParsed && localParsed.origin) || origin;
+        const nextDest = data.destination || (localParsed && localParsed.destination) || destination;
+        const nextPass = data.passenger_type || (localParsed && localParsed.passenger_type) || passengerType;
+        const nextWeather = data.weather_condition === 'rain' ? 'rain' : weather;
+        const nextRush = data.is_rush_hour || isRushHour;
+
+        setOrigin(nextOrigin);
+        setDestination(nextDest);
+        setPassengerType(nextPass);
+        if (nextWeather === 'rain') setWeather('rain');
+        if (nextRush) setIsRushHour(true);
 
         performSearch(
-          data.origin || origin,
-          data.destination || destination,
-          data.passenger_type || passengerType,
-          weather,
-          isRushHour
+          nextOrigin,
+          nextDest,
+          nextPass,
+          nextWeather,
+          nextRush
         );
         return;
       }
     } catch (e) {
-      console.warn('NLP route extraction offline, using fallback');
+      console.warn('NLP route extraction API offline, using local parser');
     }
 
-    // Local parser fallback for Banglish/Bengali
-    const lower = queryText.toLowerCase();
-    let detectedOrigin = origin;
-    let detectedDest = destination;
-
-    if (lower.includes('mirpur') || lower.includes('মিরপুর')) detectedOrigin = 'Mirpur 10';
-    if (lower.includes('motijheel') || lower.includes('মতিঝিল')) detectedDest = 'Motijheel';
-    if (lower.includes('farmgate') || lower.includes('ফার্মগেট')) detectedOrigin = 'Farmgate';
-    if (lower.includes('dhanmondi') || lower.includes('ধানমন্ডি')) detectedDest = 'Dhanmondi';
-    if (lower.includes('uttara') || lower.includes('উত্তরা')) detectedOrigin = 'Uttara';
-    if (lower.includes('student') || lower.includes('ছাত্র') || lower.includes('হাফ')) setPassengerType('student');
-
-    setOrigin(detectedOrigin);
-    setDestination(detectedDest);
-    performSearch(detectedOrigin, detectedDest, passengerType, weather, isRushHour);
+    // High reliability local parser fallback for Banglish/Bengali
+    if (localParsed) {
+      setOrigin(localParsed.origin);
+      setDestination(localParsed.destination);
+      setPassengerType(localParsed.passenger_type);
+      if (localParsed.weather_condition === 'rain') setWeather('rain');
+      if (localParsed.is_rush_hour) setIsRushHour(true);
+      performSearch(
+        localParsed.origin,
+        localParsed.destination,
+        localParsed.passenger_type,
+        localParsed.weather_condition === 'rain' ? 'rain' : weather,
+        localParsed.is_rush_hour || isRushHour
+      );
+    } else {
+      performSearch(origin, destination, passengerType, weather, isRushHour);
+    }
   };
 
   const handleVoteAlert = async (alertId, voteType) => {
@@ -507,7 +578,91 @@ export default function Home() {
 
         {/* TAB 1: HOME (Focused Smart Transit Search & Itineraries) */}
         {currentTab === 'home' && (
-          <div className="space-y-8 my-4 w-full">
+          <div className="space-y-6 my-4 w-full">
+            {/* Clean & Modern Live Weather & Fare Status Bar (Adapts to Light & Dark Themes) */}
+            {liveWeather && (
+              <div className={`p-3 sm:py-3 sm:px-5 rounded-2xl border transition-all duration-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-2.5 sm:gap-4 ${
+                theme === 'light'
+                  ? 'bg-white border-amber-200/90 text-slate-800 shadow-xs'
+                  : 'bg-[#18130f] border-[#c69429]/40 text-[#dfcfb2] shadow-md'
+              }`}>
+                {/* Left Side: Icon + Title + Live Dot + Metrics */}
+                <div className="flex items-center gap-3 flex-wrap">
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-xl shrink-0 shadow-xs ${
+                    theme === 'light' ? 'bg-amber-100/70 border border-amber-200' : 'bg-[#241a14] border border-[#c69429]/30'
+                  }`}>
+                    {liveWeather.icon || (weather === 'rain' ? '🌧️' : '☀️')}
+                  </div>
+
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className={`font-anek font-bold text-sm sm:text-base ${
+                      theme === 'light' ? 'text-slate-900 font-extrabold' : 'text-[#f6d16f]'
+                    }`}>
+                      {lang === 'bn' ? 'ঢাকা ট্রানজিট আবহাওয়া' : 'Dhaka Transit Weather'}
+                    </span>
+
+                    {/* Live Indicator Pill */}
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-500/15 text-emerald-600 border border-emerald-500/30">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      {lang === 'bn' ? 'লাইভ' : 'LIVE'}
+                    </span>
+                  </div>
+
+                  {/* Clean Metrics Badges */}
+                  <div className="flex items-center gap-1.5 sm:gap-2 text-xs font-anek font-bold flex-wrap">
+                    <span className={`px-2 py-0.5 rounded-lg border ${
+                      theme === 'light' 
+                        ? 'bg-amber-50 text-amber-900 border-amber-200' 
+                        : 'bg-[#241a14] text-[#fbf8f1] border-[#c69429]/30'
+                    }`}>
+                      🌡️ {lang === 'bn' ? `${toBnDigits(liveWeather.temperature)}° সে.` : `${liveWeather.temperature}°C`}
+                    </span>
+                    <span className={`px-2 py-0.5 rounded-lg border ${
+                      theme === 'light' 
+                        ? 'bg-sky-50 text-sky-900 border-sky-200' 
+                        : 'bg-[#241a14] text-[#7dd3fc] border-[#c69429]/30'
+                    }`}>
+                      💧 {lang === 'bn' ? `${toBnDigits(liveWeather.humidity)}%` : `${liveWeather.humidity}%`}
+                    </span>
+                    <span className={`px-2 py-0.5 rounded-lg border ${
+                      theme === 'light' 
+                        ? 'bg-slate-50 text-slate-800 border-slate-200' 
+                        : 'bg-[#241a14] text-[#dfcfb2] border-[#c69429]/30'
+                    }`}>
+                      🌧️ {lang === 'bn' ? `${toBnDigits(liveWeather.precipitation_mm)} মিমি` : `${liveWeather.precipitation_mm}mm`}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Right Side: Clean Transit Impact Status Notice */}
+                <div className="flex items-center gap-2 md:justify-end text-xs font-anek">
+                  {(liveWeather.is_raining || weather === 'rain') ? (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-rose-500/15 text-rose-600 border border-rose-500/30 font-bold">
+                      <span>⚠️</span>
+                      <span>
+                        {lang === 'bn' 
+                          ? 'বৃষ্টি ও জলজট ঝুঁকি • রিকশায় সার্ফ (+৫০%), মেট্রোরেলে সাধারণ ভাড়া' 
+                          : 'Rain & Waterlogging Risk • Rickshaws +50% surge, Metro normal'}
+                      </span>
+                    </span>
+                  ) : (
+                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl border font-semibold ${
+                      theme === 'light' 
+                        ? 'bg-emerald-50/80 text-emerald-800 border-emerald-200' 
+                        : 'bg-[#15453b]/30 text-[#6ee7b7] border-[#2a6f62]'
+                    }`}>
+                      <span className="text-emerald-500 font-bold">✓</span>
+                      <span>
+                        {lang === 'bn' 
+                          ? 'স্বাভাবিক আবহাওয়া • বাস, রিকশা ও মেট্রোরেল নিয়মিত ভাড়ায় সচল' 
+                          : 'Clear Weather • Buses, rickshaws & metro running at normal fares'}
+                      </span>
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Route Query Engine */}
             <RouteSearch
               origin={origin}
@@ -657,7 +812,7 @@ export default function Home() {
       {/* Route Results Modal (On-Demand Popup) */}
       {isResultsOpen && routes.length > 0 && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 md:p-8 bg-black/80 backdrop-blur-sm animate-fadeIn"
+          className="fixed inset-0 z-[70] flex items-center justify-center p-3 sm:p-5 md:p-8 bg-black/80 backdrop-blur-sm animate-fadeIn"
           onClick={() => setIsResultsOpen(false)}
         >
           <div 
@@ -682,13 +837,25 @@ export default function Home() {
                 </div>
               </div>
 
+              {/* Bold, Unmistakable Close / Exit Button */}
               <button
                 type="button"
                 onClick={() => setIsResultsOpen(false)}
-                className="p-2 sm:p-2.5 rounded-xl bg-[#292019] hover:bg-[#b83a2e] text-[#f6d16f] hover:text-white border border-[#c69429]/40 transition-colors cursor-pointer"
-                aria-label="Close route results"
+                className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-xl bg-[#b83a2e] hover:bg-[#96281e] text-white border-2 border-white shadow-xl cursor-pointer active:scale-95 transition-all shrink-0 group"
+                aria-label={lang === 'bn' ? 'বন্ধ করুন (Exit)' : 'Close'}
+                title={lang === 'bn' ? 'বন্ধ করুন (Exit)' : 'Close Modal'}
               >
-                <X className="w-5 h-5 sm:w-6 sm:h-6" />
+                <svg 
+                  className="w-6 h-6 stroke-[3] group-hover:rotate-90 transition-transform duration-200" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
               </button>
             </div>
 

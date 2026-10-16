@@ -6,6 +6,7 @@ import { I18N } from '../utils/localization';
 import { STATIC_HUBS } from '../data/staticData';
 import { startSpeechRecognition } from '../utils/speech';
 import { getUserCoordinates, findNearestTransitHub, formatDistance } from '../utils/geolocation.js';
+import { parseCommuteQuery } from '../utils/nlpParser';
 
 export default function RouteSearch({
   origin,
@@ -115,6 +116,33 @@ export default function RouteSearch({
     setDestination(temp);
   };
 
+  const handleQueryChange = (val) => {
+    setNaturalQuery(val);
+    if (!val || val.trim().length < 3) return;
+    try {
+      const parsed = parseCommuteQuery(val, origin, destination);
+      if (parsed && parsed.confidence >= 0.8) {
+        if (parsed.origin && parsed.origin !== origin) {
+          setOrigin(parsed.origin);
+        }
+        if (parsed.destination && parsed.destination !== destination) {
+          setDestination(parsed.destination);
+        }
+        if (parsed.passenger_type && parsed.passenger_type !== passengerType) {
+          setPassengerType(parsed.passenger_type);
+        }
+        if (parsed.weather_condition === 'rain' && weather !== 'rain') {
+          setWeather('rain');
+        }
+        if (parsed.is_rush_hour && !isRushHour) {
+          setIsRushHour(true);
+        }
+      }
+    } catch (e) {
+      console.warn('NLP query sync error:', e);
+    }
+  };
+
   const handleVoiceInput = () => {
     if (isListening) return;
     setIsListening(true);
@@ -124,6 +152,14 @@ export default function RouteSearch({
       onResult: (transcript) => {
         setNaturalQuery(transcript);
         setIsListening(false);
+        try {
+          const parsed = parseCommuteQuery(transcript, origin, destination);
+          if (parsed.origin) setOrigin(parsed.origin);
+          if (parsed.destination) setDestination(parsed.destination);
+          if (parsed.passenger_type) setPassengerType(parsed.passenger_type);
+          if (parsed.weather_condition === 'rain') setWeather('rain');
+          if (parsed.is_rush_hour) setIsRushHour(true);
+        } catch (e) {}
         if (onNlpSearch) onNlpSearch(transcript);
       },
       onError: () => setIsListening(false),
@@ -133,8 +169,42 @@ export default function RouteSearch({
 
   const handleNlpSubmit = (e) => {
     e.preventDefault();
-    if (naturalQuery.trim() && onNlpSearch) {
-      onNlpSearch(naturalQuery);
+    if (naturalQuery.trim()) {
+      try {
+        const parsed = parseCommuteQuery(naturalQuery.trim(), origin, destination);
+        if (parsed.origin) setOrigin(parsed.origin);
+        if (parsed.destination) setDestination(parsed.destination);
+        if (parsed.passenger_type) setPassengerType(parsed.passenger_type);
+        if (parsed.weather_condition === 'rain') setWeather('rain');
+        if (parsed.is_rush_hour) setIsRushHour(true);
+      } catch (err) {}
+      if (onNlpSearch) {
+        onNlpSearch(naturalQuery.trim());
+        return;
+      }
+    }
+    if (!isSameLocation && onSearch) {
+      onSearch();
+    }
+  };
+
+  const handleMainSearch = () => {
+    if (naturalQuery.trim()) {
+      try {
+        const parsed = parseCommuteQuery(naturalQuery.trim(), origin, destination);
+        if (parsed.origin) setOrigin(parsed.origin);
+        if (parsed.destination) setDestination(parsed.destination);
+        if (parsed.passenger_type) setPassengerType(parsed.passenger_type);
+        if (parsed.weather_condition === 'rain') setWeather('rain');
+        if (parsed.is_rush_hour) setIsRushHour(true);
+      } catch (err) {}
+      if (onNlpSearch) {
+        onNlpSearch(naturalQuery.trim());
+        return;
+      }
+    }
+    if (!isSameLocation && onSearch) {
+      onSearch();
     }
   };
 
@@ -383,7 +453,7 @@ export default function RouteSearch({
         <input
           type="text"
           value={naturalQuery}
-          onChange={(e) => setNaturalQuery(e.target.value)}
+          onChange={(e) => handleQueryChange(e.target.value)}
           placeholder={t.searchPlaceholder}
           className="w-full pl-4 pr-24 py-4 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/50 text-[#fbf8f1] placeholder-[#7a6654] text-sm sm:text-base font-anek font-semibold focus:border-[#f6d16f] focus:outline-none transition-all shadow-inner"
         />
@@ -418,9 +488,7 @@ export default function RouteSearch({
       {/* Main Action Search Button */}
       <button
         type="button"
-        onClick={() => {
-          if (!isSameLocation && onSearch) onSearch();
-        }}
+        onClick={handleMainSearch}
         disabled={isLoading || isSameLocation}
         className={`w-full py-4 rounded-xl font-anek font-black text-lg sm:text-xl border-2 transition-all flex items-center justify-center gap-2.5 tracking-wide uppercase shadow-xl ${
           isSameLocation 

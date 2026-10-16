@@ -127,9 +127,14 @@ export default function ChatDrawer({
 
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg bg-[#292019] text-[#dfcfb2] hover:text-white border border-[#c69429]/30"
+              className="w-9 h-9 flex items-center justify-center rounded-xl bg-[#b83a2e] hover:bg-[#96281e] text-white border-2 border-white shadow-lg cursor-pointer active:scale-95 transition-all shrink-0"
+              aria-label={lang === 'bn' ? 'বন্ধ করুন' : 'Close'}
+              title={lang === 'bn' ? 'বন্ধ করুন' : 'Close'}
             >
-              <X className="w-5 h-5" />
+              <svg className="w-5 h-5 stroke-[3]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
             </button>
           </div>
 

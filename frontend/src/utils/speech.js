@@ -1,9 +1,33 @@
 /**
- * Browser-Native Web Speech API Helpers
- * Completely free, zero API keys, runs directly in browser.
+ * DhakaPath Natural Bengali Voice & Speech Recognition Engine
+ * Streams authentic, fluent native Google Bangla audio for natural pronunciation,
+ * with seamless fallback to browser Web Speech API.
  */
 
+let activeAudio = null;
+
+export function stopSpeech() {
+  if (activeAudio) {
+    try {
+      activeAudio.pause();
+      activeAudio.currentTime = 0;
+    } catch (e) {}
+    activeAudio = null;
+  }
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    try {
+      window.speechSynthesis.cancel();
+    } catch (e) {}
+  }
+}
+
+export function isSpeechPlaying() {
+  return activeAudio && !activeAudio.paused && !activeAudio.ended;
+}
+
 export function startSpeechRecognition({ lang = 'bn-BD', onResult, onError, onEnd }) {
+  if (typeof window === 'undefined') return null;
+
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
     if (onError) onError('Speech recognition is not supported in this browser.');
@@ -39,21 +63,17 @@ export function startSpeechRecognition({ lang = 'bn-BD', onResult, onError, onEn
   }
 }
 
-export function speakText(text, lang = 'bn') {
+function fallbackSpeechSynthesis(text, lang = 'bn', onEnd) {
   if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
-    console.warn('Text-to-speech not supported.');
     return;
   }
 
-  // Cancel any ongoing speech
   window.speechSynthesis.cancel();
-
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = lang === 'bn' ? 'bn-BD' : 'en-US';
   utterance.rate = 0.95;
   utterance.pitch = 1.0;
 
-  // Attempt to select the most natural voice
   const voices = window.speechSynthesis.getVoices();
   if (voices && voices.length > 0) {
     if (lang === 'bn') {
@@ -74,5 +94,47 @@ export function speakText(text, lang = 'bn') {
     }
   }
 
+  if (onEnd) {
+    utterance.onend = onEnd;
+    utterance.onerror = onEnd;
+  }
+
   window.speechSynthesis.speak(utterance);
+}
+
+export function speakText(text, lang = 'bn', { onStart, onEnd } = {}) {
+  if (!text || typeof window === 'undefined') return;
+
+  // Stop any ongoing playback first
+  stopSpeech();
+
+  // Try natural Google Bangla stream via /api/tts
+  try {
+    const ttsUrl = `/api/tts?text=${encodeURIComponent(text)}&lang=${lang === 'bn' ? 'bn' : 'en'}`;
+    const audio = new Audio(ttsUrl);
+    activeAudio = audio;
+
+    if (onStart) onStart();
+
+    audio.onended = () => {
+      activeAudio = null;
+      if (onEnd) onEnd();
+    };
+
+    audio.onerror = (e) => {
+      console.warn('Natural TTS stream error, falling back to Web Speech API:', e);
+      activeAudio = null;
+      fallbackSpeechSynthesis(text, lang, onEnd);
+    };
+
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(err => {
+        console.warn('Audio play failed (autoplay policy?), falling back to Web Speech:', err);
+        fallbackSpeechSynthesis(text, lang, onEnd);
+      });
+    }
+  } catch (err) {
+    fallbackSpeechSynthesis(text, lang, onEnd);
+  }
 }
