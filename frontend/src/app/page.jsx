@@ -16,7 +16,6 @@ import RideShareBoard from '../components/RideShareBoard';
 import NoticeScanner from '../components/NoticeScanner';
 import EmergencyHelpline from '../components/EmergencyHelpline';
 import DhakaCommuteHeritageShowcase from '../components/DhakaCommuteHeritageShowcase';
-import LocationPromptBanner from '../components/LocationPromptBanner';
 import { generateOfflineRouteCard } from '../utils/offlineCard';
 import { X } from 'lucide-react';
 
@@ -468,12 +467,6 @@ export default function Home() {
         {/* TAB 1: HOME (Focused Smart Transit Search & Itineraries) */}
         {currentTab === 'home' && (
           <div className="space-y-8 my-4 w-full">
-            {/* Geolocation Permission & Nearest Hub Selection Banner */}
-            <LocationPromptBanner
-              onLocationDetected={handleLocationDetected}
-              lang={lang}
-            />
-
             {/* Route Query Engine */}
             <RouteSearch
               origin={origin}
