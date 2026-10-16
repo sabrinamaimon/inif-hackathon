@@ -77,12 +77,16 @@ class RouteLeg(BaseModel):
 
 class RouteOption(BaseModel):
     id: str
+    mode: Optional[str] = None
     title: str
     title_bn: str
     type_badge: str  # "Fastest", "Cheapest", "Student Pick", "Rain Detour"
     total_duration_mins: int
     total_regular_fare: int
     total_student_fare: int
+    total_distance_km: Optional[float] = None
+    obstacles_badge: Optional[str] = None
+    obstacles_status: Optional[str] = None
     transfers: int
     legs: List[RouteLeg]
     is_recommended: bool = False

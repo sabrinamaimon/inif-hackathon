@@ -277,28 +277,47 @@ class DhakaTransitGraph:
             if direct_fallback:
                 routes.append(direct_fallback)
 
-        # 4. Direct CNG Auto-Rickshaw Option (Always available door-to-door)
+        # Estimate base distance
         est_distance = 5.0
         if routes and routes[0].legs:
             est_distance = sum(leg.distance_km for leg in routes[0].legs)
         else:
             est_distance = self._get_edge_distance(origin, destination)
 
+        # Enrich existing routes with distance and obstacle badges
+        for r in routes:
+            has_metro = any(l.mode == "metro" for l in r.legs)
+            r_dist = sum(l.distance_km for l in r.legs) if r.legs else est_distance
+            r.total_distance_km = round(r_dist, 1)
+            if has_metro:
+                r.mode = "metro"
+                r.obstacles_badge = "🟢 বাধামুক্ত উড়ালপথ (০% যানজট ও জলজট)"
+                r.obstacles_status = "safe"
+            else:
+                r.mode = "bus"
+                r.obstacles_badge = "🔴 সড়কে বৃষ্টির জলজট" if weather in ["rain", "heavy_monsoon"] else ("🟡 পিক আওয়ার ট্রাফিক" if is_rush_hour else "🟡 সাধারণ সড়ক ট্রাফিক")
+                r.obstacles_status = "warning" if (is_rush_hour or weather in ["rain", "heavy_monsoon"]) else "traffic"
+
+        # 4. Direct CNG Auto-Rickshaw Option
         cng_fare, _, cng_surge = DhakaFareEngine.calculate_cng_fare(est_distance, weather=weather, is_rush_hour=is_rush_hour)
-        cng_time = max(12, int(round(est_distance * 2.4)))
+        cng_time = max(14, int(round(est_distance * 2.3)))
         if is_rush_hour:
-            cng_time = int(cng_time * 1.3)
-        if weather in ["rain", "heavy_monsoon"]:
             cng_time = int(cng_time * 1.25)
+        if weather in ["rain", "heavy_monsoon"]:
+            cng_time = int(cng_time * 1.2)
 
         cng_route = RouteOption(
             id="opt-cng",
+            mode="cng",
             title=f"Direct CNG Auto-Rickshaw ({origin} -> {destination})",
             title_bn=f"সরাসরি সিএনজি অটোরিকশা ({DHAKA_HUBS[origin]['name_bn']} -> {DHAKA_HUBS[destination]['name_bn']})",
-            type_badge="Direct & Private",
+            type_badge="ব্যক্তিগত মিটার বাহন",
             total_duration_mins=cng_time,
             total_regular_fare=cng_fare,
             total_student_fare=cng_fare,
+            total_distance_km=round(est_distance, 1),
+            obstacles_badge="🟡 মাঝারি ট্রাফিক, অলিগলি ব্যবহারের সুবিধা",
+            obstacles_status="traffic",
             transfers=0,
             is_recommended=False,
             is_detour=False,
@@ -319,6 +338,125 @@ class DhakaTransitGraph:
             ]
         )
         routes.append(cng_route)
+
+        # 5. Ride-Share Bike Option (Pathao / Uber Moto)
+        bike_time = max(9, int(round(est_distance * 1.6)))
+        if is_rush_hour:
+            bike_time = int(bike_time * 1.15)
+        bike_base = max(35, int(round(30 + (est_distance - 1) * 12 * (1.2 if weather in ["rain", "heavy_monsoon"] else 1.0))))
+        bike_obstacles = "🌧️ বৃষ্টিতে পিচ্ছিল সড়ক ও সতর্ক রাইড" if weather in ["rain", "heavy_monsoon"] else "🟢 জ্যামের ফাঁক দিয়ে দ্রুত বের হওয়ার সুযোগ"
+
+        bike_route = RouteOption(
+            id="opt-bike",
+            mode="bike",
+            title=f"Ride-Share Bike ({origin} -> {destination})",
+            title_bn=f"মোটরসাইকেল / বাইক রাইডশেয়ার",
+            type_badge="সড়কপথে দ্রুততম",
+            total_duration_mins=bike_time,
+            total_regular_fare=bike_base,
+            total_student_fare=bike_base,
+            total_distance_km=round(est_distance, 1),
+            obstacles_badge=bike_obstacles,
+            obstacles_status="warning" if weather in ["rain", "heavy_monsoon"] else "safe",
+            transfers=0,
+            is_recommended=False,
+            is_detour=False,
+            legs=[
+                RouteLeg(
+                    leg_number=1,
+                    mode="bike",
+                    line_name="Motorcycle Ride-Share (Pathao / Uber)",
+                    from_hub=origin,
+                    to_hub=destination,
+                    distance_km=round(est_distance, 1),
+                    duration_mins=bike_time,
+                    regular_fare_bdt=bike_base,
+                    student_fare_bdt=bike_base,
+                    surge_multiplier=1.0,
+                    landmark_instructions=f"{origin} থেকে বাইক রাইডশেয়ারে সরাসরি {destination}।"
+                )
+            ]
+        )
+        routes.append(bike_route)
+
+        # 6. Private Car / Cab Option
+        car_time = max(16, int(round(est_distance * 2.6)))
+        if is_rush_hour:
+            car_time = int(car_time * 1.4)
+        if weather in ["rain", "heavy_monsoon"]:
+            car_time = int(car_time * 1.25)
+        car_fare = max(140, int(round(100 + (est_distance - 1) * 24 * (1.2 if is_rush_hour else 1.0))))
+        car_obstacles = "🔴 পিক-আওয়ারে প্রধান সড়কে যানজটের সম্ভাবনা" if is_rush_hour else "🟡 স্বাভাবিক সড়ক ট্রাফিক (এসি ও আরামদায়ক)"
+
+        car_route = RouteOption(
+            id="opt-car",
+            mode="car",
+            title=f"Private Car / Cab ({origin} -> {destination})",
+            title_bn=f"প্রাইভেট কার / রাইডশেয়ার ক্যাব",
+            type_badge="আরামদায়ক ও এসি",
+            total_duration_mins=car_time,
+            total_regular_fare=car_fare,
+            total_student_fare=car_fare,
+            total_distance_km=round(est_distance * 1.06, 1),
+            obstacles_badge=car_obstacles,
+            obstacles_status="warning" if is_rush_hour else "traffic",
+            transfers=0,
+            is_recommended=False,
+            is_detour=False,
+            legs=[
+                RouteLeg(
+                    leg_number=1,
+                    mode="car",
+                    line_name="Private Cab / Uber Car",
+                    from_hub=origin,
+                    to_hub=destination,
+                    distance_km=round(est_distance * 1.06, 1),
+                    duration_mins=car_time,
+                    regular_fare_bdt=car_fare,
+                    student_fare_bdt=car_fare,
+                    surge_multiplier=1.0,
+                    landmark_instructions=f"{origin} থেকে ডোর-টু-ডোর এসি কার ক্যাবে সরাসরি {destination}।"
+                )
+            ]
+        )
+        routes.append(car_route)
+
+        # 7. Rickshaw Option (for shorter trips <= 6.5 km)
+        if est_distance <= 6.5:
+            rickshaw_fare = max(30, int(round(est_distance * 22 * (1.4 if weather in ["rain", "heavy_monsoon"] else 1.0))))
+            rickshaw_time = max(10, int(round(est_distance * 5.2)))
+            rickshaw_route = RouteOption(
+                id="opt-rickshaw",
+                mode="rickshaw",
+                title=f"Traditional Rickshaw ({origin} -> {destination})",
+                title_bn=f"ঐতিহ্যবাহী রিকশা ভ্রমণ",
+                type_badge="লোকাল ও গলিপথ",
+                total_duration_mins=rickshaw_time,
+                total_regular_fare=rickshaw_fare,
+                total_student_fare=rickshaw_fare,
+                total_distance_km=round(est_distance, 1),
+                obstacles_badge="🟢 অভ্যন্তরীণ অলিগলিতে বাধাহীন চলাচল",
+                obstacles_status="safe",
+                transfers=0,
+                is_recommended=False,
+                is_detour=False,
+                legs=[
+                    RouteLeg(
+                        leg_number=1,
+                        mode="rickshaw",
+                        line_name="Dhaka Traditional Rickshaw",
+                        from_hub=origin,
+                        to_hub=destination,
+                        distance_km=round(est_distance, 1),
+                        duration_mins=rickshaw_time,
+                        regular_fare_bdt=rickshaw_fare,
+                        student_fare_bdt=rickshaw_fare,
+                        surge_multiplier=1.0,
+                        landmark_instructions=f"{origin} থেকে রিকশা নিয়ে গলিপথ দিয়ে নিরিবিলি {destination} এ যান।"
+                    )
+                ]
+            )
+            routes.append(rickshaw_route)
 
         return routes
 

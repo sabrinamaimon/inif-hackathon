@@ -28,25 +28,12 @@ export default function RouteSearch({
 }) {
   const t = I18N[lang] || I18N.bn;
 
-  // Metro Stations (Sorted M-01 to M-17)
-  const metroStations = Object.keys(STATIC_HUBS)
-    .filter(name => STATIC_HUBS[name]?.is_metro_station && name !== 'Uttara')
-    .sort((a, b) => (STATIC_HUBS[a]?.station_order || 99) - (STATIC_HUBS[b]?.station_order || 99));
-
-  // Major Bus Hubs & Stops
-  const busStopsAndHubs = [
-    "Mirpur 1", "Mirpur 10", "Mirpur 11", "Mirpur 12", "Pallabi",
-    "Kalyanpur", "Shyamoli", "Asad Gate", "Dhanmondi 27", "Kalabagan",
-    "Science Lab", "New Market", "Farmgate", "Karwan Bazar", "Shahbagh",
-    "Dhaka University", "Kakrail", "Bangladesh Secretariat", "Gulisthan",
-    "Motijheel", "Mohakhali", "Banani", "Kuril", "Khilkhet", "Uttara"
-  ].filter(name => STATIC_HUBS[name]);
-
-  // Major Residential / CNG / Rickshaw Connector Hubs
-  const connectorZones = [
-    "Dhanmondi", "Mohammadpur", "Banasree", "Badda", "Malibagh",
-    "Jatrabari", "Sadarghat", "Lalbagh"
-  ].filter(name => STATIC_HUBS[name]);
+  // All Dhaka Hubs / Locations (Unified without mode segregation)
+  const allHubList = Object.keys(STATIC_HUBS).sort((a, b) => {
+    const nameA = STATIC_HUBS[a]?.name_bn || a;
+    const nameB = STATIC_HUBS[b]?.name_bn || b;
+    return nameA.localeCompare(nameB, 'bn');
+  });
 
   const [naturalQuery, setNaturalQuery] = useState('');
   const [isListening, setIsListening] = useState(false);
@@ -237,57 +224,21 @@ export default function RouteSearch({
             onChange={(e) => handleOriginChange(e.target.value)}
             className="w-full px-4 py-3.5 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/40 text-[#fbf8f1] text-base font-anek font-bold focus:border-[#f6d16f] focus:outline-none transition-all shadow-inner"
           >
-            <optgroup label={lang === 'bn' ? '🚇 এমআরটি-৬ মেট্রোরেল (১৭টি স্টেশন)' : '🚇 MRT-6 Metro Rail (17 Stations)'} className="bg-[#14100c] text-[#34d399] font-bold">
-              {metroStations.map((name) => {
-                const isSelectedAsDest = name === destination;
-                return (
-                  <option 
-                    key={name} 
-                    value={name} 
-                    disabled={isSelectedAsDest}
-                    className={isSelectedAsDest ? "bg-[#1a1410] text-[#7a6654] italic" : "bg-[#1a1410] text-[#fbf8f1]"}
-                  >
-                    {isSelectedAsDest ? '🚫 [গন্তব্যে নির্বাচিত] ' : ''}
-                    {STATIC_HUBS[name]?.station_order ? `[M-${String(STATIC_HUBS[name].station_order).padStart(2, '0')}] ` : ''}
-                    {STATIC_HUBS[name]?.name_bn ? `${STATIC_HUBS[name].name_bn} (${name})` : name}
-                  </option>
-                );
-              })}
-            </optgroup>
-
-            <optgroup label={lang === 'bn' ? '🚌 প্রধান বাস রুট ও স্টপেজ' : '🚌 Major Bus Routes & Stops'} className="bg-[#14100c] text-[#60a5fa] font-bold">
-              {busStopsAndHubs.map((name) => {
-                const isSelectedAsDest = name === destination;
-                return (
-                  <option 
-                    key={`bus-${name}`} 
-                    value={name} 
-                    disabled={isSelectedAsDest}
-                    className={isSelectedAsDest ? "bg-[#1a1410] text-[#7a6654] italic" : "bg-[#1a1410] text-[#fbf8f1]"}
-                  >
-                    {isSelectedAsDest ? '🚫 [গন্তব্যে নির্বাচিত] ' : ''}
-                    🚌 {STATIC_HUBS[name]?.name_bn ? `${STATIC_HUBS[name].name_bn} (${name})` : name}
-                  </option>
-                );
-              })}
-            </optgroup>
-
-            <optgroup label={lang === 'bn' ? '🚕 সিএনজি ও 🛺 রিকশা কানেক্টর জোন' : '🚕 CNG & 🛺 Rickshaw Connector Zones'} className="bg-[#14100c] text-[#f6d16f] font-bold">
-              {connectorZones.map((name) => {
-                const isSelectedAsDest = name === destination;
-                return (
-                  <option 
-                    key={`conn-${name}`} 
-                    value={name} 
-                    disabled={isSelectedAsDest}
-                    className={isSelectedAsDest ? "bg-[#1a1410] text-[#7a6654] italic" : "bg-[#1a1410] text-[#fbf8f1]"}
-                  >
-                    {isSelectedAsDest ? '🚫 [গন্তব্যে নির্বাচিত] ' : ''}
-                    🛺 {STATIC_HUBS[name]?.name_bn ? `${STATIC_HUBS[name].name_bn} (${name})` : name}
-                  </option>
-                );
-              })}
-            </optgroup>
+            {allHubList.map((name) => {
+              const isSelectedAsDest = name === destination;
+              const hub = STATIC_HUBS[name];
+              return (
+                <option 
+                  key={name} 
+                  value={name} 
+                  disabled={isSelectedAsDest}
+                  className={isSelectedAsDest ? "bg-[#1a1410] text-[#7a6654] italic" : "bg-[#1a1410] text-[#fbf8f1]"}
+                >
+                  {isSelectedAsDest ? '🚫 [গন্তব্যে নির্বাচিত] ' : '📍 '}
+                  {hub?.name_bn ? `${hub.name_bn} (${name})` : name}
+                </option>
+              );
+            })}
           </select>
 
           {/* Detected Nearest Hub Success Pill */}
@@ -359,57 +310,21 @@ export default function RouteSearch({
             onChange={(e) => handleDestinationChange(e.target.value)}
             className="w-full px-4 py-3.5 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/40 text-[#fbf8f1] text-base font-anek font-bold focus:border-[#f6d16f] focus:outline-none transition-all shadow-inner"
           >
-            <optgroup label={lang === 'bn' ? '🚇 এমআরটি-৬ মেট্রোরেল (১৭টি স্টেশন)' : '🚇 MRT-6 Metro Rail (17 Stations)'} className="bg-[#14100c] text-[#34d399] font-bold">
-              {metroStations.map((name) => {
-                const isSelectedAsOrig = name === origin;
-                return (
-                  <option 
-                    key={name} 
-                    value={name} 
-                    disabled={isSelectedAsOrig}
-                    className={isSelectedAsOrig ? "bg-[#1a1410] text-[#7a6654] italic" : "bg-[#1a1410] text-[#fbf8f1]"}
-                  >
-                    {isSelectedAsOrig ? '🚫 [শুরুতে নির্বাচিত] ' : ''}
-                    {STATIC_HUBS[name]?.station_order ? `[M-${String(STATIC_HUBS[name].station_order).padStart(2, '0')}] ` : ''}
-                    {STATIC_HUBS[name]?.name_bn ? `${STATIC_HUBS[name].name_bn} (${name})` : name}
-                  </option>
-                );
-              })}
-            </optgroup>
-
-            <optgroup label={lang === 'bn' ? '🚌 প্রধান বাস রুট ও স্টপেজ' : '🚌 Major Bus Routes & Stops'} className="bg-[#14100c] text-[#60a5fa] font-bold">
-              {busStopsAndHubs.map((name) => {
-                const isSelectedAsOrig = name === origin;
-                return (
-                  <option 
-                    key={`bus-${name}`} 
-                    value={name} 
-                    disabled={isSelectedAsOrig}
-                    className={isSelectedAsOrig ? "bg-[#1a1410] text-[#7a6654] italic" : "bg-[#1a1410] text-[#fbf8f1]"}
-                  >
-                    {isSelectedAsOrig ? '🚫 [শুরুতে নির্বাচিত] ' : ''}
-                    🚌 {STATIC_HUBS[name]?.name_bn ? `${STATIC_HUBS[name].name_bn} (${name})` : name}
-                  </option>
-                );
-              })}
-            </optgroup>
-
-            <optgroup label={lang === 'bn' ? '🚕 সিএনজি ও 🛺 রিকশা কানেক্টর জোন' : '🚕 CNG & 🛺 Rickshaw Connector Zones'} className="bg-[#14100c] text-[#f6d16f] font-bold">
-              {connectorZones.map((name) => {
-                const isSelectedAsOrig = name === origin;
-                return (
-                  <option 
-                    key={`conn-${name}`} 
-                    value={name} 
-                    disabled={isSelectedAsOrig}
-                    className={isSelectedAsOrig ? "bg-[#1a1410] text-[#7a6654] italic" : "bg-[#1a1410] text-[#fbf8f1]"}
-                  >
-                    {isSelectedAsOrig ? '🚫 [শুরুতে নির্বাচিত] ' : ''}
-                    🛺 {STATIC_HUBS[name]?.name_bn ? `${STATIC_HUBS[name].name_bn} (${name})` : name}
-                  </option>
-                );
-              })}
-            </optgroup>
+            {allHubList.map((name) => {
+              const isSelectedAsOrig = name === origin;
+              const hub = STATIC_HUBS[name];
+              return (
+                <option 
+                  key={name} 
+                  value={name} 
+                  disabled={isSelectedAsOrig}
+                  className={isSelectedAsOrig ? "bg-[#1a1410] text-[#7a6654] italic" : "bg-[#1a1410] text-[#fbf8f1]"}
+                >
+                  {isSelectedAsOrig ? '🚫 [শুরুতে নির্বাচিত] ' : '📍 '}
+                  {hub?.name_bn ? `${hub.name_bn} (${name})` : name}
+                </option>
+              );
+            })}
           </select>
         </div>
       </div>

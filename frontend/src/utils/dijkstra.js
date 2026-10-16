@@ -349,56 +349,116 @@ export function runDijkstraRouting({
     };
   });
 
-  const fastestRoute = {
-    id: "opt-fastest",
-    title: isDetourActive ? `Dynamic Detour (${origin} ➔ ${destination})` : `Express Route (${origin} ➔ ${destination})`,
-    title_bn: isDetourActive ? `নিরাপদ বিকল্প রুট (${STATIC_HUBS[origin].name_bn} ➔ ${STATIC_HUBS[destination].name_bn})` : `দ্রুততম এক্সপ্রেস রুট`,
-    type_badge: isDetourActive ? "Safe Detour" : "Fastest Route",
-    total_duration_mins: totalTime,
-    total_regular_fare: totalRegular,
-    total_student_fare: totalStudent,
-    transfers: Math.max(0, path.length - 1),
+  // Calculate base road distance
+  const baseDist = Math.max(1.8, legs.reduce((acc, l) => acc + l.distance_km, 0) || 5.0);
+  const roundedDist = Math.round(baseDist * 10) / 10;
+
+  // 1. METRO RAIL / TRAIN (Fastest & Zero Surface Obstacles)
+  const hasMetroLeg = legs.some(l => l.mode === 'metro');
+  const metroDist = roundedDist;
+  const metroTime = hasMetroLeg ? totalTime : Math.max(16, Math.round(baseDist * 1.5));
+  const metroFare = Math.min(100, Math.max(20, Math.round(baseDist * 4.5)));
+
+  const metroRoute = {
+    id: "opt-metro",
+    mode: "metro",
+    title: `MRT-6 Metro Rail / ট্রেন (${origin} ➔ ${destination})`,
+    title_bn: `এমআরটি-৬ মেট্রোরেল (এক্সপ্রেস)`,
+    type_badge: "১০০% বাধামুক্ত ও দ্রুততম",
+    total_duration_mins: metroTime,
+    total_regular_fare: metroFare,
+    total_student_fare: metroFare,
+    total_distance_km: metroDist,
+    obstacles_badge: "🟢 বাধামুক্ত উড়ালপথ (০% যানজট ও জলজট)",
+    obstacles_status: "safe",
+    transfers: hasMetroLeg ? Math.max(0, path.length - 1) : 0,
     is_recommended: true,
-    is_detour: isDetourActive,
-    disruption_warning: isDetourActive ? "Route automatically avoids flooded or blockaded intersections." : null,
-    legs
-  };
-
-  // Student Economy alternative
-  const economyRoute = {
-    id: "opt-cheapest",
-    title: `Student Half-Pass Economy (${origin} ➔ ${destination})`,
-    title_bn: `শিক্ষার্থী সাশ্রয়ী হাফ-পাস রুট`,
-    type_badge: "Student Pick",
-    total_duration_mins: Math.round(totalTime * 1.25),
-    total_regular_fare: Math.max(20, Math.round(totalRegular * 0.7)),
-    total_student_fare: Math.max(10, Math.round(totalStudent * 0.5)),
-    transfers: Math.max(0, path.length - 1),
-    is_recommended: false,
     is_detour: false,
-    legs
+    disruption_warning: null,
+    legs: hasMetroLeg ? legs : [
+      {
+        leg_number: 1,
+        mode: "metro",
+        line_name: "MRT-6 Metro Rail",
+        from_hub: origin,
+        to_hub: destination,
+        distance_km: metroDist,
+        duration_mins: metroTime,
+        regular_fare_bdt: metroFare,
+        student_fare_bdt: metroFare,
+        surge_multiplier: 1.0,
+        landmark_instructions: `${origin} মেট্রোরেল কনকোর্স দিয়ে উঠে মতিঝিল/উত্তরা ট্র্যাকে সরাসরি যাত্রা।`
+      }
+    ]
   };
 
-  // Direct CNG Auto-Rickshaw alternative
-  const cngDist = Math.max(2.0, legs.reduce((acc, l) => acc + l.distance_km, 0) || 5.0);
-  let cngBase = cngDist <= 2.0 ? 40 : 40 + Math.ceil((cngDist - 2.0) * 12);
+  // 2. LOCAL BUS (Cheapest / Student Half-Pass)
+  let busTime = Math.max(20, Math.round(baseDist * 3.0));
+  if (isRushHour) busTime = Math.round(busTime * 1.35);
+  if (weather === "rain") busTime = Math.round(busTime * 1.3);
+
+  const busRegularFare = Math.max(20, Math.round(baseDist * 2.5));
+  const busStudentFare = Math.max(10, Math.round(busRegularFare * 0.5)); // 50% statutory student pass
+  const busObstacles = weather === "rain"
+    ? "🔴 সড়কে ভারী বৃষ্টির জলজট ও ধীরগতি"
+    : (isRushHour ? "🟡 বিকেল ৫:৩০ অফিস ছুটি পিক-আওয়ার ট্রাফিক" : "🟡 সাধারণ সড়ক ট্রাফিক");
+
+  const busRoute = {
+    id: "opt-bus",
+    mode: "bus",
+    title: `Direct / Local Bus Transit (${origin} ➔ ${destination})`,
+    title_bn: `লোকাল ও ডাইরেক্ট বাস সার্ভিস`,
+    type_badge: "সবচেয়ে সাশ্রয়ী ও হাফ-পাস",
+    total_duration_mins: busTime,
+    total_regular_fare: busRegularFare,
+    total_student_fare: busStudentFare,
+    total_distance_km: Math.round(baseDist * 1.05 * 10) / 10,
+    obstacles_badge: busObstacles,
+    obstacles_status: weather === "rain" || isRushHour ? "warning" : "traffic",
+    transfers: 0,
+    is_recommended: false,
+    is_detour: isDetourActive,
+    disruption_warning: isDetourActive ? "Route navigates around surface blockades." : null,
+    legs: [
+      {
+        leg_number: 1,
+        mode: "bus",
+        line_name: "Dhaka City Bus (বিকল্প / বিআরটিসি / স্বাধীন)",
+        from_hub: origin,
+        to_hub: destination,
+        distance_km: Math.round(baseDist * 1.05 * 10) / 10,
+        duration_mins: busTime,
+        regular_fare_bdt: busRegularFare,
+        student_fare_bdt: busStudentFare,
+        surge_multiplier: 1.0,
+        landmark_instructions: `${origin} বাস স্টপ থেকে সরাসরি বাসে উঠে ${destination} এ নামুন। বাসে ৫০% শিক্ষার্থী হাফ-পাস প্রযোজ্য।`
+      }
+    ]
+  };
+
+  // 3. CNG AUTO-RICKSHAW (Direct BRTA Metered Auto)
+  let cngBase = baseDist <= 2.0 ? 40 : 40 + Math.ceil((baseDist - 2.0) * 12);
   cngBase = Math.max(100, cngBase);
   let cngSurge = 1.0;
   if (weather === "rain") cngSurge += 0.3;
   if (isRushHour) cngSurge += 0.25;
   const cngFare = Math.ceil(cngBase * cngSurge);
-  let cngTime = Math.max(12, Math.round(cngDist * 2.3));
-  if (isRushHour) cngTime = Math.round(cngTime * 1.3);
-  if (weather === "rain") cngTime = Math.round(cngTime * 1.25);
+  let cngTime = Math.max(14, Math.round(baseDist * 2.3));
+  if (isRushHour) cngTime = Math.round(cngTime * 1.25);
+  if (weather === "rain") cngTime = Math.round(cngTime * 1.2);
 
   const cngRoute = {
     id: "opt-cng",
+    mode: "cng",
     title: `Direct CNG Auto-Rickshaw (${origin} ➔ ${destination})`,
-    title_bn: `সরাসরি সিএনজি অটোরিকশা (${STATIC_HUBS[origin]?.name_bn || origin} ➔ ${STATIC_HUBS[destination]?.name_bn || destination})`,
-    type_badge: "Direct & Private",
+    title_bn: `সরাসরি সিএনজি অটোরিকশা`,
+    type_badge: "ব্যক্তিগত মিটার বাহন",
     total_duration_mins: cngTime,
     total_regular_fare: cngFare,
     total_student_fare: cngFare,
+    total_distance_km: roundedDist,
+    obstacles_badge: "🟡 মাঝারি ট্রাফিক, অলিগলি ব্যবহারের সুবিধা",
+    obstacles_status: "traffic",
     transfers: 0,
     is_recommended: false,
     is_detour: false,
@@ -409,7 +469,7 @@ export function runDijkstraRouting({
         line_name: "CNG Auto-Rickshaw (মিটার / চুক্তি)",
         from_hub: origin,
         to_hub: destination,
-        distance_km: Math.round(cngDist * 10) / 10,
+        distance_km: roundedDist,
         duration_mins: cngTime,
         regular_fare_bdt: cngFare,
         student_fare_bdt: cngFare,
@@ -419,5 +479,126 @@ export function runDijkstraRouting({
     ]
   };
 
-  return [fastestRoute, economyRoute, cngRoute];
+  // 4. RIDE-SHARE BIKE / MOTORCYCLE (Fastest Surface Road Transit)
+  let bikeTime = Math.max(9, Math.round(baseDist * 1.6));
+  if (isRushHour) bikeTime = Math.round(bikeTime * 1.15);
+  const bikeBase = Math.max(35, Math.round(30 + (baseDist - 1) * 12 * (weather === "rain" ? 1.2 : 1.0)));
+  const bikeObstacles = weather === "rain"
+    ? "🌧️ বৃষ্টিতে পিচ্ছিল সড়ক ও সতর্ক রাইড"
+    : "🟢 জ্যামের ফাঁক দিয়ে দ্রুত বের হওয়ার সুযোগ";
+
+  const bikeRoute = {
+    id: "opt-bike",
+    mode: "bike",
+    title: `Ride-Share Bike / মোটরসাইকেল (${origin} ➔ ${destination})`,
+    title_bn: `মোটরসাইকেল / বাইক রাইডশেয়ার`,
+    type_badge: "সড়কপথে দ্রুততম",
+    total_duration_mins: bikeTime,
+    total_regular_fare: bikeBase,
+    total_student_fare: bikeBase,
+    total_distance_km: roundedDist,
+    obstacles_badge: bikeObstacles,
+    obstacles_status: weather === "rain" ? "warning" : "safe",
+    transfers: 0,
+    is_recommended: false,
+    is_detour: false,
+    legs: [
+      {
+        leg_number: 1,
+        mode: "bike",
+        line_name: "Motorcycle Ride-Share (Pathao / Uber Moto)",
+        from_hub: origin,
+        to_hub: destination,
+        distance_km: roundedDist,
+        duration_mins: bikeTime,
+        regular_fare_bdt: bikeBase,
+        student_fare_bdt: bikeBase,
+        surge_multiplier: 1.0,
+        landmark_instructions: `${origin} থেকে ওয়ান-অন-ওয়ান বাইক পিকআপ। যানজট এড়িয়ে দ্রুততম সড়ক পরিবহন।`
+      }
+    ]
+  };
+
+  // 5. PRIVATE CAR / RIDE-SHARE CAB (Uber / Taxi)
+  let carTime = Math.max(16, Math.round(baseDist * 2.6));
+  if (isRushHour) carTime = Math.round(carTime * 1.4);
+  if (weather === "rain") carTime = Math.round(carTime * 1.25);
+  const carBase = Math.max(140, Math.round(100 + (baseDist - 1) * 24 * (isRushHour ? 1.2 : 1.0)));
+  const carObstacles = isRushHour
+    ? "🔴 পিক-আওয়ারে প্রধান সড়কে যানজটের সম্ভাবনা"
+    : "🟡 স্বাভাবিক সড়ক ট্রাফিক (এসি ও আরামদায়ক)";
+
+  const carRoute = {
+    id: "opt-car",
+    mode: "car",
+    title: `Private Car / ক্যাব (${origin} ➔ ${destination})`,
+    title_bn: `প্রাইভেট কার / রাইডশেয়ার ক্যাব`,
+    type_badge: "আরামদায়ক ও এসি",
+    total_duration_mins: carTime,
+    total_regular_fare: carBase,
+    total_student_fare: carBase,
+    total_distance_km: Math.round(baseDist * 1.06 * 10) / 10,
+    obstacles_badge: carObstacles,
+    obstacles_status: isRushHour ? "warning" : "traffic",
+    transfers: 0,
+    is_recommended: false,
+    is_detour: false,
+    legs: [
+      {
+        leg_number: 1,
+        mode: "car",
+        line_name: "Private Cab / Ride-Share Car",
+        from_hub: origin,
+        to_hub: destination,
+        distance_km: Math.round(baseDist * 1.06 * 10) / 10,
+        duration_mins: carTime,
+        regular_fare_bdt: carBase,
+        student_fare_bdt: carBase,
+        surge_multiplier: 1.0,
+        landmark_instructions: `${origin} থেকে ডোর-টু-ডোর কার ক্যাব। বৃষ্টি ও রোদে সম্পূর্ণ আরামদায়ক এসি যাত্রা।`
+      }
+    ]
+  };
+
+  // 6. RICKSHAW (For Short/Medium Distances <= 6.5 km)
+  const resultRoutes = [metroRoute, busRoute, cngRoute, bikeRoute, carRoute];
+
+  if (baseDist <= 6.5) {
+    const rickshawFare = Math.max(30, Math.round(baseDist * 22 * (weather === "rain" ? 1.4 : 1.0)));
+    const rickshawTime = Math.max(10, Math.round(baseDist * 5.2));
+    const rickshawRoute = {
+      id: "opt-rickshaw",
+      mode: "rickshaw",
+      title: `Traditional Rickshaw / রিকশা (${origin} ➔ ${destination})`,
+      title_bn: `ঐতিহ্যবাহী রিকশা ভ্রমণ`,
+      type_badge: "লোকাল ও গলিপথ",
+      total_duration_mins: rickshawTime,
+      total_regular_fare: rickshawFare,
+      total_student_fare: rickshawFare,
+      total_distance_km: roundedDist,
+      obstacles_badge: "🟢 অভ্যন্তরীণ অলিগলিতে বাধাহীন চলাচল",
+      obstacles_status: "safe",
+      transfers: 0,
+      is_recommended: false,
+      is_detour: false,
+      legs: [
+        {
+          leg_number: 1,
+          mode: "rickshaw",
+          line_name: "Dhaka Traditional Rickshaw",
+          from_hub: origin,
+          to_hub: destination,
+          distance_km: roundedDist,
+          duration_mins: rickshawTime,
+          regular_fare_bdt: rickshawFare,
+          student_fare_bdt: rickshawFare,
+          surge_multiplier: 1.0,
+          landmark_instructions: `${origin} থেকে হুড তোলা রিকশা নিয়ে গলিপথ দিয়ে নিরিবিলি যাতায়াত।`
+        }
+      ]
+    };
+    resultRoutes.push(rickshawRoute);
+  }
+
+  return resultRoutes;
 }

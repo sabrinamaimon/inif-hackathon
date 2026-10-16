@@ -20,6 +20,7 @@ export default function RouteResults({
   selectedRouteId
 }) {
   const t = I18N[lang] || I18N.bn;
+  const [activeFilter, setActiveFilter] = React.useState('all');
 
   if (!routes || routes.length === 0) {
     return null;
@@ -30,6 +31,8 @@ export default function RouteResults({
       case 'metro': return Train;
       case 'bus': return Bus;
       case 'cng': return Car;
+      case 'bike': return Bike;
+      case 'car': return Car;
       case 'leguna': return Car;
       case 'rickshaw': return Bike;
       default: return Navigation;
@@ -39,18 +42,22 @@ export default function RouteResults({
   const getModeLabel = (mode, currentLang) => {
     if (currentLang === 'bn') {
       switch (mode) {
-        case 'metro': return '🚇 মেট্রোরেল';
-        case 'bus': return '🚌 বাস';
+        case 'metro': return '🚇 মেট্রোরেল / ট্রেন';
+        case 'bus': return '🚌 লোকাল বাস';
         case 'cng': return '🚕 সিএনজি';
+        case 'bike': return '🏍️ বাইক / মোটরসাইকেল';
+        case 'car': return '🚗 কার / ক্যাব';
         case 'leguna': return '🚐 লেগুনা';
         case 'rickshaw': return '🛺 রিকশা';
         default: return mode;
       }
     }
     switch (mode) {
-      case 'metro': return '🚇 Metro';
-      case 'bus': return '🚌 Bus';
+      case 'metro': return '🚇 Metro / Train';
+      case 'bus': return '🚌 Local Bus';
       case 'cng': return '🚕 CNG Auto';
+      case 'bike': return '🏍️ Motorbike';
+      case 'car': return '🚗 Car / Cab';
       case 'leguna': return '🚐 Leguna';
       case 'rickshaw': return '🛺 Rickshaw';
       default: return mode;
@@ -58,38 +65,93 @@ export default function RouteResults({
   };
 
   const handleAudioBriefing = (route) => {
+    const distText = route.total_distance_km ? `${route.total_distance_km} কিলোমিটার` : '';
+    const obstacleText = route.obstacles_badge ? `পথে অবস্থা: ${route.obstacles_badge}।` : '';
     const speechScript = lang === 'bn'
-      ? `${origin} থেকে ${destination} পৌঁছাতে আনুমানিক সময় লাগবে ${route.total_duration_mins} মিনিট। মোট সাধারণ ভাড়া ${route.total_regular_fare} টাকা, শিক্ষার্থীদের হাফ-পাস ভাড়া ${route.total_student_fare} টাকা। যাত্রাপথে মোট ${route.legs.length}টি অংশ রয়েছে। প্রথম বাহন: ${route.legs[0].line_name}। ল্যান্ডমার্ক: ${route.legs[0].landmark_instructions}। সাবধানে চলাচল করুন।`
-      : `Transit itinerary from ${origin} to ${destination}. Estimated duration is ${route.total_duration_mins} minutes. Total regular fare is ${route.total_regular_fare} BDT, student half-pass is ${route.total_student_fare} BDT. Step one: board ${route.legs[0].line_name} at ${route.legs[0].from_hub}. Landmark: ${route.legs[0].landmark_instructions}. Have a safe journey.`;
+      ? `${origin} থেকে ${destination} পৌঁছাতে আনুমানিক সময় লাগবে ${route.total_duration_mins} মিনিট। দূরত্ব প্রায় ${distText}। ${obstacleText} মোট সাধারণ ভাড়া ${route.total_regular_fare} টাকা, শিক্ষার্থীদের হাফ-পাস ভাড়া ${route.total_student_fare} টাকা। বাহন: ${route.title_bn || route.legs[0]?.line_name}। সাবধানে চলাচল করুন।`
+      : `Transit itinerary from ${origin} to ${destination}. Estimated duration is ${route.total_duration_mins} minutes, distance ${route.total_distance_km || ''} km. Total regular fare is ${route.total_regular_fare} BDT, student half-pass is ${route.total_student_fare} BDT. Mode: ${route.title}. Have a safe journey.`;
 
     speakText(speechScript, lang);
   };
 
-  // Select clean route styling corresponding to route types
+  // Distinct theme and badge per transit mode
   const getRouteTheme = (route, idx) => {
-    if (idx === 0) {
-      return {
-        badgeTitle: lang === 'bn' ? 'রুট ১ (সেরা)' : 'Route 1 (Best)',
-        badgeBg: 'bg-[#e2b448] text-[#120e0b] border-[#fbf8f1]',
-        accent: '#c69429',
-        border: 'border-[#c69429]'
-      };
-    } else if (idx === 1 || route.type_badge?.toLowerCase().includes('student')) {
-      return {
-        badgeTitle: lang === 'bn' ? 'রুট ২' : 'Route 2',
-        badgeBg: 'bg-[#b83a2e] text-[#fbf8f1] border-[#f6d16f]',
-        accent: '#b83a2e',
-        border: 'border-[#b83a2e]'
-      };
-    } else {
-      return {
-        badgeTitle: lang === 'bn' ? 'রুট ৩' : 'Route 3',
-        badgeBg: 'bg-[#15453b] text-[#f6d16f] border-[#f6d16f]',
-        accent: '#15453b',
-        border: 'border-[#15453b]'
-      };
+    const mode = route.mode || (route.legs && route.legs[0]?.mode) || 'bus';
+    switch (mode) {
+      case 'metro':
+        return {
+          badgeTitle: lang === 'bn' ? '🚇 মেট্রোরেল (উড়ালপথ)' : '🚇 Metro Rail (Viaduct)',
+          badgeBg: 'bg-[#059669] text-white border-[#34d399]',
+          accent: '#059669',
+          border: 'border-[#10b981]'
+        };
+      case 'bus':
+        return {
+          badgeTitle: lang === 'bn' ? '🚌 লোকাল বাস (হাফ-পাস)' : '🚌 Local Bus (Half-Pass)',
+          badgeBg: 'bg-[#1c4568] text-white border-[#38bdf8]',
+          accent: '#1c4568',
+          border: 'border-[#38bdf8]'
+        };
+      case 'cng':
+        return {
+          badgeTitle: lang === 'bn' ? '🚕 সিএনজি অটোরিকশা' : '🚕 CNG Auto-Rickshaw',
+          badgeBg: 'bg-[#e2b448] text-[#120e0b] border-[#fbf8f1]',
+          accent: '#c69429',
+          border: 'border-[#c69429]'
+        };
+      case 'bike':
+        return {
+          badgeTitle: lang === 'bn' ? '🏍️ বাইক রাইডশেয়ার' : '🏍️ Bike Ride-Share',
+          badgeBg: 'bg-[#b83a2e] text-white border-[#f6d16f]',
+          accent: '#b83a2e',
+          border: 'border-[#b83a2e]'
+        };
+      case 'car':
+        return {
+          badgeTitle: lang === 'bn' ? '🚗 প্রাইভেট কার / ক্যাব' : '🚗 Private Car / Cab',
+          badgeBg: 'bg-[#4338ca] text-white border-[#818cf8]',
+          accent: '#4338ca',
+          border: 'border-[#6366f1]'
+        };
+      case 'rickshaw':
+        return {
+          badgeTitle: lang === 'bn' ? '🛺 ঐতিহ্যবাহী রিকশা' : '🛺 Traditional Rickshaw',
+          badgeBg: 'bg-[#15453b] text-[#f6d16f] border-[#f6d16f]',
+          accent: '#15453b',
+          border: 'border-[#15453b]'
+        };
+      default:
+        return {
+          badgeTitle: lang === 'bn' ? `অপশন ${toBnDigits(idx + 1)}` : `Option ${idx + 1}`,
+          badgeBg: 'bg-[#292019] text-[#f6d16f] border-[#c69429]',
+          accent: '#c69429',
+          border: 'border-[#c69429]'
+        };
     }
   };
+
+  // Sort and filter routes based on user preference (Time, Cost, Obstacles, Distance)
+  const displayRoutes = React.useMemo(() => {
+    let list = [...routes];
+    if (activeFilter === 'fastest') {
+      list.sort((a, b) => a.total_duration_mins - b.total_duration_mins);
+    } else if (activeFilter === 'cheapest') {
+      list.sort((a, b) => {
+        const fareA = passengerType === 'student' ? a.total_student_fare : a.total_regular_fare;
+        const fareB = passengerType === 'student' ? b.total_student_fare : b.total_regular_fare;
+        return fareA - fareB;
+      });
+    } else if (activeFilter === 'safest') {
+      list.sort((a, b) => {
+        const scoreA = a.obstacles_status === 'safe' ? 0 : (a.obstacles_status === 'traffic' ? 1 : 2);
+        const scoreB = b.obstacles_status === 'safe' ? 0 : (b.obstacles_status === 'traffic' ? 1 : 2);
+        return scoreA - scoreB;
+      });
+    } else if (activeFilter === 'shortest') {
+      list.sort((a, b) => (a.total_distance_km || 99) - (b.total_distance_km || 99));
+    }
+    return list;
+  }, [routes, activeFilter, passengerType]);
 
   return (
     <div className="my-8 space-y-6">
@@ -98,7 +160,7 @@ export default function RouteResults({
         <div className="flex items-center gap-2">
           <span className="text-2xl">🧭</span>
           <h3 className="font-rickshaw text-2xl sm:text-3xl md:text-4xl font-bold text-[#f6d16f] tracking-wide rickshaw-text-pop">
-            {lang === 'bn' ? 'সরাসরি ট্রানজিট রুট ও ভাড়ার তালিকা' : 'Direct Transit Routes & Fare Ledger'}
+            {lang === 'bn' ? 'সম্ভাব্য সকল বাহন, সময়, ভাড়া ও পথের বাধা' : 'Available Transit Modes & Trip Comparison'}
           </h3>
         </div>
 
@@ -109,13 +171,86 @@ export default function RouteResults({
         </div>
       </div>
 
+      {/* Comparison Filter Pills: All, Fastest, Cheapest, Obstacle-Free, Shortest */}
+      <div className="flex flex-wrap items-center gap-2 p-2 rounded-2xl bg-[#14100c] border border-[#c69429]/40 shadow-inner">
+        <span className="font-anek text-xs font-bold text-[#dfcfb2] px-2">
+          {lang === 'bn' ? 'সর্ট করুন:' : 'Sort By:'}
+        </span>
+        <button
+          type="button"
+          onClick={() => setActiveFilter('all')}
+          className={`px-3 py-1.5 rounded-xl font-anek font-bold text-xs sm:text-sm transition-all flex items-center gap-1.5 cursor-pointer ${
+            activeFilter === 'all'
+              ? 'bg-[#c69429] text-[#120e0b] shadow-md shadow-[#c69429]/30'
+              : 'bg-[#1c1511] text-[#dfcfb2] hover:text-white border border-[#c69429]/30'
+          }`}
+        >
+          <span>🌟</span>
+          <span>{lang === 'bn' ? 'সবগুলো বাহন' : 'All Options'} ({routes.length})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveFilter('fastest')}
+          className={`px-3 py-1.5 rounded-xl font-anek font-bold text-xs sm:text-sm transition-all flex items-center gap-1.5 cursor-pointer ${
+            activeFilter === 'fastest'
+              ? 'bg-[#15453b] text-[#6ee7b7] border border-[#2a6f62] shadow-md shadow-[#15453b]/40'
+              : 'bg-[#1c1511] text-[#dfcfb2] hover:text-white border border-[#c69429]/30'
+          }`}
+        >
+          <span>⚡</span>
+          <span>{lang === 'bn' ? 'কম সময় (দ্রুততম)' : 'Fastest Time'}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveFilter('cheapest')}
+          className={`px-3 py-1.5 rounded-xl font-anek font-bold text-xs sm:text-sm transition-all flex items-center gap-1.5 cursor-pointer ${
+            activeFilter === 'cheapest'
+              ? 'bg-[#0e6e41] text-white shadow-md shadow-[#0e6e41]/40'
+              : 'bg-[#1c1511] text-[#dfcfb2] hover:text-white border border-[#c69429]/30'
+          }`}
+        >
+          <span>💰</span>
+          <span>{lang === 'bn' ? 'কম খরচ (সাশ্রয়ী)' : 'Lowest Fare'}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveFilter('safest')}
+          className={`px-3 py-1.5 rounded-xl font-anek font-bold text-xs sm:text-sm transition-all flex items-center gap-1.5 cursor-pointer ${
+            activeFilter === 'safest'
+              ? 'bg-[#0284c7] text-white shadow-md shadow-[#0284c7]/40'
+              : 'bg-[#1c1511] text-[#dfcfb2] hover:text-white border border-[#c69429]/30'
+          }`}
+        >
+          <span>🛡️</span>
+          <span>{lang === 'bn' ? 'বাধামুক্ত উড়ালপথ' : 'Obstacle-Free'}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveFilter('shortest')}
+          className={`px-3 py-1.5 rounded-xl font-anek font-bold text-xs sm:text-sm transition-all flex items-center gap-1.5 cursor-pointer ${
+            activeFilter === 'shortest'
+              ? 'bg-[#b83a2e] text-white shadow-md shadow-[#b83a2e]/40'
+              : 'bg-[#1c1511] text-[#dfcfb2] hover:text-white border border-[#c69429]/30'
+          }`}
+        >
+          <span>📏</span>
+          <span>{lang === 'bn' ? 'কম দূরত্ব' : 'Shortest Distance'}</span>
+        </button>
+      </div>
+
       {/* Transit Routes */}
       <div className="grid grid-cols-1 gap-7">
-        {routes.map((route, idx) => {
+        {displayRoutes.map((route, idx) => {
           const isSelected = selectedRouteId === route.id || (!selectedRouteId && idx === 0);
           const hasSavings = route.total_regular_fare > route.total_student_fare;
           const savingsAmount = route.total_regular_fare - route.total_student_fare;
           const routeTheme = getRouteTheme(route, idx);
+          const rawDistance = route.total_distance_km || (route.legs ? route.legs.reduce((acc, l) => acc + (Number(l.distance_km) || 0), 0) : 0);
+          const distanceKm = rawDistance > 0 ? Number(rawDistance).toFixed(1) : (Math.max(1.8, Math.round((route.total_duration_mins * 0.32) * 10) / 10)).toFixed(1);
 
           return (
             <div
@@ -172,52 +307,93 @@ export default function RouteResults({
                       </p>
                     </div>
 
-                    {/* Centered & Perfectly Balanced Metric Badges Bar */}
-                    <div className="w-full xl:w-auto xl:min-w-[420px] flex items-center justify-center bg-[#f5eedf] px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl border-2 border-[#c69429]/40 shadow-inner shrink-0">
-                      {/* Total Duration */}
-                      <div className="px-2.5 sm:px-3.5 text-center border-r-2 border-[#c69429]/30 flex-1">
-                        <div className="text-xs sm:text-sm font-anek font-bold text-[#7a6654] uppercase tracking-wider mb-0.5">
-                          {t.durationLabel}
+                    {/* Centered & Perfectly Balanced 4-Metric Badges Bar (Time, Fare, Distance, Obstacles) */}
+                    <div className="w-full xl:w-auto xl:min-w-[500px] grid grid-cols-2 sm:grid-cols-4 items-center bg-[#f5eedf] p-2.5 sm:p-3 rounded-2xl border-2 border-[#c69429]/40 shadow-inner gap-2 sm:gap-1 shrink-0">
+                      {/* 1. Total Duration */}
+                      <div className="px-2 text-center sm:border-r-2 sm:border-[#c69429]/30">
+                        <div className="text-[11px] sm:text-xs font-anek font-bold text-[#7a6654] uppercase tracking-wider mb-0.5">
+                          ⏱️ {t.durationLabel}
                         </div>
-                        <div className="flex items-baseline justify-center gap-1 text-[#15453b] whitespace-nowrap">
-                          <span className="font-anek text-2xl sm:text-3xl font-extrabold tracking-tight">
+                        <div className="flex items-baseline justify-center gap-0.5 text-[#15453b] whitespace-nowrap">
+                          <span className="font-anek text-xl sm:text-2xl font-extrabold tracking-tight">
                             {lang === 'bn' ? toBnDigits(route.total_duration_mins) : route.total_duration_mins}
                           </span>
-                          <span className="font-anek text-xs sm:text-sm font-bold text-[#15453b]/80">
-                            {lang === 'bn' ? 'মিনিট' : 'mins'}
+                          <span className="font-anek text-xs font-bold text-[#15453b]/80 ml-0.5">
+                            {lang === 'bn' ? 'মিনিট' : 'm'}
                           </span>
                         </div>
                       </div>
 
-                      {/* Regular Fare */}
-                      <div className="px-2.5 sm:px-3.5 text-center border-r-2 border-[#c69429]/30 flex-1">
-                        <div className="text-xs sm:text-sm font-anek font-bold text-[#7a6654] uppercase tracking-wider mb-0.5">
-                          {t.regularFare}
+                      {/* 2. Regular Fare / Cost */}
+                      <div className="px-2 text-center sm:border-r-2 sm:border-[#c69429]/30">
+                        <div className="text-[11px] sm:text-xs font-anek font-bold text-[#7a6654] uppercase tracking-wider mb-0.5">
+                          💰 {t.regularFare}
                         </div>
                         <div className="flex items-baseline justify-center gap-0.5 text-[#b83a2e] whitespace-nowrap">
-                          <span className="font-anek text-2xl sm:text-3xl font-extrabold tracking-tight">
+                          <span className="font-anek text-xl sm:text-2xl font-extrabold tracking-tight">
                             {lang === 'bn' ? toBnDigits(route.total_regular_fare) : route.total_regular_fare}
                           </span>
-                          <span className="font-anek text-sm sm:text-base font-extrabold text-[#b83a2e] ml-0.5">
-                            {lang === 'bn' ? '৳' : 'BDT'}
+                          <span className="font-anek text-xs sm:text-sm font-extrabold text-[#b83a2e] ml-0.5">
+                            {lang === 'bn' ? '৳' : 'Tk'}
                           </span>
                         </div>
                       </div>
 
-                      {/* Student Half-Pass Fare */}
-                      <div className="px-2.5 sm:px-3.5 text-center flex-1">
-                        <div className="text-xs sm:text-sm font-anek font-extrabold text-[#0e6e41] uppercase tracking-wider mb-0.5 flex items-center justify-center gap-1 whitespace-nowrap">
-                          <span>🎓 {t.studentFare}</span>
+                      {/* 3. Distance in km */}
+                      <div className="px-2 text-center sm:border-r-2 sm:border-[#c69429]/30">
+                        <div className="text-[11px] sm:text-xs font-anek font-bold text-[#7a6654] uppercase tracking-wider mb-0.5">
+                          📏 {lang === 'bn' ? 'কম দূরত্ব' : 'Distance'}
                         </div>
                         <div className="flex items-baseline justify-center gap-0.5 text-[#0e6e41] whitespace-nowrap">
-                          <span className="font-anek text-2xl sm:text-3xl font-extrabold tracking-tight">
-                            {lang === 'bn' ? toBnDigits(route.total_student_fare) : route.total_student_fare}
+                          <span className="font-anek text-xl sm:text-2xl font-extrabold tracking-tight">
+                            {lang === 'bn' ? toBnDigits(distanceKm) : distanceKm}
                           </span>
-                          <span className="font-anek text-sm sm:text-base font-extrabold text-[#0e6e41] ml-0.5">
-                            {lang === 'bn' ? '৳' : 'BDT'}
+                          <span className="font-anek text-xs font-bold text-[#0e6e41] ml-0.5">
+                            {lang === 'bn' ? 'কিমি' : 'km'}
                           </span>
                         </div>
                       </div>
+
+                      {/* 4. Obstacle / Disruption Status */}
+                      <div className="px-2 text-center">
+                        <div className="text-[11px] sm:text-xs font-anek font-bold text-[#7a6654] uppercase tracking-wider mb-0.5">
+                          🛡️ {lang === 'bn' ? 'পথে বাধা' : 'Obstacles'}
+                        </div>
+                        <div className="flex items-center justify-center text-[11px] sm:text-xs font-anek font-black text-[#120e0b] leading-tight">
+                          <span className="px-1.5 py-0.5 rounded bg-[#fcf9f2] border border-[#c69429]/50 shadow-xs truncate max-w-[110px]" title={route.obstacles_badge || (route.mode === 'metro' ? 'বাধামুক্ত উড়ালপথ' : 'সড়ক পথ')}>
+                            {route.obstacles_badge || (route.mode === 'metro' ? '🟢 বাধামুক্ত' : '🟡 স্বাভাবিক')}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Prominent Road Obstacle & Traffic Condition Strip */}
+                  <div className={`mt-3 py-2 px-3.5 rounded-xl border flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm font-anek font-bold ${
+                    route.mode === 'metro'
+                      ? 'bg-[#15453b]/10 border-[#2a6f62] text-[#15453b]'
+                      : 'bg-[#fffbeb] border-[#f59e0b]/50 text-[#92400e]'
+                  }`}>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-base">{route.mode === 'metro' ? '🚇' : '🚦'}</span>
+                      <span className="font-extrabold">{lang === 'bn' ? 'পথে বাধা ও ট্রাফিক স্থিতি:' : 'Traffic & Obstacle Condition:'}</span>
+                      <span className="px-2 py-0.5 rounded-md bg-white border border-[#c69429]/40 shadow-xs text-xs font-black text-[#120e0b]">
+                        {route.obstacles_badge || (route.mode === 'metro' ? '🟢 বাধামুক্ত উড়ালপথ (০% যানজট)' : '🟡 সড়কে যানজটের ঝুঁকি')}
+                      </span>
+                      <span className="text-xs sm:text-sm font-semibold opacity-90">
+                        ({route.obstacles_status || (route.mode === 'metro' ? 'উড়াল ভায়াডাক্ট পথ, সিগন্যালমুক্ত' : 'স্বাভাবিক ঢাকা সড়ক ট্রাফিক')})
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="font-mono font-bold bg-white/70 px-2 py-0.5 rounded border border-[#c69429]/30">
+                        📏 {lang === 'bn' ? 'দূরত্ব:' : 'Dist:'} {lang === 'bn' ? toBnDigits(distanceKm) : distanceKm} {lang === 'bn' ? 'কিমি' : 'km'}
+                      </span>
+                      {route.total_student_fare < route.total_regular_fare && (
+                        <span className="font-anek font-extrabold text-[#0e6e41] bg-[#0e6e41]/10 px-2 py-0.5 rounded border border-[#0e6e41]/30">
+                          🎓 হাফ-পাস: {lang === 'bn' ? toBnDigits(route.total_student_fare) : route.total_student_fare} ৳
+                        </span>
+                      )}
                     </div>
                   </div>
 
