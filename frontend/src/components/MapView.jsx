@@ -134,7 +134,12 @@ export default function MapView({
       // 2. PLOT CLEAN PLACE NAME PINS (NO vehicle emojis, NO order codes)
       // =========================================================================
       Object.entries(hubs).forEach(([name, data]) => {
-        const isMetro = Boolean(data.is_metro_station);
+        const isMetro = Boolean(
+          data.is_metro_station || 
+          data.type === 'metro' || 
+          data.metro_code || 
+          MRT6_STATIONS_DATA.some(s => s.name === name || s.name_bn === data.name_bn)
+        );
         const isWaterlogged = activeAlerts.some(a => a.hub === name && a.type === 'waterlogging' && a.is_active);
         const isBlockaded = activeAlerts.some(a => a.hub === name && a.type === 'blockade' && a.is_active);
 
@@ -155,9 +160,9 @@ export default function MapView({
         let labelPositionStyle = '';
         if (isMetro) {
           if (isEven) {
-            labelPositionStyle = 'top: -11px; left: 10px;';
+            labelPositionStyle = 'top: -14px; left: 16px;';
           } else {
-            labelPositionStyle = 'top: -11px; right: 10px; text-align: right;';
+            labelPositionStyle = 'top: -14px; right: 16px; text-align: right;';
           }
         } else {
           labelPositionStyle = 'top: -11px; left: 10px;';
@@ -167,21 +172,48 @@ export default function MapView({
           className: 'dhaka-clean-place-marker',
           html: `
             <div style="position: relative; width: 0; height: 0; cursor: pointer; user-select: none;">
-              <!-- Pin Dot centered at (0,0) -->
-              <div style="
-                position: absolute;
-                top: -4px;
-                left: -4px;
-                width: 8px;
-                height: 8px;
-                border-radius: 50%;
-                background: ${dotColor};
-                border: 1.5px solid #ffffff;
-                box-shadow: 0 0 5px rgba(0,0,0,0.7);
-                z-index: 10;
-              "></div>
+              ${isMetro ? `
+                <!-- Distinctive Metro [M] Sign Badge centered at (0,0) -->
+                <div style="
+                  position: absolute;
+                  top: -11px;
+                  left: -11px;
+                  width: 22px;
+                  height: 22px;
+                  border-radius: 50%;
+                  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+                  border: 2px solid #ffffff;
+                  box-shadow: 0 0 10px rgba(5, 150, 105, 0.9), 0 2px 6px rgba(0,0,0,0.65);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-family: -apple-system, BlinkMacSystemFont, 'Space Grotesk', 'Segoe UI', Roboto, sans-serif;
+                  font-size: 12px;
+                  font-weight: 900;
+                  color: #ffffff;
+                  line-height: 1;
+                  z-index: 25;
+                  letter-spacing: -0.5px;
+                ">
+                  M
+                </div>
+              ` : `
+                <!-- Standard Pin Dot centered at (0,0) for non-metro hubs -->
+                <div style="
+                  position: absolute;
+                  top: -4px;
+                  left: -4px;
+                  width: 8px;
+                  height: 8px;
+                  border-radius: 50%;
+                  background: ${dotColor};
+                  border: 1.5px solid #ffffff;
+                  box-shadow: 0 0 5px rgba(0,0,0,0.7);
+                  z-index: 10;
+                "></div>
+              `}
 
-              <!-- Clean Place Name Tag -->
+              <!-- Clean Place Name Tag with M Badge for Metro -->
               <div style="
                 position: absolute;
                 ${labelPositionStyle}
@@ -190,7 +222,7 @@ export default function MapView({
                 font-family: 'Anek Bangla', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                 font-size: 11px;
                 font-weight: 700;
-                padding: 2px 7px;
+                padding: 2.5px 8px;
                 border-radius: 6px;
                 border: 1px solid ${borderColor};
                 box-shadow: 0 2px 6px rgba(0,0,0,0.55);
@@ -198,8 +230,29 @@ export default function MapView({
                 letter-spacing: 0.2px;
                 z-index: 20;
                 pointer-events: auto;
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
               ">
-                ${placeName}
+                ${isMetro ? `
+                  <span style="
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 14px;
+                    height: 14px;
+                    border-radius: 3px;
+                    background: #059669;
+                    color: #ffffff;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                    font-weight: 900;
+                    font-size: 9px;
+                    line-height: 1;
+                    flex-shrink: 0;
+                    box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+                  ">M</span>
+                ` : ''}
+                <span>${placeName}</span>
               </div>
             </div>
           `,
@@ -224,8 +277,24 @@ export default function MapView({
         marker.bindPopup(`
           <div style="min-width: 210px; font-family: 'Anek Bangla', sans-serif;" class="p-1 text-slate-900">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
-              <span style="font-weight: 900; font-size: 15px; color: ${isMetro ? '#065f46' : '#b83a2e'};">
-                ${placeName}
+              <span style="font-weight: 900; font-size: 15px; color: ${isMetro ? '#065f46' : '#b83a2e'}; display: inline-flex; align-items: center; gap: 6px;">
+                ${isMetro ? `
+                  <span style="
+                    background: #059669;
+                    color: #ffffff;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 11px;
+                    font-weight: 900;
+                    font-family: sans-serif;
+                    flex-shrink: 0;
+                  ">M</span>
+                ` : ''}
+                <span>${placeName}</span>
               </span>
             </div>
 
@@ -406,12 +475,13 @@ export default function MapView({
           <button
             type="button"
             onClick={() => setFilterMode('metro_only')}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-anek font-bold transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-anek font-bold transition-all cursor-pointer ${
               filterMode === 'metro_only'
                 ? 'bg-[#064e3b] text-[#34d399] border border-[#10b981] shadow-md'
                 : 'text-[#dfcfb2] hover:text-[#34d399]'
             }`}
           >
+            <span className="w-3.5 h-3.5 rounded bg-[#059669] text-white flex items-center justify-center text-[9px] font-black leading-none shrink-0">M</span>
             <span>{lang === 'bn' ? 'মেট্রোরেল' : 'Metro Rail'}</span>
           </button>
 
