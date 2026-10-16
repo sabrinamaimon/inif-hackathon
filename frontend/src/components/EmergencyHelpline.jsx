@@ -15,7 +15,7 @@ export default function EmergencyHelpline({ lang = 'bn', isHome = true }) {
           © ২০২৬ ঢাকা-পাথ — আইএআইটি জাতীয় আইটি উৎসব হ্যাকাথন। সর্বস্বত্ব সংরক্ষিত।
         </p>
         <p className="text-[11px] text-[#9e8a76] mt-1 font-mono">
-          Open Tech Stack: Next.js 14, Leaflet.js (OpenStreetMap Free), FastAPI, Google Gemini AI.
+          IAIT National IT Fest 2026 | Theme: Smart City | DhakaPath
         </p>
       </footer>
     );

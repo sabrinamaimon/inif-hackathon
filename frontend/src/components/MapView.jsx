@@ -170,7 +170,7 @@ export default function MapView({
               {lang === 'bn' ? 'ঢাকা লাইভ ট্রানজিট ও হেরিটেজ ম্যাপ' : 'Dhaka Live Transit & Heritage Map'}
             </h3>
             <p className="font-anek text-xs text-[#dfcfb2]">
-              {lang === 'bn' ? 'ওপেনস্ট্রিটম্যাপ ও কার্টোগ্রাফিক শৈলীতে ১৬টি নোড ও রুট প্রদর্শন' : 'Interactive node graph covering 16 major Dhaka hubs'}
+              {lang === 'bn' ? 'কার্টোগ্রাফিক ও স্যাটেলাইট গ্রিডে ১৬টি নোড ও রুট প্রদর্শন' : 'Interactive node graph covering 16 major Dhaka hubs'}
             </p>
           </div>
         </div>
