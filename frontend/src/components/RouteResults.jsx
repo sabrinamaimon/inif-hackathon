@@ -43,19 +43,17 @@ export default function RouteResults({
     speakText(speechScript, lang);
   };
 
-  // Select vintage postcard artwork corresponding to destinations / route types
-  const getPostcardTheme = (route, idx) => {
+  // Select clean route styling corresponding to route types
+  const getRouteTheme = (route, idx) => {
     if (idx === 0) {
       return {
-        bgImage: '/assets/postcard_shapla_motijheel.jpg',
-        badgeTitle: lang === 'bn' ? 'রুট ১' : 'Route 1',
+        badgeTitle: lang === 'bn' ? 'রুট ১ (সেরা)' : 'Route 1 (Best)',
         badgeBg: 'bg-[#e2b448] text-[#120e0b] border-[#fbf8f1]',
         accent: '#c69429',
         border: 'border-[#c69429]'
       };
     } else if (idx === 1 || route.type_badge?.toLowerCase().includes('student')) {
       return {
-        bgImage: '/assets/postcard_lalbagh_fort.jpg',
         badgeTitle: lang === 'bn' ? 'রুট ২' : 'Route 2',
         badgeBg: 'bg-[#b83a2e] text-[#fbf8f1] border-[#f6d16f]',
         accent: '#b83a2e',
@@ -63,7 +61,6 @@ export default function RouteResults({
       };
     } else {
       return {
-        bgImage: '/assets/postcard_ahsan_manzil.jpg',
         badgeTitle: lang === 'bn' ? 'রুট ৩' : 'Route 3',
         badgeBg: 'bg-[#15453b] text-[#f6d16f] border-[#f6d16f]',
         accent: '#15453b',
@@ -77,9 +74,9 @@ export default function RouteResults({
       {/* Title */}
       <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b-2 border-[#c69429]/40">
         <div className="flex items-center gap-2">
-          <span className="text-2xl">✉️</span>
+          <span className="text-2xl">🧭</span>
           <h3 className="font-rickshaw text-2xl sm:text-3xl md:text-4xl font-bold text-[#f6d16f] tracking-wide rickshaw-text-pop">
-            {lang === 'bn' ? 'বাংলাদেশ পোস্টকার্ড ট্রানজিট কার্ড' : 'Bangladesh Postcard Commute Cards'}
+            {lang === 'bn' ? 'সরাসরি ট্রানজিট রুট ও ভাড়ার তালিকা' : 'Direct Transit Routes & Fare Ledger'}
           </h3>
         </div>
 
@@ -90,54 +87,38 @@ export default function RouteResults({
         </div>
       </div>
 
-      {/* Commute Postcards */}
+      {/* Transit Routes */}
       <div className="grid grid-cols-1 gap-7">
         {routes.map((route, idx) => {
           const isSelected = selectedRouteId === route.id || (!selectedRouteId && idx === 0);
           const hasSavings = route.total_regular_fare > route.total_student_fare;
           const savingsAmount = route.total_regular_fare - route.total_student_fare;
-          const postcardTheme = getPostcardTheme(route, idx);
+          const routeTheme = getRouteTheme(route, idx);
 
           return (
             <div
               key={route.id}
               onClick={() => onSelectRoute && onSelectRoute(route)}
-              className={`rounded-2xl border-4 transition-all cursor-pointer relative overflow-hidden shadow-2xl bg-[#1a1410] ${postcardTheme.border} ${
+              className={`rounded-2xl border-4 transition-all cursor-pointer relative overflow-hidden shadow-2xl bg-[#1a1410] ${routeTheme.border} ${
                 isSelected 
                   ? 'ring-4 ring-[#f6d16f] scale-[1.01]' 
                   : 'hover:border-[#f6d16f]'
               }`}
             >
-              {/* ========================================================= */}
-              {/* 1. ARTWORK IN THE BACKGROUND WITH LOWERED TRANSPARENCY    */}
-              {/* (User requested: "lower transparency of art in background") */}
-              {/* ========================================================= */}
-              <div 
-                className="absolute inset-0 bg-cover bg-center pointer-events-none transition-opacity duration-500"
-                style={{
-                  backgroundImage: `url(${postcardTheme.bgImage})`,
-                  opacity: 0.18, // Lowered transparency so the route stays in sharp, crystal-clear focus!
-                  filter: 'saturate(120%) contrast(110%)'
-                }}
-              />
-
-              {/* Inner vintage air mail perforated border dash */}
-              <div className="absolute inset-2 border-2 border-dashed border-[#c69429]/30 rounded-xl pointer-events-none" />
-
-              {/* Postcard Top Strip */}
-              <div className="relative z-10 px-5 sm:px-7 py-3.5 bg-[#14100c]/90 border-b border-[#c69429]/40 flex flex-wrap items-center justify-between gap-3">
+              {/* Route Card Top Strip */}
+              <div className="relative z-10 px-5 sm:px-7 py-3.5 bg-[#14100c]/95 border-b border-[#c69429]/40 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <span className={`text-xs sm:text-sm font-anek font-black px-3.5 py-1 rounded-xl border shadow-md ${postcardTheme.badgeBg}`}>
-                    {postcardTheme.badgeTitle}
+                  <span className={`text-xs sm:text-sm font-anek font-black px-3.5 py-1.5 rounded-xl border shadow-md ${routeTheme.badgeBg}`}>
+                    {routeTheme.badgeTitle}
                   </span>
-                  <span className="text-xs font-regal tracking-widest text-[#dfcfb2] uppercase hidden md:inline">
-                    BANGLADESH POSTAGE • ISSUE 2026
+                  <span className="text-xs sm:text-sm font-anek font-bold text-[#f6d16f] uppercase tracking-wider hidden md:inline">
+                    {route.type_badge || (lang === 'bn' ? 'যাচাইকৃত রুট' : 'Verified Route')}
                   </span>
                 </div>
 
-                {/* Circular Postal Seal Stamp on Card */}
-                <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#f6d16f] bg-black/50 px-3 py-1 rounded-xl border border-[#c69429]/40">
-                  <span className="w-2 h-2 rounded-full bg-[#f6d16f] animate-ping" />
+                {/* Grounded Graph Badge */}
+                <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#6ee7b7] bg-[#15453b]/40 px-3 py-1 rounded-xl border border-[#2a6f62]">
+                  <span className="w-2 h-2 rounded-full bg-[#6ee7b7] animate-ping" />
                   <span>{lang === 'bn' ? 'সরাসরি যাচাইকৃত রুট' : 'GROUNDED GRAPH ROUTE'}</span>
                 </div>
               </div>
@@ -308,20 +289,6 @@ export default function RouteResults({
                     >
                       <Volume2 className="w-5 h-5 text-[#f6d16f]" />
                       <span>{lang === 'bn' ? '🔊 পড়ে শোনান (অডিও ব্রিফিং)' : '🔊 Read Aloud (Audio)'}</span>
-                    </button>
-
-                    {/* Download Large-Print Offline Postcard */}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        generateOfflineRouteCard({ route, origin, destination, lang });
-                      }}
-                      className="flex items-center gap-2 px-4 sm:px-5 py-3 rounded-xl bg-gradient-to-r from-[#15453b] to-[#0d342c] hover:from-[#1f5e51] hover:to-[#15453b] text-[#fbf8f1] font-anek font-bold text-sm sm:text-base border-2 border-[#2a6f62] active:scale-95 transition-all shadow-lg"
-                      title="Download offline commute card"
-                    >
-                      <Download className="w-5 h-5 text-[#6ee7b7]" />
-                      <span>{lang === 'bn' ? '💾 অফলাইন রুট কার্ড ডাউনলোড' : '💾 Save Offline Commute Card'}</span>
                     </button>
                   </div>
 

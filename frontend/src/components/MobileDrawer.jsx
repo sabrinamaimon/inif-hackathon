@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { X, Navigation, AlertTriangle, Cpu, Users, Bus, FileScan, ShieldAlert, Globe, Sun, Moon } from 'lucide-react';
+import { X, Navigation, AlertTriangle, Cpu, Users, Bus, FileScan, ShieldAlert, Globe, Sun, Moon, Download } from 'lucide-react';
 import { I18N, toBnDigits } from '../utils/localization';
 
 export default function MobileDrawer({ 
@@ -14,7 +14,8 @@ export default function MobileDrawer({
   theme = 'dark',
   setTheme,
   activeAlertCount = 3,
-  onOpenScanner
+  onOpenScanner,
+  onDownloadPostcard
 }) {
   if (!isOpen) return null;
   const t = I18N[lang] || I18N.bn;
@@ -87,10 +88,22 @@ export default function MobileDrawer({
               );
             })}
 
+            {/* Postcard Transit Card Download in Mobile Drawer */}
+            <button
+              onClick={() => { onClose(); onDownloadPostcard && onDownloadPostcard(); }}
+              className="w-full mt-3 flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-bold bg-[#15453b]/40 border border-[#2a6f62] text-[#6ee7b7] hover:bg-[#15453b]/70 transition-all active:scale-95 shadow-md"
+            >
+              <div className="flex items-center gap-3">
+                <Download className="w-4 h-4 text-[#6ee7b7]" />
+                <span>{lang === 'bn' ? 'পোস্টকার্ড ট্রানজিট কার্ড ডাউনলোড' : 'Download Transit Card'}</span>
+              </div>
+              <span className="text-[10px] font-mono font-bold text-[#f6d16f] bg-black/40 px-2 py-0.5 rounded border border-[#2a6f62]/50">PNG</span>
+            </button>
+
             {/* Bonus Signboard OCR Button */}
             <button
               onClick={() => { onClose(); onOpenScanner(); }}
-              className="w-full mt-3 flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold bg-[#201712] border border-[#c69429]/40 text-[#f6d16f] hover:bg-[#2a1e17]"
+              className="w-full mt-2 flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold bg-[#201712] border border-[#c69429]/40 text-[#f6d16f] hover:bg-[#2a1e17]"
             >
               <FileScan className="w-4 h-4 text-[#f6d16f]" />
               <span>{lang === 'bn' ? 'সাইনর্বোড / ভাড়ার চার্ট স্ক্যান' : 'Scan Bus Signboard (OCR)'}</span>

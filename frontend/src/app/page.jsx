@@ -16,6 +16,7 @@ import RideShareBoard from '../components/RideShareBoard';
 import NoticeScanner from '../components/NoticeScanner';
 import EmergencyHelpline from '../components/EmergencyHelpline';
 import DhakaCommuteHeritageShowcase from '../components/DhakaCommuteHeritageShowcase';
+import { generateOfflineRouteCard } from '../utils/offlineCard';
 
 import { STATIC_HUBS, STATIC_ALERTS } from '../data/staticData';
 
@@ -357,6 +358,50 @@ export default function Home() {
     }
   };
 
+  // Download Postcard Transit Card (direct from Navbar & Drawer)
+  const handleDownloadPostcard = () => {
+    const routeToDownload = selectedRoute || (routes && routes.length > 0 ? routes[0] : null);
+    if (routeToDownload) {
+      generateOfflineRouteCard({
+        route: routeToDownload,
+        origin: origin || 'Mirpur 10',
+        destination: destination || 'Motijheel',
+        lang
+      });
+    } else {
+      const defaultRoute = {
+        id: 'opt-fastest',
+        title: 'MRT-6 Metro Rail Lifeline (Uttara ➔ Motijheel)',
+        title_bn: 'এমআরটি-৬ মেট্রোরেল এক্সপ্রেস (উত্তরা ➔ মতিঝিল)',
+        type_badge: 'Fastest Route',
+        total_duration_mins: 32,
+        total_regular_fare: 100,
+        total_student_fare: 100,
+        transfers: 0,
+        legs: [
+          {
+            leg_number: 1,
+            mode: 'metro',
+            line_name: 'MRT-6 Metro Rail',
+            from_hub: 'Uttara North',
+            to_hub: 'Motijheel',
+            distance_km: 20.1,
+            duration_mins: 32,
+            regular_fare_bdt: 100,
+            student_fare_bdt: 100,
+            landmark_instructions: lang === 'bn' ? 'উত্তরা উত্তর মেট্রোরেল স্টেশন কনকোর্স' : 'Enter Uttara North Station concourse'
+          }
+        ]
+      };
+      generateOfflineRouteCard({
+        route: defaultRoute,
+        origin: lang === 'bn' ? 'উত্তরা উত্তর' : 'Uttara North',
+        destination: lang === 'bn' ? 'মতিঝিল' : 'Motijheel',
+        lang
+      });
+    }
+  };
+
   return (
     <main className="min-h-screen flex flex-col bg-slate-950 text-slate-100 font-anek">
       {/* Top Navigation */}
@@ -369,6 +414,7 @@ export default function Home() {
         setTheme={setTheme}
         setIsDrawerOpen={setIsDrawerOpen}
         activeAlertCount={alerts.length}
+        onDownloadPostcard={handleDownloadPostcard}
       />
 
       {/* Mobile Slide-Out Drawer */}
@@ -383,12 +429,13 @@ export default function Home() {
         setTheme={setTheme}
         activeAlertCount={alerts.length}
         onOpenScanner={() => setIsScannerOpen(true)}
+        onDownloadPostcard={handleDownloadPostcard}
       />
 
       {/* Full-Width Laptop Screen Container */}
       <div className="flex-1 w-full max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-8 xl:px-12">
 
-        {/* TAB 1: HOME (Focused Smart Transit Search & Postcard Itineraries) */}
+        {/* TAB 1: HOME (Focused Smart Transit Search & Itineraries) */}
         {currentTab === 'home' && (
           <div className="space-y-8 my-4 w-full">
             {/* Route Query Engine */}

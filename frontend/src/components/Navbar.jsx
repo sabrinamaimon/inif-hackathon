@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Menu, Navigation, AlertTriangle, Cpu, Users, Bus, Globe, Sparkles, Sun, Moon } from 'lucide-react';
+import { Menu, Navigation, AlertTriangle, Cpu, Users, Bus, Globe, Sparkles, Sun, Moon, Download } from 'lucide-react';
 import { I18N, toBnDigits } from '../utils/localization';
 
 export default function Navbar({ 
@@ -12,7 +12,8 @@ export default function Navbar({
   theme = 'dark',
   setTheme,
   setIsDrawerOpen, 
-  activeAlertCount = 3 
+  activeAlertCount = 3,
+  onDownloadPostcard
 }) {
   const t = I18N[lang] || I18N.bn;
 
@@ -76,10 +77,22 @@ export default function Navbar({
           })}
         </nav>
 
-        {/* Right Action Controls: Shapla Badge + Theme Toggle + Language Switcher */}
-        <div className="flex items-center gap-2.5">
+        {/* Right Action Controls: Postcard Download + Shapla Badge + Theme Toggle + Language Switcher */}
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          {/* Postcard Transit Card Download Button */}
+          <button
+            onClick={onDownloadPostcard}
+            className="flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-[#15453b] to-[#0e3b32] hover:from-[#1b5e50] hover:to-[#15453b] text-[#fbf8f1] text-sm font-anek font-bold border-2 border-[#2a6f62] transition-all active:scale-95 shadow-md group cursor-pointer"
+            title={lang === 'bn' ? 'পোস্টকার্ড ট্রানজিট কার্ড ডাউনলোড করুন' : 'Download Postcard Transit Card'}
+          >
+            <Download className="w-4 h-4 text-[#6ee7b7] group-hover:scale-110 transition-transform" />
+            <span className="whitespace-nowrap">
+              {lang === 'bn' ? 'পোস্টকার্ড কার্ড' : 'Transit Card'}
+            </span>
+          </button>
+
           {/* Shapla Chattar Enamel Badge */}
-          <div className="hidden lg:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#15453b]/40 border border-[#2a6f62] text-sm text-[#f6d16f] font-anek font-semibold">
+          <div className="hidden xl:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#15453b]/40 border border-[#2a6f62] text-sm text-[#f6d16f] font-anek font-semibold">
             <span className="w-2.5 h-2.5 rounded-full bg-[#f6d16f] animate-pulse" />
             <span>{lang === 'bn' ? '১৬টি হাব সচল' : '16 Hubs Active'}</span>
           </div>
@@ -135,6 +148,16 @@ export default function Navbar({
         </div>
 
         <div className="flex items-center gap-1.5">
+          {/* Mobile Postcard Download Button */}
+          <button
+            onClick={onDownloadPostcard}
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-[#15453b] border border-[#2a6f62] text-[#6ee7b7] active:scale-95 transition-all shadow-md"
+            title={lang === 'bn' ? 'পোস্টকার্ড কার্ড ডাউনলোড' : 'Download Transit Card'}
+            aria-label="Download Transit Card"
+          >
+            <Download className="w-4 h-4 text-[#6ee7b7]" />
+          </button>
+
           {/* Mobile Theme Toggle */}
           <button
             onClick={() => setTheme && setTheme(theme === 'dark' ? 'light' : 'dark')}
