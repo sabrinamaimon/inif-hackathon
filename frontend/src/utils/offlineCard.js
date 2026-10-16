@@ -1,4 +1,5 @@
 import { formatFare, formatDuration, toBnDigits } from './localization';
+import { STATIC_HUBS } from '../data/staticData';
 
 /**
  * Generates a high-resolution, beautifully formatted Commute Pass Card
@@ -91,7 +92,7 @@ export function generateOfflineRouteCard(arg1, arg2, arg3, arg4) {
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
   ctx.fillText(
-    isBn ? 'DHAKAPATH • ডিজিটাল কমিউট কার্ড' : 'DHAKAPATH • DIGITAL COMMUTE CARD',
+    isBn ? 'ঢাকা-পাথ • ডিজিটাল কমিউট কার্ড' : 'DHAKAPATH • DIGITAL COMMUTE CARD',
     bannerX + 18,
     bannerY + bannerH / 2
   );
@@ -164,7 +165,9 @@ export function generateOfflineRouteCard(arg1, arg2, arg3, arg4) {
   // Route Title (Origin ➔ Destination)
   ctx.fillStyle = '#120e0b';
   ctx.font = 'bold 28px "Anek Bangla", "Segoe UI", Georgia, serif';
-  const corridorText = `${origin}   ➔   ${destination}`;
+  const originName = isBn ? (STATIC_HUBS[origin]?.name_bn || origin) : origin;
+  const destName = isBn ? (STATIC_HUBS[destination]?.name_bn || destination) : destination;
+  const corridorText = `${originName}   ➔   ${destName}`;
   ctx.fillText(fitText(ctx, corridorText, panelW - 200), contentLeft, panelY + 64);
 
   // Route Subtitle
@@ -267,8 +270,15 @@ export function generateOfflineRouteCard(arg1, arg2, arg3, arg4) {
     ctx.fillStyle = '#120e0b';
     ctx.font = 'bold 16px "Anek Bangla", "Segoe UI", sans-serif';
 
-    const modeTag = leg.mode ? `[${leg.mode.toUpperCase()}] ` : '';
-    const legTitle = `${modeTag}${leg.line_name} (${leg.from_hub} ➔ ${leg.to_hub})`;
+    const modeTag = leg.mode 
+      ? (isBn 
+          ? `[${leg.mode === 'metro' ? 'মেট্রোরেল' : leg.mode === 'bus' ? 'বাস' : leg.mode === 'cng' ? 'সিএনজি' : leg.mode === 'bike' ? 'বাইক' : leg.mode === 'car' ? 'প্রাইভেট কার' : 'রিকশা'}] ` 
+          : `[${leg.mode.toUpperCase()}] `) 
+      : '';
+    const lineName = isBn ? (leg.line_name_bn || leg.line_name) : leg.line_name;
+    const fromName = isBn ? (STATIC_HUBS[leg.from_hub]?.name_bn || leg.from_hub) : leg.from_hub;
+    const toName = isBn ? (STATIC_HUBS[leg.to_hub]?.name_bn || leg.to_hub) : leg.to_hub;
+    const legTitle = `${modeTag}${lineName} (${fromName} ➔ ${toName})`;
     ctx.fillText(fitText(ctx, legTitle, 530), contentLeft + 32, currentY + 7);
 
     // Leg Right-Aligned Quick Metrics
@@ -279,7 +289,9 @@ export function generateOfflineRouteCard(arg1, arg2, arg3, arg4) {
     const legFareText = formatFare(leg.regular_fare_bdt, lang);
     const legStudentText = formatFare(leg.student_fare_bdt, lang);
     ctx.fillText(
-      `⏱ ${legDurationText}  •  ভাড়া: ${legFareText} (হাফ: ${legStudentText})`,
+      isBn 
+        ? `⏱ ${legDurationText}  •  ভাড়া: ${legFareText} (হাফ: ${legStudentText})` 
+        : `⏱ ${legDurationText}  •  Fare: ${legFareText} (Half: ${legStudentText})`,
       panelX + panelW - 24,
       currentY + 7
     );
@@ -289,7 +301,10 @@ export function generateOfflineRouteCard(arg1, arg2, arg3, arg4) {
     ctx.fillStyle = '#59473a';
     ctx.font = '13px "Anek Bangla", "Segoe UI", sans-serif';
     const landmarkPrefix = isBn ? 'বোর্ডিং নির্দেশিকা: ' : 'Boarding Landmark: ';
-    const landmarkFull = `${landmarkPrefix}${leg.landmark_instructions || 'নির্ধারিত কাউন্টার বা স্টপেজ থেকে উঠুন।'}`;
+    const landmarkText = isBn 
+      ? (leg.landmark_instructions_bn || leg.landmark_instructions || 'নির্ধারিত কাউন্টার বা স্টপেজ থেকে উঠুন।') 
+      : (leg.landmark_instructions || 'Board at designated transit station counter.');
+    const landmarkFull = `${landmarkPrefix}${landmarkText}`;
     ctx.fillText(fitText(ctx, landmarkFull, panelW - 70), contentLeft + 32, currentY + 28);
 
     // Subtle divider between legs
@@ -334,7 +349,7 @@ export function generateOfflineRouteCard(arg1, arg2, arg3, arg4) {
   ctx.textBaseline = 'bottom';
   ctx.fillText(
     isBn 
-      ? 'DhakaPath Urban Mobility Intelligence • অফলাইনে সহজে পড়ার জন্য ডিজিটাল কমিউট কার্ড'
+      ? 'ঢাকা-পাথ আরবান মবিলিটি ইন্টেলিজেন্স • অফলাইনে সহজে পড়ার জন্য ডিজিটাল কমিউট কার্ড'
       : 'DhakaPath Urban Mobility Intelligence • Digital Commute Card for Offline Use',
     940 / 2,
     642

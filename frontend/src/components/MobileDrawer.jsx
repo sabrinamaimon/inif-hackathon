@@ -107,7 +107,7 @@ export default function MobileDrawer({
               className="w-full mt-2 flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold bg-[#201712] border border-[#c69429]/40 text-[#f6d16f] hover:bg-[#2a1e17]"
             >
               <FileScan className="w-4 h-4 text-[#f6d16f]" />
-              <span>{lang === 'bn' ? 'সাইনর্বোড / ভাড়ার চার্ট স্ক্যান' : 'Scan Bus Signboard (OCR)'}</span>
+              <span>{lang === 'bn' ? 'বাসের সাইনবোর্ড ও ভাড়ার তালিকা স্ক্যান' : 'Scan Bus Signboard OCR'}</span>
             </button>
 
             {/* Admin CMS Portal Link */}

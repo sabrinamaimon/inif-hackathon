@@ -17,7 +17,7 @@ export default function StatsBar({ lang }) {
       <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-[12px] font-semibold text-[#fbf8f1]">
         <span className="flex items-center gap-1.5">
           <MapPin className="w-3.5 h-3.5 text-[#f6d16f]" />
-          <span>{lang === 'bn' ? '১৬টি হাব (সদরঘাট-উত্তরা)' : '16 Active Hubs'}</span>
+          <span>{lang === 'bn' ? '১৬টি প্রধান ট্রানজিট হাব' : '16 Active Transit Hubs'}</span>
         </span>
 
         <span className="flex items-center gap-1.5">
@@ -27,7 +27,7 @@ export default function StatsBar({ lang }) {
 
         <span className="flex items-center gap-1.5">
           <Users className="w-3.5 h-3.5 text-[#6ee7b7]" />
-          <span>{lang === 'bn' ? 'বাসে ৫০% শিক্ষার্থী হাফ-পাস (১০ ৳ ফ্লোর)' : '50% Student Pass (10 BDT Floor)'}</span>
+          <span>{lang === 'bn' ? 'বাসে ৫০% শিক্ষার্থী হাফ-পাস' : '50% Bus Student Discount'}</span>
         </span>
 
         <span className="flex items-center gap-1.5">

@@ -390,8 +390,8 @@ export default function MapView({
               ${isMetro ? `
                 <div style="font-size: 11px; color: #047857; margin-bottom: 8px; line-height: 1.4;">
                   ${lang === 'bn' 
-                    ? '✦ <strong>ভাড়া:</strong> সর্বনিম্ন ২০ ৳ • র‍্যাপিড পাস/MRT Pass-এ ১০% ছাড় (১৮ ৳)<br/>✦ ১০০ মিনিট পেইড এরিয়ায় টিকিট কার্যকর'
-                    : '✦ <strong>Fare:</strong> Min 20 BDT • 10% discount on Rapid/MRT Pass (18 BDT)<br/>✦ Valid for 100 mins in paid area'}
+                    ? '✦ <strong>ভাড়া:</strong> সর্বনিম্ন ২০ ৳ • র‍্যাপিড পাস বা এমআরটি পাসে ১০% ছাড় (১৮ ৳)<br/>✦ ১০০ মিনিট পেইড এরিয়ায় টিকিট কার্যকর'
+                    : '✦ <strong>Fare:</strong> Min 20 BDT • 10% discount on Rapid Pass or MRT Pass (18 BDT)<br/>✦ Valid for 100 mins in paid area'}
                 </div>
               ` : ''}
 
@@ -577,7 +577,7 @@ export default function MapView({
             }`}
           >
             <span>🚇</span>
-            <span>{lang === 'bn' ? 'মেট্রোরেল (MRT-6)' : 'MRT-6 Metro'}</span>
+            <span>{lang === 'bn' ? 'এমআরটি-৬ মেট্রোরেল' : 'MRT-6 Metro'}</span>
           </button>
 
           <button
@@ -590,7 +590,7 @@ export default function MapView({
             }`}
           >
             <span>🚌</span>
-            <span>{lang === 'bn' ? 'বিকল্প বাস (১৮ স্টপ)' : 'Bikolpo Bus'}</span>
+            <span>{lang === 'bn' ? 'বিকল্প বাস (১৮ স্টপেজ)' : 'Bikolpo Bus (18 Stops)'}</span>
           </button>
 
           <button
@@ -603,7 +603,7 @@ export default function MapView({
             }`}
           >
             <span>🚌</span>
-            <span>{lang === 'bn' ? 'উত্তরা বাস (২০ স্টপ)' : 'Uttara Bus'}</span>
+            <span>{lang === 'bn' ? 'উত্তরা বাস (২০ স্টপেজ)' : 'Uttara Bus (20 Stops)'}</span>
           </button>
 
           <button

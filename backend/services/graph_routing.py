@@ -223,8 +223,11 @@ class DhakaTransitGraph:
         if fast_option:
             fast_option.id = "opt-fastest"
             fast_option.type_badge = "Fastest Route"
+            fast_option.type_badge_bn = "১০০% বাধামুক্ত ও দ্রুততম"
             fast_option.title = f"Express Priority ({origin} -> {destination})"
             fast_option.title_bn = f"দ্রুততম রুট ({DHAKA_HUBS[origin]['name_bn']} -> {DHAKA_HUBS[destination]['name_bn']})"
+            fast_option.obstacles_badge = "🟢 Clear Overhead Route"
+            fast_option.obstacles_badge_bn = "🟢 বাধামুক্ত উড়ালপথ (০% যানজট ও জলজট)"
             fast_option.is_recommended = True
             routes.append(fast_option)
 
@@ -248,8 +251,11 @@ class DhakaTransitGraph:
             if is_distinct:
                 bus_option.id = "opt-cheapest"
                 bus_option.type_badge = "Student & Budget Pick"
+                bus_option.type_badge_bn = "সবচেয়ে সাশ্রয়ী ও হাফ-পাস"
                 bus_option.title = f"Economy Bus Route ({origin} -> {destination})"
                 bus_option.title_bn = f"সাশ্রয়ী ও হাফ-পাস বাস রুট ({DHAKA_HUBS[origin]['name_bn']} -> {DHAKA_HUBS[destination]['name_bn']})"
+                bus_option.obstacles_badge = "🟡 Surface Road Traffic"
+                bus_option.obstacles_badge_bn = "🟡 সাধারণ সড়ক ট্রাফিক"
                 routes.append(bus_option)
 
         # 3. Resilient Detour Route if disruptions active
@@ -265,8 +271,11 @@ class DhakaTransitGraph:
             if detour_option and not any(r.legs == detour_option.legs for r in routes):
                 detour_option.id = "opt-detour"
                 detour_option.type_badge = "Safe Detour"
+                detour_option.type_badge_bn = "নিরাপদ বিকল্প পথ"
                 detour_option.title = "Disruption Bypass Detour"
                 detour_option.title_bn = "জলজট ও ব্যারিকেড এড়িয়ে বিকল্প পথ"
+                detour_option.obstacles_badge = "🟢 Detour around Obstacle"
+                detour_option.obstacles_badge_bn = "🟢 বাধা এড়িয়ে বিকল্প পথ"
                 detour_option.is_detour = True
                 detour_option.disruption_warning = "Bypassing waterlogged/blocked intersections automatically."
                 routes.append(detour_option)
@@ -315,12 +324,14 @@ class DhakaTransitGraph:
             mode="cng",
             title=f"Direct CNG Auto-Rickshaw ({origin} -> {destination})",
             title_bn=f"সরাসরি সিএনজি অটোরিকশা ({DHAKA_HUBS[origin]['name_bn']} -> {DHAKA_HUBS[destination]['name_bn']})",
-            type_badge="ব্যক্তিগত মিটার বাহন",
+            type_badge="Personal Metered Transit",
+            type_badge_bn="ব্যক্তিগত মিটার বাহন",
             total_duration_mins=cng_time,
             total_regular_fare=cng_fare,
             total_student_fare=cng_fare,
             total_distance_km=round(est_distance, 1),
-            obstacles_badge="🟡 মাঝারি ট্রাফিক, অলিগলি ব্যবহারের সুবিধা",
+            obstacles_badge="🟡 Moderate Traffic, Alley Accessible",
+            obstacles_badge_bn="🟡 মাঝারি ট্রাফিক, অলিগলি ব্যবহারের সুবিধা",
             obstacles_status="traffic",
             transfers=0,
             is_recommended=False,
@@ -329,7 +340,8 @@ class DhakaTransitGraph:
                 RouteLeg(
                     leg_number=1,
                     mode="cng",
-                    line_name="CNG Auto-Rickshaw (মিটার / চুক্তি)",
+                    line_name="CNG Auto-Rickshaw (Metered)",
+                    line_name_bn="সিএনজি অটোরিকশা (মিটার)",
                     from_hub=origin,
                     to_hub=destination,
                     distance_km=round(est_distance, 1),
@@ -337,7 +349,8 @@ class DhakaTransitGraph:
                     regular_fare_bdt=cng_fare,
                     student_fare_bdt=cng_fare,
                     surge_multiplier=cng_surge,
-                    landmark_instructions=f"{origin} সিএনজি স্ট্যান্ড থেকে সরাসরি {destination}। কোনো পরিবর্তন ছাড়া দ্রুত যাতায়াত।"
+                    landmark_instructions=f"Direct CNG from {origin} to {destination}. No transfers required.",
+                    landmark_instructions_bn=f"{origin} সিএনজি স্ট্যান্ড থেকে সরাসরি {destination}। কোনো পরিবর্তন ছাড়া দ্রুত যাতায়াত।"
                 )
             ]
         )
@@ -349,19 +362,22 @@ class DhakaTransitGraph:
             bike_time = int(bike_time * 1.15)
         raw_bike = 30 + (est_distance - 1) * 12 * (1.2 if weather in ["rain", "heavy_monsoon"] else 1.0)
         bike_base = max(35, int(round(raw_bike / 5.0) * 5))
-        bike_obstacles = "🌧️ বৃষ্টিতে পিচ্ছিল সড়ক ও সতর্ক রাইড" if weather in ["rain", "heavy_monsoon"] else "🟢 জ্যামের ফাঁক দিয়ে দ্রুত বের হওয়ার সুযোগ"
+        bike_obstacles_en = "🌧️ Slippery Road - Ride Cautiously" if weather in ["rain", "heavy_monsoon"] else "🟢 Quick Maneuver through Traffic"
+        bike_obstacles_bn = "🌧️ বৃষ্টিতে পিচ্ছিল সড়ক ও সতর্ক রাইড" if weather in ["rain", "heavy_monsoon"] else "🟢 জ্যামের ফাঁক দিয়ে দ্রুত বের হওয়ার সুযোগ"
 
         bike_route = RouteOption(
             id="opt-bike",
             mode="bike",
-            title=f"Ride-Share Bike ({origin} -> {destination})",
-            title_bn=f"মোটরসাইকেল / বাইক রাইডশেয়ার",
-            type_badge="সড়কপথে দ্রুততম",
+            title=f"Ride-Share Motorbike ({origin} -> {destination})",
+            title_bn=f"মোটরসাইকেল রাইডশেয়ার ({DHAKA_HUBS[origin]['name_bn']} -> {DHAKA_HUBS[destination]['name_bn']})",
+            type_badge="Fastest Surface Transit",
+            type_badge_bn="সড়কপথে দ্রুততম",
             total_duration_mins=bike_time,
             total_regular_fare=bike_base,
             total_student_fare=bike_base,
             total_distance_km=round(est_distance, 1),
-            obstacles_badge=bike_obstacles,
+            obstacles_badge=bike_obstacles_en,
+            obstacles_badge_bn=bike_obstacles_bn,
             obstacles_status="warning" if weather in ["rain", "heavy_monsoon"] else "safe",
             transfers=0,
             is_recommended=False,
@@ -370,7 +386,8 @@ class DhakaTransitGraph:
                 RouteLeg(
                     leg_number=1,
                     mode="bike",
-                    line_name="Motorcycle Ride-Share (Pathao / Uber)",
+                    line_name="Motorcycle Ride-Share (Pathao or Uber)",
+                    line_name_bn="মোটরসাইকেল রাইডশেয়ার (পাঠাও ও উবার)",
                     from_hub=origin,
                     to_hub=destination,
                     distance_km=round(est_distance, 1),
@@ -378,7 +395,8 @@ class DhakaTransitGraph:
                     regular_fare_bdt=bike_base,
                     student_fare_bdt=bike_base,
                     surge_multiplier=1.0,
-                    landmark_instructions=f"{origin} থেকে বাইক রাইডশেয়ারে সরাসরি {destination}।"
+                    landmark_instructions=f"1-on-1 motorbike pickup at {origin}. Direct commute to {destination}.",
+                    landmark_instructions_bn=f"{DHAKA_HUBS[origin]['name_bn']} থেকে বাইক রাইডশেয়ারে সরাসরি {DHAKA_HUBS[destination]['name_bn']}।"
                 )
             ]
         )
@@ -392,19 +410,22 @@ class DhakaTransitGraph:
             car_time = int(car_time * 1.25)
         raw_car = 100 + (est_distance - 1) * 24 * (1.2 if is_rush_hour else 1.0)
         car_fare = max(140, int(round(raw_car / 10.0) * 10))
-        car_obstacles = "🔴 পিক-আওয়ারে প্রধান সড়কে যানজটের সম্ভাবনা" if is_rush_hour else "🟡 স্বাভাবিক সড়ক ট্রাফিক (এসি ও আরামদায়ক)"
+        car_obstacles_en = "🔴 Peak Hour Traffic Likely" if is_rush_hour else "🟡 Normal Surface Traffic (AC & Comfort)"
+        car_obstacles_bn = "🔴 পিক-আওয়ারে প্রধান সড়কে যানজটের সম্ভাবনা" if is_rush_hour else "🟡 স্বাভাবিক সড়ক ট্রাফিক (এসি ও আরামদায়ক)"
 
         car_route = RouteOption(
             id="opt-car",
             mode="car",
-            title=f"Private Car / Cab ({origin} -> {destination})",
-            title_bn=f"প্রাইভেট কার / রাইডশেয়ার ক্যাব",
-            type_badge="আরামদায়ক ও এসি",
+            title=f"Private Car ({origin} -> {destination})",
+            title_bn=f"প্রাইভেট কার ক্যাব ({DHAKA_HUBS[origin]['name_bn']} -> {DHAKA_HUBS[destination]['name_bn']})",
+            type_badge="Comfortable & AC",
+            type_badge_bn="আরামদায়ক ও এসি",
             total_duration_mins=car_time,
             total_regular_fare=car_fare,
             total_student_fare=car_fare,
             total_distance_km=round(est_distance * 1.06, 1),
-            obstacles_badge=car_obstacles,
+            obstacles_badge=car_obstacles_en,
+            obstacles_badge_bn=car_obstacles_bn,
             obstacles_status="warning" if is_rush_hour else "traffic",
             transfers=0,
             is_recommended=False,
@@ -413,7 +434,8 @@ class DhakaTransitGraph:
                 RouteLeg(
                     leg_number=1,
                     mode="car",
-                    line_name="Private Cab / Uber Car",
+                    line_name="Private Cab and Car",
+                    line_name_bn="প্রাইভেট ক্যাব ও কার",
                     from_hub=origin,
                     to_hub=destination,
                     distance_km=round(est_distance * 1.06, 1),
@@ -421,7 +443,8 @@ class DhakaTransitGraph:
                     regular_fare_bdt=car_fare,
                     student_fare_bdt=car_fare,
                     surge_multiplier=1.0,
-                    landmark_instructions=f"{origin} থেকে ডোর-টু-ডোর এসি কার ক্যাবে সরাসরি {destination}।"
+                    landmark_instructions=f"Door-to-door AC car pickup from {origin} to {destination}.",
+                    landmark_instructions_bn=f"{DHAKA_HUBS[origin]['name_bn']} থেকে ডোর-টু-ডোর এসি কার ক্যাবে সরাসরি {DHAKA_HUBS[destination]['name_bn']}।"
                 )
             ]
         )
@@ -436,13 +459,15 @@ class DhakaTransitGraph:
                 id="opt-rickshaw",
                 mode="rickshaw",
                 title=f"Traditional Rickshaw ({origin} -> {destination})",
-                title_bn=f"ঐতিহ্যবাহী রিকশা ভ্রমণ",
-                type_badge="লোকাল ও গলিপথ",
+                title_bn=f"ঐতিহ্যবাহী রিকশা ({DHAKA_HUBS[origin]['name_bn']} -> {DHAKA_HUBS[destination]['name_bn']})",
+                type_badge="Local Feeder Transit",
+                type_badge_bn="লোকাল ও গলিপথ",
                 total_duration_mins=rickshaw_time,
                 total_regular_fare=rickshaw_fare,
                 total_student_fare=rickshaw_fare,
                 total_distance_km=round(est_distance, 1),
-                obstacles_badge="🟢 অভ্যন্তরীণ অলিগলিতে বাধাহীন চলাচল",
+                obstacles_badge="🟢 Easy Passage via Alleyways",
+                obstacles_badge_bn="🟢 অভ্যন্তরীণ অলিগলিতে বাধাহীন চলাচল",
                 obstacles_status="safe",
                 transfers=0,
                 is_recommended=False,
@@ -452,6 +477,7 @@ class DhakaTransitGraph:
                         leg_number=1,
                         mode="rickshaw",
                         line_name="Dhaka Traditional Rickshaw",
+                        line_name_bn="ঢাকা ঐতিহ্যবাহী রিকশা",
                         from_hub=origin,
                         to_hub=destination,
                         distance_km=round(est_distance, 1),
@@ -459,7 +485,8 @@ class DhakaTransitGraph:
                         regular_fare_bdt=rickshaw_fare,
                         student_fare_bdt=rickshaw_fare,
                         surge_multiplier=1.0,
-                        landmark_instructions=f"{origin} থেকে রিকশা নিয়ে গলিপথ দিয়ে নিরিবিলি {destination} এ যান।"
+                        landmark_instructions=f"Hooded cycle rickshaw from {origin} through inner roads to {destination}.",
+                        landmark_instructions_bn=f"{DHAKA_HUBS[origin]['name_bn']} থেকে হুড তোলা রিকশা নিয়ে গলিপথ দিয়ে নিরিবিলি {DHAKA_HUBS[destination]['name_bn']} যাতায়াত।"
                     )
                 ]
             )
@@ -660,6 +687,7 @@ class DhakaTransitGraph:
             title=f"Route via {title_via}",
             title_bn=title_bn_via,
             type_badge="Standard",
+            type_badge_bn="স্ট্যান্ডার্ড রুট",
             total_duration_mins=total_time,
             total_regular_fare=total_regular,
             total_student_fare=total_student,
@@ -692,6 +720,7 @@ class DhakaTransitGraph:
             leg_number=1,
             mode="rickshaw",
             line_name="Direct Connector Rickshaw/CNG",
+            line_name_bn="সরাসরি কানেক্টর রিকশা বা সিএনজি",
             from_hub=origin,
             to_hub=destination,
             distance_km=dist,
@@ -699,13 +728,15 @@ class DhakaTransitGraph:
             regular_fare_bdt=reg_fare,
             student_fare_bdt=stud_fare,
             surge_multiplier=surge,
-            landmark_instructions=f"Take direct connector from {origin} to {destination}."
+            landmark_instructions=f"Take direct connector from {origin} to {destination}.",
+            landmark_instructions_bn=f"{origin} থেকে সরাসরি কানেক্টর বাহন নিয়ে {destination} এ যান।"
         )
         return RouteOption(
             id="opt-fallback",
             title=f"Direct Connector ({origin} -> {destination})",
             title_bn=f"সরাসরি সংযোগ ({DHAKA_HUBS[origin]['name_bn']} -> {DHAKA_HUBS[destination]['name_bn']})",
             type_badge="Direct",
+            type_badge_bn="সরাসরি সংযোগ",
             total_duration_mins=25,
             total_regular_fare=reg_fare,
             total_student_fare=stud_fare,

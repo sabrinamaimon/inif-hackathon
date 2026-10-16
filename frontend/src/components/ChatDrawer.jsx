@@ -18,7 +18,7 @@ export default function ChatDrawer({
     {
       sender: 'bot',
       text: lang === 'bn' 
-        ? 'আসসালামু আলাইকুম! আমি ঢাকা-পাথ এআই সহকারী। আপনি যে কোনো ট্রানজিট রুট, ছাত্র হাফ-পাস ভাড়া, বা মালিবাগ/শাহবাগের লাইভ জ্যাম পরিস্থিতি জানতে পারেন।'
+        ? 'আসসালামু আলাইকুম! আমি ঢাকা-পাথ এআই সহকারী। আপনি যে কোনো ট্রানজিট রুট, শিক্ষার্থী হাফ-পাস ভাড়া, কিংবা মালিবাগ ও শাহবাগের লাইভ জ্যাম পরিস্থিতি জানতে পারেন।'
         : 'Hello! I am your DhakaPath AI Transit Assistant. Ask about routes, student half-pass rules, or live waterlogging and roadblock updates.'
     }
   ]);
@@ -161,7 +161,7 @@ export default function ChatDrawer({
                       {m.structured_route && (
                         <div className="mt-3 pt-2.5 border-t border-[#c69429]/30 flex items-center justify-between">
                           <span className="font-bold text-[#f6d16f] text-xs">
-                            {m.structured_route.title}
+                            {lang === 'bn' ? (m.structured_route.title_bn || m.structured_route.title) : m.structured_route.title}
                           </span>
                           <button
                             onClick={() => onApplyRouteFromChat && onApplyRouteFromChat(m.structured_route)}

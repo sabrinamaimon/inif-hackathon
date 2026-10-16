@@ -364,7 +364,7 @@ export default function RouteSearch({
             }`}
           >
             <CloudRain className={`w-4 h-4 ${weather === 'rain' ? 'text-[#7dd3fc]' : 'text-[#f6d16f]'}`} />
-            <span>{weather === 'rain' ? (lang === 'bn' ? 'মৌসুমী ভারী বৃষ্টি (জলজট)' : 'Monsoon Rain Active') : (lang === 'bn' ? 'স্বাভাবিক আবহাওয়া' : 'Normal Weather')}</span>
+            <span>{weather === 'rain' ? (lang === 'bn' ? 'মৌসুমী ভারী বৃষ্টি ও জলজট' : 'Monsoon Rain Active') : (lang === 'bn' ? 'স্বাভাবিক আবহাওয়া' : 'Normal Weather')}</span>
           </button>
 
           {/* Rush Hour Toggle */}
@@ -378,7 +378,7 @@ export default function RouteSearch({
             }`}
           >
             <Clock className={`w-4 h-4 ${isRushHour ? 'text-[#f6d16f]' : 'text-[#f6d16f]'}`} />
-            <span>{isRushHour ? (lang === 'bn' ? 'বিকেল ৫:৩০ অফিস ছুটি (পিক আওয়ার)' : 'Peak Rush Hour Active') : (lang === 'bn' ? 'অফ-পিক সময়' : 'Off-Peak Time')}</span>
+            <span>{isRushHour ? (lang === 'bn' ? 'বিকেল ৫:৩০ অফিস ছুটি ও পিক আওয়ার' : 'Peak Rush Hour Active') : (lang === 'bn' ? 'অফ-পিক সময়' : 'Off-Peak Time')}</span>
           </button>
         </div>
       </div>

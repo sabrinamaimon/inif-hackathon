@@ -21,7 +21,7 @@ export default function FareBreakdownModal({ isOpen, onClose, route, lang = 'bn'
                 {lang === 'bn' ? 'ভাড়ার বিস্তারিত ও সরকারি নিয়মাবলী' : 'Fare Breakdown & Statutory Rules'}
               </h3>
               <p className="font-anek text-xs text-[#dfcfb2]">
-                {lang === 'bn' ? 'বাংলাদেশ সড়ক পরিবহন কর্তৃপক্ষ (BRTA) ও DMTCL নিয়মানুযায়ী' : 'BRTA & DMTCL Government Regulations'}
+                {lang === 'bn' ? 'বাংলাদেশ সড়ক পরিবহন কর্তৃপক্ষ (বিআরটিএ) ও ডিএমটিসিএল নিয়মানুযায়ী' : 'BRTA & DMTCL Government Regulations'}
               </p>
             </div>
           </div>
@@ -35,10 +35,15 @@ export default function FareBreakdownModal({ isOpen, onClose, route, lang = 'bn'
 
         {/* Breakdown Items per Leg */}
         <div className="space-y-3 mb-4 max-h-[50vh] overflow-y-auto pr-1 font-anek">
-          {route.legs.map((leg) => (
+          {route.legs.map((leg) => {
+            const legTitleText = lang === 'bn' ? (leg.line_name_bn || leg.line_name) : leg.line_name;
+            const legModeTag = lang === 'bn' 
+              ? (leg.mode === 'metro' ? 'মেট্রোরেল' : leg.mode === 'bus' ? 'বাস' : leg.mode === 'cng' ? 'সিএনজি' : leg.mode === 'bike' ? 'বাইক' : leg.mode === 'car' ? 'প্রাইভেট কার' : 'রিকশা')
+              : leg.mode.toUpperCase();
+            return (
             <div key={leg.leg_number} className="p-3.5 rounded-xl bg-[#16110d] border border-[#c69429]/30">
               <div className="flex items-center justify-between font-bold text-sm text-[#fbf8f1] mb-1.5">
-                <span>{lang === 'bn' ? `পর্ব ${toBnDigits(leg.leg_number)}` : `Leg ${leg.leg_number}`}: {leg.line_name} ({leg.mode.toUpperCase()})</span>
+                <span>{lang === 'bn' ? `পর্ব ${toBnDigits(leg.leg_number)}` : `Leg ${leg.leg_number}`}: {legTitleText} ({legModeTag})</span>
                 <span className="font-rickshaw text-base text-[#f6d16f] font-bold">{formatFare(leg.regular_fare_bdt, lang)}</span>
               </div>
 
@@ -64,7 +69,7 @@ export default function FareBreakdownModal({ isOpen, onClose, route, lang = 'bn'
                 {leg.mode === 'metro' && (
                   <p className="text-[11px] text-[#f6d16f] pt-1.5 border-t border-[#c69429]/20 font-medium">
                     {lang === 'bn'
-                      ? 'ℹ মেট্রোরেলে (MRT-6) শিক্ষার্থীদের হাফ-পাস প্রযোজ্য নয়। দূরত্বভিত্তিক ফিক্সড টিকিট।'
+                      ? 'ℹ মেট্রোরেলে (এমআরটি-৬) শিক্ষার্থীদের হাফ-পাস প্রযোজ্য নয়। দূরত্বভিত্তিক ফিক্সড টিকিট।'
                       : 'ℹ MRT-6 Metro has no student discount. Distance-based fixed ticket.'}
                   </p>
                 )}
@@ -81,12 +86,13 @@ export default function FareBreakdownModal({ isOpen, onClose, route, lang = 'bn'
                   <p className="text-[11px] text-[#f87171] pt-1.5 border-t border-[#c69429]/20 font-medium">
                     {lang === 'bn'
                       ? `⚡ আবহাওয়া বা ভিড়ের কারণে সার্জযুক্ত (+${toBnDigits(Math.round((leg.surge_multiplier - 1) * 100))}% সার্জ)।`
-                      : `⚡ Weather / congestion surge rate applied (+${Math.round((leg.surge_multiplier - 1) * 100)}% surge).`}
+                      : `⚡ Weather or congestion surge rate applied (+${Math.round((leg.surge_multiplier - 1) * 100)}% surge).`}
                   </p>
                 )}
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Total Comparison Box */}

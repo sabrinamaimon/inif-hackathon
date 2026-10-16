@@ -59,7 +59,7 @@ export default function EmergencyHelpline({ lang = 'bn', isHome = true }) {
                   {lang === 'bn' ? c.name_bn : c.name}
                 </div>
                 <div className="font-anek text-xs text-[#dfcfb2] mt-1 line-clamp-1">
-                  {c.desc}
+                  {lang === 'bn' ? (c.desc_bn || c.desc) : c.desc}
                 </div>
               </div>
 
@@ -82,7 +82,7 @@ export default function EmergencyHelpline({ lang = 'bn', isHome = true }) {
         <div className="flex items-center justify-center gap-2 mb-2">
           <span className="text-2xl">🛺</span>
           <span className="font-rickshaw text-2xl text-[#f6d16f] rickshaw-text-pop">
-            {lang === 'bn' ? 'ঢাকা-পাথ (DhakaPath)' : 'DhakaPath Urban Transit'}
+            {lang === 'bn' ? 'ঢাকা-পাথ আরবান ট্রানজিট' : 'DhakaPath Urban Transit'}
           </span>
           <span className="text-2xl">🛺</span>
         </div>

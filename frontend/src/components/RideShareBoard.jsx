@@ -16,10 +16,13 @@ export default function RideShareBoard({ lang = 'bn' }) {
       seats_available: 1,
       seats_taken: 1,
       host_name: "Sadia (DU Student)",
+      host_name_bn: "সাদিয়া (ঢাবি শিক্ষার্থী)",
       contact_phone: "01711-234567",
       departure_time: "Now (Next 10 mins)",
+      departure_time_bn: "এখনই (আগামী ১০ মিনিটে)",
       split_fare_per_person: 30,
-      notes: "Waiting near Ananda Cinema foot-overbridge. Need 1 co-rider to split rickshaw."
+      notes: "Waiting near Ananda Cinema foot-overbridge. Need 1 co-rider to split rickshaw.",
+      notes_bn: "আনন্দ সিনেমা ফুট-ওভারব্রিজের নিচে অপেক্ষা করছি। রিকশা শেয়ারের জন্য ১ জন সঙ্গী প্রয়োজন।"
     },
     {
       id: "ride-002",
@@ -30,10 +33,13 @@ export default function RideShareBoard({ lang = 'bn' }) {
       seats_available: 2,
       seats_taken: 2,
       host_name: "Fahim (Office Commuter)",
+      host_name_bn: "ফাহিম (অফিস যাত্রী)",
       contact_phone: "01822-987654",
       departure_time: "6:15 PM",
+      departure_time_bn: "সন্ধ্যা ৬:১৫",
       split_fare_per_person: 67,
-      notes: "CNG heading to Mohakhali Wireless. Metro gate 2 pickup."
+      notes: "CNG heading to Mohakhali Wireless. Metro gate 2 pickup.",
+      notes_bn: "মহাখালী ওয়ারলেসের দিকে সিএনজি যাবে। মেট্রো ২ নম্বর গেট থেকে উঠা যাবে।"
     }
   ]);
 
@@ -128,9 +134,9 @@ export default function RideShareBoard({ lang = 'bn' }) {
                 </div>
                 <div>
                   <h4 className="font-anek text-lg font-black text-[#fbf8f1] flex items-center gap-1.5">
-                    <span>{ride.hub_origin}</span>
+                    <span>{lang === 'bn' ? (STATIC_HUBS[ride.hub_origin]?.name_bn || ride.hub_origin) : ride.hub_origin}</span>
                     <span className="text-[#f6d16f]">➔</span>
-                    <span>{ride.destination}</span>
+                    <span>{lang === 'bn' ? (STATIC_HUBS[ride.destination]?.name_bn || ride.destination) : ride.destination}</span>
                   </h4>
                   <span className="inline-block text-[11px] font-anek font-bold px-2 py-0.5 rounded bg-[#201712] border border-[#c69429]/30 text-[#dfcfb2] uppercase mt-0.5">
                     {ride.vehicle_type === 'rickshaw' ? (lang === 'bn' ? 'রিকশা শেয়ার' : 'Rickshaw Share') : (lang === 'bn' ? 'সিএনজি শেয়ার' : 'CNG Share')}
@@ -149,13 +155,13 @@ export default function RideShareBoard({ lang = 'bn' }) {
             </div>
 
             <p className="font-anek text-sm text-[#dfcfb2] leading-relaxed mb-4 bg-[#1e1712] p-3.5 rounded-xl border border-[#c69429]/20 font-medium italic">
-              "{ride.notes}"
+              "{lang === 'bn' ? (ride.notes_bn || ride.notes) : ride.notes}"
             </p>
 
             <div className="pt-3 border-t border-[#c69429]/20 flex items-center justify-between text-sm">
               <div className="flex items-center gap-2 font-anek text-xs sm:text-sm text-[#dfcfb2] font-semibold">
                 <Clock className="w-4 h-4 text-[#c69429]" />
-                <span>{ride.departure_time}</span>
+                <span>{lang === 'bn' ? (ride.departure_time_bn || ride.departure_time) : ride.departure_time}</span>
               </div>
 
               <a
@@ -163,7 +169,7 @@ export default function RideShareBoard({ lang = 'bn' }) {
                 className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#292019] hover:bg-[#b83a2e] text-[#f6d16f] hover:text-[#fbf8f1] border border-[#c69429]/40 font-anek font-bold text-xs active:scale-95 transition-all shadow-sm"
               >
                 <Phone className="w-3.5 h-3.5 text-[#f6d16f]" />
-                <span>{ride.host_name}</span>
+                <span>{lang === 'bn' ? (ride.host_name_bn || ride.host_name) : ride.host_name}</span>
               </a>
             </div>
           </div>
@@ -200,7 +206,11 @@ export default function RideShareBoard({ lang = 'bn' }) {
                     onChange={(e) => setHubOrigin(e.target.value)}
                     className="w-full p-3 rounded-xl bg-[#120e0b] border border-[#c69429]/40 text-[#fbf8f1] text-sm font-semibold focus:border-[#f6d16f] focus:outline-none"
                   >
-                    {hubNames.map((h) => <option key={h} value={h}>{h}</option>)}
+                    {hubNames.map((h) => (
+                      <option key={h} value={h}>
+                        {lang === 'bn' ? (STATIC_HUBS[h]?.name_bn || h) : h}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -212,7 +222,11 @@ export default function RideShareBoard({ lang = 'bn' }) {
                     onChange={(e) => setDestination(e.target.value)}
                     className="w-full p-3 rounded-xl bg-[#120e0b] border border-[#c69429]/40 text-[#fbf8f1] text-sm font-semibold focus:border-[#f6d16f] focus:outline-none"
                   >
-                    {hubNames.map((h) => <option key={h} value={h}>{h}</option>)}
+                    {hubNames.map((h) => (
+                      <option key={h} value={h}>
+                        {lang === 'bn' ? (STATIC_HUBS[h]?.name_bn || h) : h}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { X, AlertTriangle, Send } from 'lucide-react';
 import { STATIC_HUBS } from '../data/staticData';
-import { I18N } from '../utils/localization';
+import { I18N, toBnDigits } from '../utils/localization';
 
 export default function AddAlertModal({ isOpen, onClose, onSubmitAlert, lang = 'bn' }) {
   if (!isOpen) return null;
@@ -55,7 +55,7 @@ export default function AddAlertModal({ isOpen, onClose, onSubmitAlert, lang = '
         <form onSubmit={handleSubmit} className="space-y-3.5 font-anek">
           <div>
             <label className="block text-xs font-bold text-[#dfcfb2] mb-1">
-              {lang === 'bn' ? 'আক্রান্ত এলাকা / হাব' : 'Affected Hub'}
+              {lang === 'bn' ? 'আক্রান্ত এলাকা বা ট্রানজিট হাব' : 'Affected Hub'}
             </label>
             <select
               value={hub}
@@ -116,8 +116,8 @@ export default function AddAlertModal({ isOpen, onClose, onSubmitAlert, lang = '
 
           <div>
             <div className="flex justify-between text-xs text-[#dfcfb2] mb-1">
-              <span>{lang === 'bn' ? 'তীব্রতা মাত্রা (Severity):' : 'Severity:'}</span>
-              <span className="font-bold text-[#f6d16f]">{severity}%</span>
+              <span>{lang === 'bn' ? 'তীব্রতার মাত্রা:' : 'Severity:'}</span>
+              <span className="font-bold text-[#f6d16f]">{lang === 'bn' ? `${toBnDigits(severity)}%` : `${severity}%`}</span>
             </div>
             <input
               type="range"

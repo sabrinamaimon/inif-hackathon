@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { X, Upload, FileText, CheckCircle, Sparkles, Image as ImageIcon } from 'lucide-react';
 import { formatFare, toBnDigits } from '../utils/localization';
+import { STATIC_HUBS } from '../data/staticData';
 
 export default function NoticeScanner({ isOpen, onClose, lang = 'bn' }) {
   if (!isOpen) return null;
@@ -21,7 +22,8 @@ export default function NoticeScanner({ isOpen, onClose, lang = 'bn' }) {
     // Call OCR endpoint or simulated vision processing
     setTimeout(() => {
       setExtractedData({
-        bus_name: "Bikolpo Auto Service (বিকল্প)",
+        bus_name: "Bikolpo Auto Service",
+        bus_name_bn: "বিকল্প অটো সার্ভিস",
         route_code: "MIR-MJL-04",
         detected_stops: ["Mirpur 10", "Kazipara", "Shewrapara", "Agargaon", "Farmgate", "Shahbagh", "Paltan", "Motijheel"],
         base_fare_bdt: 10,
@@ -69,7 +71,7 @@ export default function NoticeScanner({ isOpen, onClose, lang = 'bn' }) {
               {lang === 'bn' ? 'ছবি নির্বাচন বা ক্যামেরা দিয়ে তুলুন' : 'Click or capture photo'}
             </span>
             <span className="font-anek text-xs text-[#dfcfb2]">
-              JPEG, PNG, WebP (বাসের সাইড প্যানেল ও বিআরটিএ চার্ট)
+              {lang === 'bn' ? 'জেপিইজি, পিএনজি, ওয়েবপি (বাসের সাইড প্যানেল ও বিআরটিএ চার্ট)' : 'JPEG, PNG, WebP (Bus side panel & BRTA chart)'}
             </span>
           </label>
         )}
@@ -94,7 +96,7 @@ export default function NoticeScanner({ isOpen, onClose, lang = 'bn' }) {
                 </span>
               </div>
               <h4 className="font-rickshaw text-lg font-bold text-[#fbf8f1] mb-3">
-                {extractedData.bus_name}
+                {lang === 'bn' ? extractedData.bus_name_bn : extractedData.bus_name}
               </h4>
 
               <div className="text-xs text-[#dfcfb2] mb-3">
@@ -104,7 +106,7 @@ export default function NoticeScanner({ isOpen, onClose, lang = 'bn' }) {
                 <div className="flex flex-wrap gap-1.5">
                   {extractedData.detected_stops.map((s, idx) => (
                     <span key={idx} className="px-2 py-0.5 rounded bg-[#201712] border border-[#c69429]/30 text-[11px] text-[#fbf8f1]">
-                      {s}
+                      {lang === 'bn' ? (STATIC_HUBS[s]?.name_bn || s) : s}
                     </span>
                   ))}
                 </div>

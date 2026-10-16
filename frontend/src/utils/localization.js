@@ -55,10 +55,10 @@ export const I18N = {
     passengerType: "Passenger Category",
     generalCommuter: "General Commuter",
     studentPass: "Student (50% Half-Pass)",
-    searchPlaceholder: "Type in English or Banglish (e.g., 'Farmgate to Motijheel avoiding Shahbagh')",
+    searchPlaceholder: "Type journey details (e.g., 'Farmgate to Motijheel avoiding Shahbagh')",
     searchBtn: "Find Smart Routes",
     micListening: "Listening... speak now",
-    micTooltip: "Search with Voice (English or বাংলা)",
+    micTooltip: "Search with Voice",
 
     // Route Cards
     recommended: "Fastest Recommendation",
@@ -80,7 +80,7 @@ export const I18N = {
     confirmBtn: "Confirm",
     resolveBtn: "Mark Resolved",
     trustScoreLabel: "Trust Score",
-    waterlogging: "Waterlogging (জলজট)",
+    waterlogging: "Waterlogging",
     blockade: "Intersection Blockade",
     gridlock: "Severe Gridlock",
     construction: "Road Construction",
@@ -132,10 +132,10 @@ export const I18N = {
     passengerType: "যাত্রীর ধরন",
     generalCommuter: "সাধারণ যাত্রী",
     studentPass: "শিক্ষার্থী (৫০% হাফ-পাস)",
-    searchPlaceholder: "বাংলা বা বাংলিশে লিখুন (যেমন: 'mirpur theke motijheel student')",
+    searchPlaceholder: "যাত্রার বিবরণ লিখুন (যেমন: 'মিরপুর থেকে মতিঝিল হাফ-পাস')",
     searchBtn: "রুট খুঁজুন",
     micListening: "শুনছি... কথা বলুন",
-    micTooltip: "ভয়েস দিয়ে খুঁজুন (বাংলা বা ইংরেজি)",
+    micTooltip: "ভয়েস দিয়ে খুঁজুন",
 
     // Route Cards
     recommended: "দ্রুততম রিকমেন্ডেশন",
@@ -149,16 +149,16 @@ export const I18N = {
     listenBriefing: "সংক্ষেপ শুনুন",
     offlineCardBtn: "অফলাইন কার্ড ডাউনলোড",
     viewFareBreakdown: "ভাড়ার বিস্তারিত",
-    landmarkInstruction: "ওঠার স্থান / ল্যান্ডমার্ক",
+    landmarkInstruction: "ওঠার স্থান",
 
     // Alerts
-    alertsTitle: "চলতি রাস্তার বিঘ্ন, জ্যাম ও জলজট",
+    alertsTitle: "চলতি রাস্তার বিঘ্ন ও জলজট",
     submitAlertBtn: "নতুন সতর্কবার্তা দিন",
     confirmBtn: "নিশ্চিত করুন",
     resolveBtn: "সমাধান হয়েছে",
     trustScoreLabel: "নির্ভরযোগ্যতা স্কোর",
-    waterlogging: "জলজট (পানিবন্দী)",
-    blockade: "রাস্তা অবরোধ / ব্যারিকেড",
+    waterlogging: "জলজট",
+    blockade: "রাস্তা অবরোধ ও ব্যারিকেড",
     gridlock: "তীব্র ট্রাফিক জ্যাম",
     construction: "রাস্তা মেরামত কাজ",
 
