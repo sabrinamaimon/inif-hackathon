@@ -26,11 +26,18 @@ class DhakaTransitGraph:
                 is_metro=hub_data["is_metro_station"]
             )
 
-        # 1. Add Metro Edges (MRT-6)
-        mrt_stops = ["Uttara", "Mirpur 10", "Agargaon", "Farmgate", "Shahbagh", "Motijheel"]
+        # 1. Add Metro Edges (MRT-6) - All 17 official consecutive stations
+        mrt_stops = [
+            "Uttara North", "Uttara Center", "Uttara South", "Pallabi",
+            "Mirpur 11", "Mirpur 10", "Kazipara", "Shewrapara",
+            "Agargaon", "Bijoy Sarani", "Farmgate", "Karwan Bazar",
+            "Shahbagh", "Dhaka University", "Bangladesh Secretariat",
+            "Motijheel", "Kamalapur"
+        ]
         for i in range(len(mrt_stops) - 1):
             u, v = mrt_stops[i], mrt_stops[i+1]
             dist = self._get_edge_distance(u, v)
+            base_time = max(2, int(round(dist * 1.8)))
             # Metro is immune to street traffic/waterlogging!
             self.multi_graph.add_edge(
                 u, v,
@@ -38,7 +45,7 @@ class DhakaTransitGraph:
                 mode="metro",
                 line_name="MRT-6 Metro Rail",
                 distance_km=dist,
-                base_time_mins=6,  # 6 mins between stations
+                base_time_mins=base_time,
                 operator="DMTCL",
                 color="#059669",
                 student_allowed=False,
@@ -50,12 +57,17 @@ class DhakaTransitGraph:
                 mode="metro",
                 line_name="MRT-6 Metro Rail",
                 distance_km=dist,
-                base_time_mins=6,
+                base_time_mins=base_time,
                 operator="DMTCL",
                 color="#059669",
                 student_allowed=False,
                 elevated=True
             )
+
+        # Connector between bus terminal Uttara and Uttara North metro station
+        if "Uttara" in self.multi_graph and "Uttara North" in self.multi_graph:
+            self.multi_graph.add_edge("Uttara", "Uttara North", key="walk", mode="rickshaw", line_name="Metro Link Walk", distance_km=0.2, base_time_mins=2, operator="Walk / Connector", color="#059669", student_allowed=True, elevated=False)
+            self.multi_graph.add_edge("Uttara North", "Uttara", key="walk", mode="rickshaw", line_name="Metro Link Walk", distance_km=0.2, base_time_mins=2, operator="Walk / Connector", color="#059669", student_allowed=True, elevated=False)
 
         # 2. Add Bus Routes
         for route in TRANSIT_ROUTES:
@@ -343,13 +355,8 @@ class DhakaTransitGraph:
         except (nx.NetworkXNoPath, nx.NodeNotFound):
             return None
 
-        # Build RouteLeg list
-        legs: List[RouteLeg] = []
-        total_time = 0
-        total_regular = 0
-        total_student = 0
-        transfers = max(0, len(node_path) - 2)
-
+        # Build RouteLeg list - Consolidate continuous legs of same transit line
+        raw_segments = []
         for i in range(len(node_path) - 1):
             u = node_path[i]
             v = node_path[i+1]
@@ -368,10 +375,55 @@ class DhakaTransitGraph:
                 if u in waterlogged_hubs or v in waterlogged_hubs:
                     duration += 15
 
+            raw_segments.append({
+                "u": u,
+                "v": v,
+                "mode": mode,
+                "line_name": line_name,
+                "dist": dist,
+                "duration": duration,
+                "is_affected": (u in waterlogged_hubs or v in waterlogged_hubs or u in blocked_hubs or v in blocked_hubs)
+            })
+
+        consolidated = []
+        for seg in raw_segments:
+            if consolidated and consolidated[-1]["mode"] == seg["mode"] and consolidated[-1]["line_name"] == seg["line_name"]:
+                consolidated[-1]["to_hub"] = seg["v"]
+                consolidated[-1]["distance_km"] += seg["dist"]
+                consolidated[-1]["duration_mins"] += seg["duration"]
+                consolidated[-1]["intermediate_stops"].append(seg["u"])
+                if seg["is_affected"]:
+                    consolidated[-1]["is_affected"] = True
+            else:
+                consolidated.append({
+                    "from_hub": seg["u"],
+                    "to_hub": seg["v"],
+                    "mode": seg["mode"],
+                    "line_name": seg["line_name"],
+                    "distance_km": seg["dist"],
+                    "duration_mins": seg["duration"],
+                    "intermediate_stops": [],
+                    "is_affected": seg["is_affected"]
+                })
+
+        legs: List[RouteLeg] = []
+        total_time = 0
+        total_regular = 0
+        total_student = 0
+        transfers = max(0, len(consolidated) - 1)
+
+        for i, c in enumerate(consolidated):
+            u = c["from_hub"]
+            v = c["to_hub"]
+            mode = c["mode"]
+            line_name = c["line_name"]
+            dist = c["distance_km"]
+            duration = c["duration_mins"]
+
             # Calculate exact leg fare
             surge_mult = 1.0
             if mode == "metro":
-                reg_fare = DhakaFareEngine.calculate_metro_fare(u, v)
+                reg_fare = DhakaFareEngine.calculate_metro_fare(u, v) or 20
                 stud_fare = reg_fare  # Metro has no student discount
             elif mode == "bus":
                 reg_fare, stud_fare = DhakaFareEngine.calculate_bus_fare(dist, from_hub=u, to_hub=v)
@@ -383,6 +435,8 @@ class DhakaTransitGraph:
                 )
 
             instructions = self._get_landmark_instruction(u, v, mode, line_name)
+            if c["intermediate_stops"]:
+                instructions += f" ({len(c['intermediate_stops'])} intermediate stops via {', '.join(c['intermediate_stops'][:3])}{'...' if len(c['intermediate_stops']) > 3 else ''})"
 
             leg = RouteLeg(
                 leg_number=i+1,
@@ -396,7 +450,7 @@ class DhakaTransitGraph:
                 student_fare_bdt=stud_fare,
                 surge_multiplier=surge_mult,
                 landmark_instructions=instructions,
-                is_affected_by_alert=(u in waterlogged_hubs or v in waterlogged_hubs or u in blocked_hubs or v in blocked_hubs)
+                is_affected_by_alert=c["is_affected"]
             )
             legs.append(leg)
             total_time += duration

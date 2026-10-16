@@ -4,16 +4,205 @@ Contains 14 Major Dhaka Hubs, Coordinates, MRT-6 Metro Rail, Local Buses, Leguna
 """
 
 DHAKA_HUBS = {
+    # --- MRT-6 Official Stations (Uttara North to Kamalapur) ---
+    "Uttara North": {
+        "id": "hub-uttara-north",
+        "name": "Uttara North",
+        "name_bn": "উত্তরা উত্তর (দিয়াবাড়ী)",
+        "lat": 23.8755,
+        "lng": 90.3807,
+        "landmarks": ["Diabari Metro Terminal", "Sector 15 Playground", "DMTCL Depot", "Metro Gate 1 & 2"],
+        "is_metro_station": True,
+        "metro_station_code": "MRT6-UTN",
+        "zone": "MRT-6 North Terminal"
+    },
+    "Uttara Center": {
+        "id": "hub-uttara-center",
+        "name": "Uttara Center",
+        "name_bn": "উত্তরা সেন্টার",
+        "lat": 23.8645,
+        "lng": 90.3785,
+        "landmarks": ["Sector 16/17 Bridge", "Uttara Sector 17 Avenue", "Metro Gate 1"],
+        "is_metro_station": True,
+        "metro_station_code": "MRT6-UTC",
+        "zone": "MRT-6 Sector 16/17"
+    },
+    "Uttara South": {
+        "id": "hub-uttara-south",
+        "name": "Uttara South",
+        "name_bn": "উত্তরা দক্ষিণ",
+        "lat": 23.8540,
+        "lng": 90.3752,
+        "landmarks": ["Sector 18 Connector", "Sonargaon Janapath Road", "Metro Gate 2"],
+        "is_metro_station": True,
+        "metro_station_code": "MRT6-UTS",
+        "zone": "MRT-6 Sector 18"
+    },
+    "Pallabi": {
+        "id": "hub-pallabi",
+        "name": "Pallabi",
+        "name_bn": "পল্লবী",
+        "lat": 23.8340,
+        "lng": 90.3660,
+        "landmarks": ["Purobi Cinema Hall", "Pallabi Thana", "Mirpur 12 Bus Stand", "Metro Gate A"],
+        "is_metro_station": True,
+        "metro_station_code": "MRT6-PAL",
+        "zone": "MRT-6 Mirpur 12"
+    },
+    "Mirpur 11": {
+        "id": "hub-mirpur11",
+        "name": "Mirpur 11",
+        "name_bn": "মিরপুর ১১",
+        "lat": 23.8210,
+        "lng": 90.3670,
+        "landmarks": ["Avenue 3", "Mirpur 11 Bus Stand", "Bihari Camp Junction", "Metro Gate 1"],
+        "is_metro_station": True,
+        "metro_station_code": "MRT6-M11",
+        "zone": "MRT-6 Mirpur 11"
+    },
+    "Mirpur 10": {
+        "id": "hub-mirpur10",
+        "name": "Mirpur 10",
+        "name_bn": "মিরপুর ১০",
+        "lat": 23.8070,
+        "lng": 90.3686,
+        "landmarks": ["Mirpur 10 Roundabout", "Fire Service Station", "Metro Pillar 184", "Benarosi Palli"],
+        "is_metro_station": True,
+        "metro_station_code": "MRT6-M10",
+        "zone": "MRT-6 Transit Interchange"
+    },
+    "Kazipara": {
+        "id": "hub-kazipara",
+        "name": "Kazipara",
+        "name_bn": "কাজীপাড়া",
+        "lat": 23.7950,
+        "lng": 90.3720,
+        "landmarks": ["Kazipara Bus Stand", "Begum Rokeya Sarani", "Metro Gate 2"],
+        "is_metro_station": True,
+        "metro_station_code": "MRT6-KAZ",
+        "zone": "MRT-6 Rokeya Sarani"
+    },
+    "Shewrapara": {
+        "id": "hub-shewrapara",
+        "name": "Shewrapara",
+        "name_bn": "শেওড়াপাড়া",
+        "lat": 23.7875,
+        "lng": 90.3745,
+        "landmarks": ["West Kafrul Road", "Shewrapara Bazar", "Metro Gate 1"],
+        "is_metro_station": True,
+        "metro_station_code": "MRT6-SHW",
+        "zone": "MRT-6 West Kafrul"
+    },
+    "Agargaon": {
+        "id": "hub-agargaon",
+        "name": "Agargaon",
+        "name_bn": "আগারগাঁও",
+        "lat": 23.7785,
+        "lng": 90.3780,
+        "landmarks": ["Passport Office Road", "Election Commission", "IDB Bhaban", "Metro Gate 2"],
+        "is_metro_station": True,
+        "metro_station_code": "MRT6-AGA",
+        "zone": "MRT-6 Administrative Hub"
+    },
+    "Bijoy Sarani": {
+        "id": "hub-bijoy-sarani",
+        "name": "Bijoy Sarani",
+        "name_bn": "বিজয় সরণি",
+        "lat": 23.7650,
+        "lng": 90.3850,
+        "landmarks": ["Old Airport Road", "Rangs Bhaban", "Novo Theatre", "Air Force Museum", "Metro Gate A"],
+        "is_metro_station": True,
+        "metro_station_code": "MRT6-BJS",
+        "zone": "MRT-6 Khamarbari / Old Airport"
+    },
+    "Farmgate": {
+        "id": "hub-farmgate",
+        "name": "Farmgate",
+        "name_bn": "ফার্মগেট",
+        "lat": 23.7561,
+        "lng": 90.3872,
+        "landmarks": ["Ananda Cinema Hall", "Foot-overbridge", "Tejgaon College", "Khamarbari", "Metro Exit A"],
+        "is_metro_station": True,
+        "metro_station_code": "MRT6-FMG",
+        "zone": "MRT-6 Transit Interchange"
+    },
+    "Karwan Bazar": {
+        "id": "hub-karwan-bazar",
+        "name": "Karwan Bazar",
+        "name_bn": "কারওয়ান বাজার",
+        "lat": 23.7485,
+        "lng": 90.3920,
+        "landmarks": ["SAARC Fountain", "Pan Pacific Sonargaon", "Petrobangla", "Metro Gate 2"],
+        "is_metro_station": True,
+        "metro_station_code": "MRT6-KBZ",
+        "zone": "MRT-6 Commercial District"
+    },
+    "Shahbagh": {
+        "id": "hub-shahbagh",
+        "name": "Shahbagh",
+        "name_bn": "শাহবাগ",
+        "lat": 23.7383,
+        "lng": 90.3956,
+        "landmarks": ["BSMMU (PG Hospital)", "National Museum", "BIRDEM Hospital", "DU Campus Gate", "Metro Exit 1"],
+        "is_metro_station": True,
+        "metro_station_code": "MRT6-SHB",
+        "zone": "MRT-6 University / Medical Hub"
+    },
+    "Dhaka University": {
+        "id": "hub-du",
+        "name": "Dhaka University",
+        "name_bn": "ঢাকা বিশ্ববিদ্যালয় (টিএসসি)",
+        "lat": 23.7315,
+        "lng": 90.3965,
+        "landmarks": ["TSC (Teacher Student Centre)", "Curzon Hall", "Doyel Chattar", "Central Library", "Metro Gate A"],
+        "is_metro_station": True,
+        "metro_station_code": "MRT6-DU",
+        "zone": "MRT-6 Academic Corridor"
+    },
+    "Bangladesh Secretariat": {
+        "id": "hub-secretariat",
+        "name": "Bangladesh Secretariat",
+        "name_bn": "বাংলাদেশ সচিবালয় (প্রেস ক্লাব)",
+        "lat": 23.7290,
+        "lng": 90.4075,
+        "landmarks": ["National Press Club", "Cabinet Division", "Abdul Gani Road", "Topkhana Road", "Metro Gate 1"],
+        "is_metro_station": True,
+        "metro_station_code": "MRT6-SEC",
+        "zone": "MRT-6 Government Hub"
+    },
     "Motijheel": {
         "id": "hub-motijheel",
         "name": "Motijheel",
         "name_bn": "মতিঝিল",
-        "lat": 23.7330,
-        "lng": 90.4172,
-        "landmarks": ["Shapla Chattar", "Bangladesh Bank", "Sonali Bank HQ", "Metro Exit B"],
+        "lat": 23.7270,
+        "lng": 90.4180,
+        "landmarks": ["Shapla Chattar", "Bangladesh Bank HQ", "Sonali Bank HQ", "Metro Exit B"],
         "is_metro_station": True,
         "metro_station_code": "MRT6-MJL",
-        "zone": "Central Commercial"
+        "zone": "MRT-6 Commercial Terminal"
+    },
+    "Kamalapur": {
+        "id": "hub-kamalapur",
+        "name": "Kamalapur",
+        "name_bn": "কমলাপুর",
+        "lat": 23.7318,
+        "lng": 90.4255,
+        "landmarks": ["Kamalapur Central Railway Station", "ICD Container Yard", "Railway Overbridge", "Metro East Terminal"],
+        "is_metro_station": True,
+        "metro_station_code": "MRT6-KMP",
+        "zone": "MRT-6 Central Railway Hub"
+    },
+    # --- Major Road Transit Hubs ---
+    "Uttara": {
+        "id": "hub-uttara",
+        "name": "Uttara",
+        "name_bn": "উত্তরা (আজমপুর / রাজলক্ষ্মী)",
+        "lat": 23.8755,
+        "lng": 90.3807,
+        "landmarks": ["House Building", "Rajlakshmi Complex", "Azampur Bus Stand", "Metro North Station"],
+        "is_metro_station": True,
+        "metro_station_code": "MRT6-UTN",
+        "zone": "North Suburban"
     },
     "Banasree": {
         "id": "hub-banasree",
@@ -34,28 +223,6 @@ DHAKA_HUBS = {
         "landmarks": ["Malibagh Railgate", "Chowdhurypara", "Abul Hotel", "Mouchak Market"],
         "is_metro_station": False,
         "zone": "Central East"
-    },
-    "Shahbagh": {
-        "id": "hub-shahbagh",
-        "name": "Shahbagh",
-        "name_bn": "শাহবাগ",
-        "lat": 23.7383,
-        "lng": 90.3956,
-        "landmarks": ["BSMMU (PG Hospital)", "National Museum", "BIRDEM Hospital", "DU Campus Gate", "Metro Exit 1"],
-        "is_metro_station": True,
-        "metro_station_code": "MRT6-SHB",
-        "zone": "Institutional / University"
-    },
-    "Farmgate": {
-        "id": "hub-farmgate",
-        "name": "Farmgate",
-        "name_bn": "ফার্মগেট",
-        "lat": 23.7561,
-        "lng": 90.3872,
-        "landmarks": ["Ananda Cinema Hall", "Foot-overbridge", "Tejgaon College", "Khamarbari", "Metro Exit A"],
-        "is_metro_station": True,
-        "metro_station_code": "MRT6-FMG",
-        "zone": "Central Transit Hub"
     },
     "Science Lab": {
         "id": "hub-sciencelab",
@@ -87,28 +254,6 @@ DHAKA_HUBS = {
         "is_metro_station": False,
         "zone": "West Residential"
     },
-    "Mirpur 10": {
-        "id": "hub-mirpur10",
-        "name": "Mirpur 10",
-        "name_bn": "মিরপুর ১০",
-        "lat": 23.8070,
-        "lng": 90.3686,
-        "landmarks": ["Mirpur 10 Roundabout", "Fire Service Station", "Metro Pillar 184", "Benarosi Palli"],
-        "is_metro_station": True,
-        "metro_station_code": "MRT6-M10",
-        "zone": "North Transit Hub"
-    },
-    "Agargaon": {
-        "id": "hub-agargaon",
-        "name": "Agargaon",
-        "name_bn": "আগারগাঁও",
-        "lat": 23.7785,
-        "lng": 90.3780,
-        "landmarks": ["Passport Office Road", "Election Commission", "IDB Bhaban", "Metro Gate 2"],
-        "is_metro_station": True,
-        "metro_station_code": "MRT6-AGA",
-        "zone": "Administrative / Institutional"
-    },
     "Mohakhali": {
         "id": "hub-mohakhali",
         "name": "Mohakhali",
@@ -129,17 +274,6 @@ DHAKA_HUBS = {
         "is_metro_station": False,
         "zone": "North-East Corridor"
     },
-    "Uttara": {
-        "id": "hub-uttara",
-        "name": "Uttara",
-        "name_bn": "উত্তরা",
-        "lat": 23.8759,
-        "lng": 90.3795,
-        "landmarks": ["House Building", "Rajlakshmi Complex", "Azampur Bus Stand", "Metro North Station"],
-        "is_metro_station": True,
-        "metro_station_code": "MRT6-UTN",
-        "zone": "North Suburban"
-    },
     "Jatrabari": {
         "id": "hub-jatrabari",
         "name": "Jatrabari",
@@ -149,6 +283,26 @@ DHAKA_HUBS = {
         "landmarks": ["Mayor Hanif Flyover Entry", "Jatrabari Chourasta", "Golapbagh Field", "Donia Mor"],
         "is_metro_station": False,
         "zone": "South-East Entryway"
+    },
+    "Sadarghat": {
+        "id": "hub-sadarghat",
+        "name": "Sadarghat",
+        "name_bn": "সদরঘাট (পুরান ঢাকা)",
+        "lat": 23.7081,
+        "lng": 90.4124,
+        "landmarks": ["Ahsan Manzil (Pink Palace)", "Sadarghat Launch Terminal", "Bahadur Shah Park"],
+        "is_metro_station": False,
+        "zone": "Puran Dhaka Heritage / Riverport"
+    },
+    "Lalbagh": {
+        "id": "hub-lalbagh",
+        "name": "Lalbagh",
+        "name_bn": "লালবাগ কেল্লা (চকবাজার)",
+        "lat": 23.7189,
+        "lng": 90.3881,
+        "landmarks": ["Lalbagh Fort", "Chawkbazar Shahi Masjid", "Shaista Khan Gate"],
+        "is_metro_station": False,
+        "zone": "Mughal Heritage / Old Dhaka"
     }
 }
 
@@ -229,7 +383,7 @@ MRT6_FULL_STATION_FARE_MATRIX = {
     # 0: Uttara North
     ("Uttara North", "Uttara Center"): 20, ("Uttara North", "Uttara South"): 20, ("Uttara North", "Pallabi"): 30,
     ("Uttara North", "Mirpur 11"): 30, ("Uttara North", "Mirpur 10"): 40, ("Uttara North", "Kazipara"): 40,
-    ("Uttara North", "Shewrapara"): 50, ("Uttara North", "Agargaon"): 50, ("Uttara North", "Bijoy Sarani"): 60,
+    ("Uttara North", "Shewrapara"): 50, ("Uttara North", "Agargaon"): 60, ("Uttara North", "Bijoy Sarani"): 60,
     ("Uttara North", "Farmgate"): 70, ("Uttara North", "Karwan Bazar"): 80, ("Uttara North", "Shahbagh"): 80,
     ("Uttara North", "Dhaka University"): 90, ("Uttara North", "Bangladesh Secretariat"): 90,
     ("Uttara North", "Motijheel"): 100, ("Uttara North", "Kamalapur"): 100,
@@ -322,7 +476,13 @@ TRANSIT_ROUTES = [
         "color": "#059669",
         "student_pass_allowed": False,
         "frequency_mins": 6,
-        "hubs": ["Uttara", "Mirpur 10", "Agargaon", "Farmgate", "Shahbagh", "Motijheel"],
+        "hubs": [
+            "Uttara North", "Uttara Center", "Uttara South", "Pallabi",
+            "Mirpur 11", "Mirpur 10", "Kazipara", "Shewrapara",
+            "Agargaon", "Bijoy Sarani", "Farmgate", "Karwan Bazar",
+            "Shahbagh", "Dhaka University", "Bangladesh Secretariat",
+            "Motijheel", "Kamalapur"
+        ],
         "landmark_instructions": "Enter elevated station via concourse level. Use Rapid Pass or single journey ticket at turnstiles. Train has AC and automated voice announcements."
     },
     {
@@ -546,6 +706,26 @@ TRANSIT_ROUTES = [
 # Physical Distance & Baseline Travel Time Between Connected Hubs
 # Format: (Origin, Destination): {"distance_km": float, "base_time_mins": int, "rickshaw_base_bdt": int}
 TRANSIT_EDGES = {
+    # --- MRT-6 Inter-station Elevated Rail Segments ---
+    ("Uttara North", "Uttara Center"): {"distance_km": 1.3, "base_time_mins": 3, "rickshaw_base_bdt": 35},
+    ("Uttara Center", "Uttara South"): {"distance_km": 1.2, "base_time_mins": 2, "rickshaw_base_bdt": 35},
+    ("Uttara South", "Pallabi"): {"distance_km": 2.3, "base_time_mins": 4, "rickshaw_base_bdt": 50},
+    ("Pallabi", "Mirpur 11"): {"distance_km": 1.5, "base_time_mins": 3, "rickshaw_base_bdt": 40},
+    ("Mirpur 11", "Mirpur 10"): {"distance_km": 1.6, "base_time_mins": 3, "rickshaw_base_bdt": 40},
+    ("Mirpur 10", "Kazipara"): {"distance_km": 1.4, "base_time_mins": 3, "rickshaw_base_bdt": 35},
+    ("Kazipara", "Shewrapara"): {"distance_km": 1.0, "base_time_mins": 2, "rickshaw_base_bdt": 30},
+    ("Shewrapara", "Agargaon"): {"distance_km": 1.2, "base_time_mins": 2, "rickshaw_base_bdt": 35},
+    ("Agargaon", "Bijoy Sarani"): {"distance_km": 1.6, "base_time_mins": 3, "rickshaw_base_bdt": 40},
+    ("Bijoy Sarani", "Farmgate"): {"distance_km": 1.2, "base_time_mins": 2, "rickshaw_base_bdt": 35},
+    ("Farmgate", "Karwan Bazar"): {"distance_km": 1.1, "base_time_mins": 2, "rickshaw_base_bdt": 35},
+    ("Karwan Bazar", "Shahbagh"): {"distance_km": 1.2, "base_time_mins": 2, "rickshaw_base_bdt": 35},
+    ("Shahbagh", "Dhaka University"): {"distance_km": 0.9, "base_time_mins": 2, "rickshaw_base_bdt": 30},
+    ("Dhaka University", "Bangladesh Secretariat"): {"distance_km": 1.3, "base_time_mins": 2, "rickshaw_base_bdt": 35},
+    ("Bangladesh Secretariat", "Motijheel"): {"distance_km": 1.2, "base_time_mins": 2, "rickshaw_base_bdt": 35},
+    ("Motijheel", "Kamalapur"): {"distance_km": 1.1, "base_time_mins": 2, "rickshaw_base_bdt": 35},
+    ("Uttara", "Uttara North"): {"distance_km": 0.2, "base_time_mins": 2, "rickshaw_base_bdt": 20},
+
+    # --- Surface Transit Corridor Hubs ---
     ("Uttara", "Mirpur 10"): {"distance_km": 8.5, "base_time_mins": 25, "rickshaw_base_bdt": 160},
     ("Mirpur 10", "Agargaon"): {"distance_km": 3.8, "base_time_mins": 12, "rickshaw_base_bdt": 70},
     ("Agargaon", "Farmgate"): {"distance_km": 3.2, "base_time_mins": 10, "rickshaw_base_bdt": 60},

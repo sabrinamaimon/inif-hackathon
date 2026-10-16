@@ -8,33 +8,81 @@
  * - Dynamic Detour calculation during Waterlogging and Intersection Blockades
  */
 
-import { STATIC_HUBS } from '../data/staticData';
+import { STATIC_HUBS } from '../data/staticData.js';
 
 export const METRO_FARE_CHART = {
-  "Uttara-Mirpur 10": 30,
-  "Uttara-Agargaon": 50,
-  "Uttara-Farmgate": 60,
-  "Uttara-Shahbagh": 80,
-  "Uttara-Motijheel": 100,
-  "Mirpur 10-Agargaon": 20,
-  "Mirpur 10-Farmgate": 30,
+  // Official DMTCL 17x17 Matrix Key Station Fares
+  "Uttara North-Motijheel": 100,
+  "Uttara North-Kamalapur": 100,
+  "Uttara North-Shahbagh": 80,
+  "Uttara North-Farmgate": 70,
+  "Uttara North-Agargaon": 60,
+  "Uttara North-Mirpur 10": 40,
+  "Uttara North-Pallabi": 30,
+  "Uttara North-Dhaka University": 90,
+  "Uttara North-Bangladesh Secretariat": 90,
+  "Pallabi-Motijheel": 70,
+  "Pallabi-Kamalapur": 80,
+  "Pallabi-Bangladesh Secretariat": 70,
+  "Pallabi-Shahbagh": 60,
+  "Pallabi-Farmgate": 50,
+  "Pallabi-Agargaon": 30,
+  "Pallabi-Mirpur 10": 20,
+  "Mirpur 10-Motijheel": 60,
+  "Mirpur 10-Kamalapur": 60,
+  "Mirpur 10-Bangladesh Secretariat": 50,
+  "Mirpur 10-Dhaka University": 50,
   "Mirpur 10-Shahbagh": 40,
-  "Mirpur 10-Motijheel": 50,
-  "Agargaon-Farmgate": 20,
-  "Agargaon-Shahbagh": 30,
+  "Mirpur 10-Farmgate": 30,
+  "Mirpur 10-Agargaon": 20,
   "Agargaon-Motijheel": 40,
-  "Farmgate-Shahbagh": 20,
+  "Agargaon-Kamalapur": 50,
+  "Agargaon-Bangladesh Secretariat": 40,
+  "Agargaon-Dhaka University": 30,
+  "Agargaon-Shahbagh": 30,
+  "Agargaon-Farmgate": 20,
+  "Bijoy Sarani-Motijheel": 40,
+  "Bijoy Sarani-Shahbagh": 20,
   "Farmgate-Motijheel": 30,
-  "Shahbagh-Motijheel": 20
+  "Farmgate-Kamalapur": 40,
+  "Farmgate-Bangladesh Secretariat": 30,
+  "Farmgate-Dhaka University": 20,
+  "Farmgate-Shahbagh": 20,
+  "Karwan Bazar-Motijheel": 30,
+  "Karwan Bazar-Shahbagh": 20,
+  "Shahbagh-Motijheel": 20,
+  "Shahbagh-Kamalapur": 30,
+  "Dhaka University-Motijheel": 20,
+  "Dhaka University-Kamalapur": 20,
+  "Bangladesh Secretariat-Motijheel": 20,
+  "Bangladesh Secretariat-Kamalapur": 20,
+  "Motijheel-Kamalapur": 20,
+  // Alias for Uttara
+  "Uttara-Motijheel": 100,
+  "Uttara-Farmgate": 70,
+  "Uttara-Agargaon": 50,
+  "Uttara-Mirpur 10": 40
 };
 
 export const BASE_TRANSIT_EDGES = [
-  // Metro MRT-6 (Elevated - Immune to surface traffic/waterlogging)
-  { u: "Uttara", v: "Mirpur 10", mode: "metro", line: "MRT-6 Metro Rail", dist: 8.5, time: 10, elevated: true },
-  { u: "Mirpur 10", v: "Agargaon", mode: "metro", line: "MRT-6 Metro Rail", dist: 3.8, time: 6, elevated: true },
-  { u: "Agargaon", v: "Farmgate", mode: "metro", line: "MRT-6 Metro Rail", dist: 3.2, time: 5, elevated: true },
-  { u: "Farmgate", v: "Shahbagh", mode: "metro", line: "MRT-6 Metro Rail", dist: 2.5, time: 5, elevated: true },
-  { u: "Shahbagh", v: "Motijheel", mode: "metro", line: "MRT-6 Metro Rail", dist: 2.8, time: 6, elevated: true },
+  // Metro MRT-6 (Elevated - Immune to surface traffic/waterlogging) - All 17 Stations
+  { u: "Uttara North", v: "Uttara Center", mode: "metro", line: "MRT-6 Metro Rail", dist: 1.3, time: 3, elevated: true },
+  { u: "Uttara Center", v: "Uttara South", mode: "metro", line: "MRT-6 Metro Rail", dist: 1.2, time: 2, elevated: true },
+  { u: "Uttara South", v: "Pallabi", mode: "metro", line: "MRT-6 Metro Rail", dist: 2.3, time: 4, elevated: true },
+  { u: "Pallabi", v: "Mirpur 11", mode: "metro", line: "MRT-6 Metro Rail", dist: 1.5, time: 3, elevated: true },
+  { u: "Mirpur 11", v: "Mirpur 10", mode: "metro", line: "MRT-6 Metro Rail", dist: 1.6, time: 3, elevated: true },
+  { u: "Mirpur 10", v: "Kazipara", mode: "metro", line: "MRT-6 Metro Rail", dist: 1.4, time: 3, elevated: true },
+  { u: "Kazipara", v: "Shewrapara", mode: "metro", line: "MRT-6 Metro Rail", dist: 1.0, time: 2, elevated: true },
+  { u: "Shewrapara", v: "Agargaon", mode: "metro", line: "MRT-6 Metro Rail", dist: 1.2, time: 2, elevated: true },
+  { u: "Agargaon", v: "Bijoy Sarani", mode: "metro", line: "MRT-6 Metro Rail", dist: 1.6, time: 3, elevated: true },
+  { u: "Bijoy Sarani", v: "Farmgate", mode: "metro", line: "MRT-6 Metro Rail", dist: 1.2, time: 2, elevated: true },
+  { u: "Farmgate", v: "Karwan Bazar", mode: "metro", line: "MRT-6 Metro Rail", dist: 1.1, time: 2, elevated: true },
+  { u: "Karwan Bazar", v: "Shahbagh", mode: "metro", line: "MRT-6 Metro Rail", dist: 1.2, time: 2, elevated: true },
+  { u: "Shahbagh", v: "Dhaka University", mode: "metro", line: "MRT-6 Metro Rail", dist: 0.9, time: 2, elevated: true },
+  { u: "Dhaka University", v: "Bangladesh Secretariat", mode: "metro", line: "MRT-6 Metro Rail", dist: 1.3, time: 2, elevated: true },
+  { u: "Bangladesh Secretariat", v: "Motijheel", mode: "metro", line: "MRT-6 Metro Rail", dist: 1.2, time: 2, elevated: true },
+  { u: "Motijheel", v: "Kamalapur", mode: "metro", line: "MRT-6 Metro Rail", dist: 1.1, time: 2, elevated: true },
+  { u: "Uttara", v: "Uttara North", mode: "rickshaw", line: "Metro Connector Walk", dist: 0.2, time: 2, elevated: false },
 
   // Surface Local Buses (Eligible for 50% student discount, 10 BDT min floor)
   { u: "Mirpur 10", v: "Agargaon", mode: "bus", line: "Bikolpo Auto Service", dist: 3.8, time: 15, elevated: false },
@@ -208,32 +256,57 @@ export function runDijkstraRouting({
     ];
   }
 
-  // Build legs and compute fares
+  // Consolidate consecutive legs of same line/mode (especially MRT-6)
+  const consolidated = [];
+  path.forEach((p) => {
+    const e = p.edge;
+    const duration = Math.round(e.time * (weather === "rain" && !e.elevated ? 1.3 : 1.0));
+    if (consolidated.length > 0 && consolidated[consolidated.length - 1].mode === e.mode && consolidated[consolidated.length - 1].line === e.line) {
+      const last = consolidated[consolidated.length - 1];
+      last.to = p.to;
+      last.dist += e.dist;
+      last.duration += duration;
+      last.intermediate.push(p.from);
+    } else {
+      consolidated.push({
+        from: p.from,
+        to: p.to,
+        mode: e.mode,
+        line: e.line,
+        dist: e.dist,
+        duration: duration,
+        intermediate: []
+      });
+    }
+  });
+
   let totalTime = 0;
   let totalRegular = 0;
   let totalStudent = 0;
   const isDetourActive = waterloggedHubs.size > 0 || blockedHubs.size > 0;
 
-  const legs = path.map((p, idx) => {
-    const e = p.edge;
-    const fare = calculateFare(e.mode, p.from, p.to, e.dist, weather, isRushHour);
-    const duration = Math.round(e.time * (weather === "rain" ? 1.3 : 1.0));
-    totalTime += duration;
+  const legs = consolidated.map((c, idx) => {
+    const fare = calculateFare(c.mode, c.from, c.to, c.dist, weather, isRushHour);
+    totalTime += c.duration;
     totalRegular += fare.regular;
     totalStudent += fare.student;
 
-    const landmark = e.mode === "metro"
-      ? `Board MRT-6 at ${p.from} Station. Alight at ${p.to}.`
-      : `Board ${e.line} at ${p.from} near ${STATIC_HUBS[p.from].landmarks[0]}.`;
+    let landmark = c.mode === "metro"
+      ? `Board MRT-6 at ${c.from} Station. Alight at ${c.to} Platform.`
+      : `Board ${c.line} at ${c.from} near ${STATIC_HUBS[c.from]?.landmarks?.[0] || 'Bus Stop'}.`;
+
+    if (c.intermediate.length > 0) {
+      landmark += ` (${c.intermediate.length} intermediate stops via ${c.intermediate.slice(0, 3).join(', ')}${c.intermediate.length > 3 ? '...' : ''})`;
+    }
 
     return {
       leg_number: idx + 1,
-      mode: e.mode,
-      line_name: e.line,
-      from_hub: p.from,
-      to_hub: p.to,
-      distance_km: e.dist,
-      duration_mins: duration,
+      mode: c.mode,
+      line_name: c.line,
+      from_hub: c.from,
+      to_hub: c.to,
+      distance_km: Math.round(c.dist * 10) / 10,
+      duration_mins: c.duration,
       regular_fare_bdt: fare.regular,
       student_fare_bdt: fare.student,
       surge_multiplier: fare.surge,

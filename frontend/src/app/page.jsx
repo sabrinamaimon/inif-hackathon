@@ -409,6 +409,20 @@ export default function Home() {
               lang={lang}
             />
 
+            {/* Live Interactive Transit & MRT-6 Metro Rail Map (17 Stations) */}
+            <MapView
+              hubs={hubs}
+              activeAlerts={alerts}
+              activeRoute={selectedRoute}
+              lang={lang}
+              onSetOrigin={(name) => setOrigin(name)}
+              onSetDestination={(name) => setDestination(name)}
+              onSelectHub={(name) => {
+                if (!origin) setOrigin(name);
+                else setDestination(name);
+              }}
+            />
+
             {/* Vintage BD Postcard Results */}
             <RouteResults
               routes={routes}
@@ -455,6 +469,12 @@ export default function Home() {
               activeAlerts={alerts}
               activeRoute={selectedRoute}
               lang={lang}
+              onSetOrigin={(name) => setOrigin(name)}
+              onSetDestination={(name) => setDestination(name)}
+              onSelectHub={(name) => {
+                if (!origin) setOrigin(name);
+                else setDestination(name);
+              }}
             />
             <EmergencyHelpline lang={lang} isHome={false} />
           </div>

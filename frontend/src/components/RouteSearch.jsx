@@ -23,7 +23,12 @@ export default function RouteSearch({
   lang
 }) {
   const t = I18N[lang] || I18N.bn;
-  const hubNames = Object.keys(STATIC_HUBS);
+  const metroStations = Object.keys(STATIC_HUBS)
+    .filter(name => STATIC_HUBS[name]?.is_metro_station && name !== 'Uttara')
+    .sort((a, b) => (STATIC_HUBS[a]?.station_order || 99) - (STATIC_HUBS[b]?.station_order || 99));
+
+  const roadHubs = Object.keys(STATIC_HUBS)
+    .filter(name => !STATIC_HUBS[name]?.is_metro_station || name === 'Uttara');
 
   const [naturalQuery, setNaturalQuery] = useState('');
   const [isListening, setIsListening] = useState(false);
@@ -121,14 +126,21 @@ export default function RouteSearch({
             onChange={(e) => setOrigin(e.target.value)}
             className="w-full px-4 py-3.5 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/40 text-[#fbf8f1] text-base font-anek font-bold focus:border-[#f6d16f] focus:outline-none transition-all shadow-inner"
           >
-            {hubNames.map((name) => (
-              <option key={name} value={name} className="bg-[#1a1410] text-[#fbf8f1]">
-                {STATIC_HUBS[name]?.name_bn 
-                  ? `${STATIC_HUBS[name].name_bn} (${name})` 
-                  : name}
-                {STATIC_HUBS[name]?.is_metro_station ? ' 🚇 [মেট্রো]' : ''}
-              </option>
-            ))}
+            <optgroup label={lang === 'bn' ? '🚇 এমআরটি-৬ মেট্রোরেল (১৭টি স্টেশন ক্রমানুসারে)' : '🚇 MRT-6 Metro Rail (17 Stations in Order)'} className="bg-[#14100c] text-[#34d399] font-bold">
+              {metroStations.map((name) => (
+                <option key={name} value={name} className="bg-[#1a1410] text-[#fbf8f1]">
+                  {STATIC_HUBS[name]?.station_order ? `[M-${String(STATIC_HUBS[name].station_order).padStart(2, '0')}] ` : ''}
+                  {STATIC_HUBS[name]?.name_bn ? `${STATIC_HUBS[name].name_bn} (${name})` : name}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label={lang === 'bn' ? '🛺 রোড বাস ও ট্রানজিট হাব' : '🛺 Road Bus & Transit Hubs'} className="bg-[#14100c] text-[#f6d16f] font-bold">
+              {roadHubs.map((name) => (
+                <option key={name} value={name} className="bg-[#1a1410] text-[#fbf8f1]">
+                  {STATIC_HUBS[name]?.name_bn ? `${STATIC_HUBS[name].name_bn} (${name})` : name}
+                </option>
+              ))}
+            </optgroup>
           </select>
         </div>
 
@@ -154,14 +166,21 @@ export default function RouteSearch({
             onChange={(e) => setDestination(e.target.value)}
             className="w-full px-4 py-3.5 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/40 text-[#fbf8f1] text-base font-anek font-bold focus:border-[#f6d16f] focus:outline-none transition-all shadow-inner"
           >
-            {hubNames.map((name) => (
-              <option key={name} value={name} className="bg-[#1a1410] text-[#fbf8f1]">
-                {STATIC_HUBS[name]?.name_bn 
-                  ? `${STATIC_HUBS[name].name_bn} (${name})` 
-                  : name}
-                {STATIC_HUBS[name]?.is_metro_station ? ' 🚇 [মেট্রো]' : ''}
-              </option>
-            ))}
+            <optgroup label={lang === 'bn' ? '🚇 এমআরটি-৬ মেট্রোরেল (১৭টি স্টেশন ক্রমানুসারে)' : '🚇 MRT-6 Metro Rail (17 Stations in Order)'} className="bg-[#14100c] text-[#34d399] font-bold">
+              {metroStations.map((name) => (
+                <option key={name} value={name} className="bg-[#1a1410] text-[#fbf8f1]">
+                  {STATIC_HUBS[name]?.station_order ? `[M-${String(STATIC_HUBS[name].station_order).padStart(2, '0')}] ` : ''}
+                  {STATIC_HUBS[name]?.name_bn ? `${STATIC_HUBS[name].name_bn} (${name})` : name}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label={lang === 'bn' ? '🛺 রোড বাস ও ট্রানজিট হাব' : '🛺 Road Bus & Transit Hubs'} className="bg-[#14100c] text-[#f6d16f] font-bold">
+              {roadHubs.map((name) => (
+                <option key={name} value={name} className="bg-[#1a1410] text-[#fbf8f1]">
+                  {STATIC_HUBS[name]?.name_bn ? `${STATIC_HUBS[name].name_bn} (${name})` : name}
+                </option>
+              ))}
+            </optgroup>
           </select>
         </div>
       </div>
