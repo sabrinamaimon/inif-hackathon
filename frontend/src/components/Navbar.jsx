@@ -273,7 +273,6 @@ export default function Navbar({
             <Globe className={`w-4 h-4 ${theme === 'light' ? 'text-[#b83a2e]' : 'text-[#f6d16f]'}`} />
           </button>
         </div>
-        </div>
       </div>
     </header>
   );
