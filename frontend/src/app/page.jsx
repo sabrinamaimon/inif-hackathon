@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import MobileDrawer from '../components/MobileDrawer';
+import StatsBar from '../components/StatsBar';
 import MapView from '../components/MapView';
 import RouteSearch from '../components/RouteSearch';
 import RouteResults from '../components/RouteResults';
@@ -118,7 +119,7 @@ export default function Home() {
         type_badge: 'Fastest Route',
         total_duration_mins: isDirectMetro ? 24 : 35,
         total_regular_fare: isDirectMetro ? 50 : 60,
-        total_student_fare: isDirectMetro ? 50 : 60, // Metro has no student discount
+        total_student_fare: isDirectMetro ? 50 : 60,
         transfers: isDirectMetro ? 0 : 1,
         is_recommended: true,
         is_detour: false,
@@ -146,8 +147,8 @@ export default function Home() {
         title_bn: `সাশ্রয়ী বাস রুট (শিক্ষার্থী হাফ-পাস)`,
         type_badge: 'Student & Budget Pick',
         total_duration_mins: 42,
-        total_regular_fare: 30,
-        total_student_fare: 15,
+        total_regular_fare: 35,
+        total_student_fare: 18,
         transfers: 0,
         is_recommended: false,
         is_detour: false,
@@ -155,55 +156,55 @@ export default function Home() {
           {
             leg_number: 1,
             mode: 'bus',
-            line_name: 'Bikolpo Auto Service',
+            line_name: 'Shikor Paribahan',
             from_hub: orig,
             to_hub: dest,
-            distance_km: 8.5,
+            distance_km: 9.2,
             duration_mins: 42,
-            regular_fare_bdt: 30,
-            student_fare_bdt: 15,
+            regular_fare_bdt: 35,
+            student_fare_bdt: 18,
             surge_multiplier: 1.0,
-            landmark_instructions: `Board at ${orig} bus counter. 50% Student discount applies with 10 BDT min floor.`
+            landmark_instructions: `Board from ${orig} foot-overbridge bus bay.`
           }
         ]
       },
       {
-        id: 'opt-heritage',
-        title: `Puran Dhaka Rickshaw & Connector Route (${orig} ➔ ${dest})`,
-        title_bn: `পুরান ঢাকা হেরিটেজ রিকশা ও কানেক্টর রুট`,
-        type_badge: 'Heritage & Detour Pick',
-        total_duration_mins: 38,
-        total_regular_fare: 45,
-        total_student_fare: 35,
-        transfers: 1,
+        id: 'opt-scenic',
+        title: `Old Dhaka Heritage Connector (${orig} ➔ ${dest})`,
+        title_bn: `ঐতিহ্যবাহী পুরান ঢাকা কানেক্টর (রিকশা ও লেগুনা)`,
+        type_badge: 'Culture & Rickshaw Art',
+        total_duration_mins: 55,
+        total_regular_fare: 80,
+        total_student_fare: 65,
+        transfers: 2,
         is_recommended: false,
-        is_detour: weather === 'rain',
+        is_detour: false,
         legs: [
           {
             leg_number: 1,
-            mode: 'bus',
-            line_name: 'Bihanga Paribahan',
+            mode: 'leguna',
+            line_name: 'Farmgate - Lalbagh Human Hauler',
             from_hub: orig,
             to_hub: 'Shahbagh',
-            distance_km: 5.2,
-            duration_mins: 22,
+            distance_km: 4.0,
+            duration_mins: 20,
             regular_fare_bdt: 20,
-            student_fare_bdt: 10,
+            student_fare_bdt: 20,
             surge_multiplier: 1.0,
-            landmark_instructions: `Board near ${orig} main counter.`
+            landmark_instructions: 'Take front seat near Khamarbari.'
           },
           {
             leg_number: 2,
             mode: 'rickshaw',
-            line_name: 'Painted Heritage Connector Rickshaw',
+            line_name: 'Traditional Rickshaw Art Ride',
             from_hub: 'Shahbagh',
             to_hub: dest,
-            distance_km: 3.1,
-            duration_mins: 16,
-            regular_fare_bdt: 25,
-            student_fare_bdt: 25,
-            surge_multiplier: weather === 'rain' ? 1.5 : 1.0,
-            landmark_instructions: `Alight at Shahbagh, hire painted connector rickshaw to ${dest}.`
+            distance_km: 3.2,
+            duration_mins: 25,
+            regular_fare_bdt: 60,
+            student_fare_bdt: 45,
+            surge_multiplier: weath === 'rain' ? 1.5 : 1.0,
+            landmark_instructions: 'Take colorful hood rickshaw past Curzon Hall & High Court.'
           }
         ]
       }
@@ -225,29 +226,41 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: queryText })
       });
+
       if (res.ok) {
-        const parsed = await res.json();
-        if (parsed.origin) setOrigin(parsed.origin);
-        if (parsed.destination) setDestination(parsed.destination);
-        if (parsed.passenger_type) setPassengerType(parsed.passenger_type);
+        const data = await res.json();
+        if (data.origin) setOrigin(data.origin);
+        if (data.destination) setDestination(data.destination);
+        if (data.passenger_type) setPassengerType(data.passenger_type);
+
         performSearch(
-          parsed.origin || origin,
-          parsed.destination || destination,
-          parsed.passenger_type || passengerType,
+          data.origin || origin,
+          data.destination || destination,
+          data.passenger_type || passengerType,
           weather,
           isRushHour
         );
         return;
       }
     } catch (e) {
-      console.warn('NLP API unavailable, applying local parsing');
+      console.warn('NLP route extraction offline, using fallback');
     }
 
-    // Local parse fallback
-    const low = queryText.toLowerCase();
-    const isStudent = low.includes('student') || low.includes('half') || low.includes('হাফ');
-    if (isStudent) setPassengerType('student');
-    performSearch(origin, destination, isStudent ? 'student' : passengerType, weather, isRushHour);
+    // Local parser fallback for Banglish/Bengali
+    const lower = queryText.toLowerCase();
+    let detectedOrigin = origin;
+    let detectedDest = destination;
+
+    if (lower.includes('mirpur') || lower.includes('মিরপুর')) detectedOrigin = 'Mirpur 10';
+    if (lower.includes('motijheel') || lower.includes('মতিঝিল')) detectedDest = 'Motijheel';
+    if (lower.includes('farmgate') || lower.includes('ফার্মগেট')) detectedOrigin = 'Farmgate';
+    if (lower.includes('dhanmondi') || lower.includes('ধানমন্ডি')) detectedDest = 'Dhanmondi';
+    if (lower.includes('uttara') || lower.includes('উত্তরা')) detectedOrigin = 'Uttara';
+    if (lower.includes('student') || lower.includes('ছাত্র') || lower.includes('হাফ')) setPassengerType('student');
+
+    setOrigin(detectedOrigin);
+    setDestination(detectedDest);
+    performSearch(detectedOrigin, detectedDest, passengerType, weather, isRushHour);
   };
 
   const handleVoteAlert = async (alertId, voteType) => {
@@ -346,7 +359,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col bg-slate-950 text-slate-100">
+    <main className="min-h-screen flex flex-col bg-[#120c09] text-[#fbf8f1] font-anek selection:bg-[#c69429] selection:text-[#120c09]">
       {/* Top Navigation */}
       <Navbar
         currentTab={currentTab}
@@ -373,17 +386,18 @@ export default function Home() {
         onOpenScanner={() => setIsScannerOpen(true)}
       />
 
-      {/* Full-Width Laptop Screen Container */}
-      <div className="flex-1 w-full max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-8 xl:px-10">
+      {/* Main Content Area */}
+      <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6">
+        {/* Living Stats Bar (1-Line Sleek Live Ticker) */}
+        <StatsBar lang={lang} />
 
-        {/* TAB 1: HOME (Search + Results + Map + Heritage Showcase + Simulator) */}
+        {/* TAB 1: HOME (Clean 2-Column Commute Workspace + Heritage Showcase) */}
         {currentTab === 'home' && (
-          <div className="w-full">
-            {/* Desktop 2-Column Split: Search/Results/Simulator (Left) & Sticky Live Map/Heritage (Right) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start my-4">
-              {/* Left Column: Smart Route Engine, Itineraries & Simulator */}
-              <div className="lg:col-span-5 xl:col-span-5 flex flex-col gap-6">
-                {/* Route Search Engine */}
+          <div className="space-y-8 my-4">
+            {/* 2-Column Grid: Left (Search + Postcard Route Cards) | Right (Sticky Map) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              {/* Left Column: Commute Query & Vintage BD Postcard Results */}
+              <div className="lg:col-span-7 space-y-6">
                 <RouteSearch
                   origin={origin}
                   setOrigin={setOrigin}
@@ -401,7 +415,6 @@ export default function Home() {
                   lang={lang}
                 />
 
-                {/* Route Results: Focused Large-Print Bangladesh Postcard Commute Cards */}
                 <RouteResults
                   routes={routes}
                   origin={origin}
@@ -412,34 +425,63 @@ export default function Home() {
                   onSelectRoute={(r) => setSelectedRoute(r)}
                   onOpenFareBreakdown={(r) => setFareModalRoute(r)}
                 />
-
-                {/* Quick Scenario Simulator Shortcut */}
-                <ScenarioSimulator
-                  simulationState={simulationState}
-                  onTriggerScenario={handleTriggerScenario}
-                  lang={lang}
-                />
               </div>
 
-              {/* Right Column: Full Interactive Leaflet Map (Sticky on Desktop) & Heritage Showcase */}
-              <div className="lg:col-span-7 xl:col-span-7 lg:sticky lg:top-20 flex flex-col gap-6">
-                {/* Interactive Leaflet Map View */}
-                <MapView
-                  hubs={hubs}
-                  activeAlerts={alerts}
-                  activeRoute={selectedRoute}
-                  lang={lang}
-                  onSelectHub={(hubName) => {
-                    if (hubName !== origin) setDestination(hubName);
-                  }}
-                />
+              {/* Right Column: Sticky Live Map View & Quick Simulator Banner */}
+              <div className="lg:col-span-5 lg:sticky lg:top-20 space-y-4">
+                <div className="heritage-card p-3 sm:p-4 border-2 border-[#c69429]/50 shadow-2xl bg-[#18130f] rounded-2xl overflow-hidden">
+                  <div className="flex items-center justify-between px-2 pb-2 mb-2 border-b border-[#c69429]/30">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">🗺️</span>
+                      <h3 className="font-rickshaw text-lg font-bold text-[#f6d16f] rickshaw-text-pop">
+                        {lang === 'bn' ? 'লাইভ ট্রানজিট মানচিত্র' : 'Live Transit Map'}
+                      </h3>
+                    </div>
+                    <span className="text-[11px] font-anek font-bold px-2 py-0.5 rounded-full bg-[#15453b] text-[#7dd3fc] border border-[#2a6f62]">
+                      {lang === 'bn' ? '১৬টি হাব ও রুট' : '16 Active Hubs'}
+                    </span>
+                  </div>
 
-                {/* Dhaka Cultural Heritage & Commute Showcase */}
-                <DhakaCommuteHeritageShowcase lang={lang} />
+                  <MapView
+                    hubs={hubs}
+                    activeAlerts={alerts}
+                    activeRoute={selectedRoute}
+                    lang={lang}
+                    onSelectHub={(hubName) => {
+                      if (hubName !== origin) setDestination(hubName);
+                    }}
+                  />
+                </div>
+
+                {/* Quick Simulation Shortcut Callout */}
+                <div className="p-4 rounded-2xl bg-[#18130f] border-2 border-[#c69429]/40 flex items-center justify-between gap-3 shadow-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-[#b83a2e]/30 border border-[#b83a2e] flex items-center justify-center text-xl shrink-0">
+                      ⚡
+                    </div>
+                    <div>
+                      <h4 className="font-rickshaw text-base font-bold text-[#f6d16f]">
+                        {lang === 'bn' ? 'আকস্মিক বৃষ্টি বা জ্যাম পরীক্ষা করুন' : 'Test Sudden Rain & Reroute'}
+                      </h4>
+                      <p className="font-anek text-xs text-[#dfcfb2]">
+                        {lang === 'bn' ? 'লাইভ ডিট্যুর ও রিকশা সার্জ সিমুলেটরে দেখুন' : 'Check dynamic detour and rickshaw surge rates'}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setCurrentTab('simulator')}
+                    className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#b83a2e] to-[#891e17] text-[#fbf8f1] font-anek font-bold text-xs border border-[#f6d16f] shrink-0 hover:scale-105 active:scale-95 transition-all shadow-md"
+                  >
+                    {lang === 'bn' ? 'সিমুলেটর ➔' : 'Simulate ➔'}
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* Emergency Helpline Strip (Exclusively on Home) */}
+            {/* Dhaka Cultural Heritage & Commute Lifelines Showcase */}
+            <DhakaCommuteHeritageShowcase lang={lang} />
+
+            {/* Emergency Helpline Strip */}
             <EmergencyHelpline lang={lang} isHome={true} />
           </div>
         )}

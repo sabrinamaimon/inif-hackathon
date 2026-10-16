@@ -89,31 +89,42 @@ export default function TransitCMS({ lang = 'bn' }) {
   });
 
   return (
-    <div className="glass-panel p-6 sm:p-7 border border-emerald-500/30 my-8 shadow-2xl">
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 mb-5 border-b border-slate-800">
+    <div className="heritage-card p-6 sm:p-7 border-2 border-[#c69429]/50 my-8 shadow-2xl bg-[#18130f]">
+      {/* Header */}
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 mb-5 border-b border-[#c69429]/30">
         <div>
-          <h3 className="text-xl sm:text-2xl font-black text-white flex items-center gap-3">
-            <Bus className="w-6 h-6 text-emerald-400" />
-            <span>{lang === 'bn' ? 'ঢাকা ট্রানজিট নেটওয়ার্ক ডিরেক্টরি (CMS)' : 'Dhaka Transit Network Directory (CMS)'}</span>
-          </h3>
-          <p className="text-sm text-slate-300 font-medium mt-1">
-            {lang === 'bn' ? 'মেট্রোরেল, অনুমোদিত বাস লাইন, লেগুনা করিডোর ও হাফ-পাস চার্ট' : 'Verified Metro, Bus, and Leguna transit corridors with student pass eligibility'}
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🚌</span>
+            <h3 className="font-rickshaw text-2xl sm:text-3xl font-bold text-[#f6d16f] rickshaw-text-pop tracking-wide">
+              {lang === 'bn' ? 'ঢাকা ট্রানজিট নেটওয়ার্ক ডিরেক্টরি' : 'Dhaka Transit Network Directory'}
+            </h3>
+            <span className="text-xs px-2.5 py-1 rounded-full bg-[#15453b] text-[#7dd3fc] font-anek font-bold border border-[#2a6f62] shadow-md">
+              {lang === 'bn' ? 'BRTA ও DMTCL অনুমোদিত' : 'Verified BRTA & DMTCL'}
+            </span>
+          </div>
+          <p className="font-anek text-xs sm:text-sm text-[#dfcfb2] mt-1 font-medium">
+            {lang === 'bn' ? 'মেট্রোরেল, অনুমোদিত বাস লাইন, লেগুনা করিডোর ও হাফ-পাস ভাড়ার পূর্ণাঙ্গ তালিকা' : 'Verified Metro, Bus, and Leguna transit corridors with student pass eligibility'}
           </p>
         </div>
 
         {/* Filter Pills */}
-        <div className="flex items-center gap-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800 text-sm">
-          {['all', 'metro', 'bus', 'leguna'].map((type) => (
+        <div className="flex items-center gap-2 bg-[#120e0b] p-1.5 rounded-xl border border-[#c69429]/40 font-anek text-xs sm:text-sm">
+          {[
+            { id: 'all', label: lang === 'bn' ? 'সব রুট' : 'All Routes' },
+            { id: 'metro', label: lang === 'bn' ? '🚇 মেট্রোরেল' : 'Metro' },
+            { id: 'bus', label: lang === 'bn' ? '🚌 বাস সার্ভিস' : 'Bus' },
+            { id: 'leguna', label: lang === 'bn' ? '🚐 লেগুনা' : 'Leguna' }
+          ].map((item) => (
             <button
-              key={type}
-              onClick={() => setFilterType(type)}
-              className={`px-4 py-2 rounded-xl font-extrabold capitalize transition-all ${
-                filterType === type 
-                  ? 'bg-emerald-600 text-white shadow-md' 
-                  : 'text-slate-400 hover:text-white'
+              key={item.id}
+              onClick={() => setFilterType(item.id)}
+              className={`px-3.5 py-1.5 rounded-lg font-bold transition-all ${
+                filterType === item.id 
+                  ? 'bg-gradient-to-r from-[#b83a2e] to-[#891e17] text-[#fbf8f1] border border-[#f6d16f] shadow-md' 
+                  : 'text-[#dfcfb2] hover:text-[#fbf8f1]'
               }`}
             >
-              {type}
+              {item.label}
             </button>
           ))}
         </div>
@@ -121,52 +132,58 @@ export default function TransitCMS({ lang = 'bn' }) {
 
       {/* Search Input */}
       <div className="mb-5">
-        <div className="relative">
+        <div className="relative font-anek">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={lang === 'bn' ? 'বাস বা মেট্রো রুট খুঁজুন (যেমন: বিকল্প, মিরপুর, ফার্মগেট)...' : 'Search routes or hubs...'}
-            className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-slate-900 border border-slate-700 text-white text-base placeholder:text-slate-500 focus:outline-none focus:border-emerald-500"
+            placeholder={lang === 'bn' ? 'বাস বা মেট্রো রুট খুঁজুন (যেমন: বিকল্প, মিরপুর, ফার্মগেট, মতিঝিল)...' : 'Search routes or hubs...'}
+            className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-[#120e0b] border border-[#c69429]/40 text-[#fbf8f1] text-sm sm:text-base placeholder:text-[#8a7258] focus:outline-none focus:border-[#f6d16f] shadow-inner"
           />
-          <Search className="w-5 h-5 text-slate-400 absolute left-4 top-4" />
+          <Search className="w-5 h-5 text-[#c69429] absolute left-4 top-4" />
         </div>
       </div>
 
       {/* Route Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 font-anek">
         {filtered.map((route) => (
           <div
             key={route.id}
-            className="p-5 sm:p-6 rounded-2xl bg-slate-950/80 border border-slate-800 hover:border-slate-700 transition-all interactive-card shadow-md"
+            className="p-5 sm:p-6 rounded-2xl bg-[#16110d] border-2 border-[#c69429]/30 hover:border-[#f6d16f] transition-all interactive-card shadow-lg relative overflow-hidden"
           >
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2.5">
                 <span 
-                  className="w-4 h-4 rounded-full" 
+                  className="w-4 h-4 rounded-full border border-[#f6d16f]/60 shadow-sm" 
                   style={{ backgroundColor: route.color }} 
                 />
-                <h4 className="text-base sm:text-lg font-black text-white">
+                <h4 className="font-rickshaw text-lg sm:text-xl font-bold text-[#fbf8f1] tracking-wide">
                   {lang === 'bn' ? route.name_bn : route.name}
                 </h4>
               </div>
 
-              <span className="text-xs font-black px-3 py-1 rounded-lg bg-slate-800 text-slate-200 uppercase">
+              <span className={`text-[11px] font-bold px-2.5 py-1 rounded-lg uppercase border ${
+                route.type === 'metro'
+                  ? 'bg-[#15453b] text-[#7dd3fc] border-[#2a6f62]'
+                  : route.type === 'bus'
+                  ? 'bg-[#292019] text-[#f6d16f] border-[#c69429]/40'
+                  : 'bg-[#b83a2e]/30 text-[#fbf8f1] border-[#b83a2e]'
+              }`}>
                 {route.type}
               </span>
             </div>
 
-            <p className="text-sm text-slate-300 mb-4 font-medium">
-              {lang === 'bn' ? 'অপারেটর:' : 'Operator:'} <strong className="text-white">{route.operator}</strong> | 
-              {lang === 'bn' ? ' ফ্রিকোয়েন্সি:' : ' Frequency:'} <strong className="text-emerald-400">{lang === 'bn' ? `${toBnDigits(route.frequency_mins)} মিনিট পর পর` : `Every ${route.frequency_mins} mins`}</strong>
+            <p className="text-xs sm:text-sm text-[#dfcfb2] mb-3 font-medium">
+              <span>{lang === 'bn' ? 'অপারেটর:' : 'Operator:'}</span> <strong className="text-[#fbf8f1]">{route.operator}</strong> | 
+              <span>{lang === 'bn' ? ' ফ্রিকোয়েন্সি:' : ' Frequency:'}</span> <strong className="text-[#f6d16f]">{lang === 'bn' ? `${toBnDigits(route.frequency_mins)} মিনিট পর পর` : `Every ${route.frequency_mins} mins`}</strong>
             </p>
 
             {/* Hubs pill tags */}
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="flex flex-wrap gap-1.5 mb-4">
               {route.hubs.map((hub, i) => (
                 <span 
                   key={i}
-                  className="px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-200 font-bold"
+                  className="px-2.5 py-1 rounded-lg bg-[#201712] border border-[#c69429]/25 text-xs text-[#dfcfb2] font-semibold"
                 >
                   {hub}
                 </span>
@@ -174,21 +191,21 @@ export default function TransitCMS({ lang = 'bn' }) {
             </div>
 
             {/* Landmark & Fare Strip */}
-            <div className="pt-3 border-t border-slate-850 flex items-center justify-between text-sm">
+            <div className="pt-3 border-t border-[#c69429]/20 flex items-center justify-between text-xs sm:text-sm">
               <div className="flex items-center gap-2">
-                <span className="text-slate-400 font-medium">{lang === 'bn' ? 'হাফ-পাস:' : 'Student Half-Pass:'}</span>
+                <span className="text-[#a89078] font-medium">{lang === 'bn' ? 'হাফ-পাস:' : 'Student Half-Pass:'}</span>
                 {route.student_pass_allowed ? (
-                  <span className="flex items-center gap-1 text-emerald-400 font-black">
-                    <Check className="w-4 h-4" /> {lang === 'bn' ? 'প্রযোজ্য (৫০%)' : 'Eligible (50%)'}
+                  <span className="flex items-center gap-1 text-[#7dd3fc] bg-[#15453b]/40 px-2 py-0.5 rounded border border-[#2a6f62] font-bold text-xs">
+                    <Check className="w-3.5 h-3.5 text-[#7dd3fc]" /> {lang === 'bn' ? 'প্রযোজ্য (৫০%)' : 'Eligible (50%)'}
                   </span>
                 ) : (
-                  <span className="flex items-center gap-1 text-slate-400 font-medium">
-                    <X className="w-4 h-4" /> {lang === 'bn' ? 'প্রযোজ্য নয়' : 'Not Applicable'}
+                  <span className="flex items-center gap-1 text-[#a89078] font-medium text-xs">
+                    <X className="w-3.5 h-3.5" /> {lang === 'bn' ? 'প্রযোজ্য নয়' : 'Not Applicable'}
                   </span>
                 )}
               </div>
 
-              <div className="font-black text-base text-emerald-400">
+              <div className="font-rickshaw text-lg sm:text-xl font-bold text-[#f6d16f] rickshaw-text-pop">
                 {formatFare(route.base_fare_bdt, lang)} - {formatFare(route.max_fare_bdt, lang)}
               </div>
             </div>

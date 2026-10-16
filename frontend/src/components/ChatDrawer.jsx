@@ -93,46 +93,48 @@ export default function ChatDrawer({
       {!isOpen && (
         <button
           onClick={onToggle}
-          className="fixed bottom-5 right-5 z-40 p-3.5 rounded-full bg-gradient-to-r from-emerald-600 to-emerald-500 text-slate-950 font-bold shadow-2xl shadow-emerald-500/40 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 group border border-emerald-300"
+          className="fixed bottom-5 right-5 z-40 px-4 py-3 rounded-full bg-gradient-to-r from-[#b83a2e] to-[#891e17] text-[#fbf8f1] font-bold shadow-2xl shadow-[#b83a2e]/50 hover:scale-105 active:scale-95 transition-all flex items-center gap-2.5 group border-2 border-[#f6d16f]"
           title="Open DhakaPath AI Commute Assistant"
         >
           <div className="relative">
-            <Bot className="w-6 h-6 text-slate-950" />
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-300 absolute -top-1 -right-1 animate-ping" />
+            <Bot className="w-5 h-5 text-[#f6d16f]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#f6d16f] absolute -top-1 -right-1 animate-ping" />
           </div>
-          <span className="text-xs font-black pr-1 hidden sm:inline">
-            {lang === 'bn' ? 'ঢাকা এআই সহকারী' : 'AI Commute Assistant'}
+          <span className="font-rickshaw text-sm font-bold text-[#fbf8f1] rickshaw-text-pop pr-1 hidden sm:inline">
+            {lang === 'bn' ? 'ঢাকা এআই সহকারী' : 'AI Transit Assistant'}
           </span>
         </button>
       )}
 
       {/* Slide-Up Chat Modal / Drawer */}
       {isOpen && (
-        <div className="fixed bottom-0 sm:bottom-6 right-0 sm:right-6 w-full sm:w-[460px] h-[600px] max-h-[92vh] z-50 glass-panel border border-emerald-500/40 shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300">
+        <div className="fixed bottom-0 sm:bottom-6 right-0 sm:right-6 w-full sm:w-[460px] h-[600px] max-h-[92vh] z-50 heritage-card bg-[#18130f] border-2 border-[#c69429] shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300 rounded-t-2xl sm:rounded-2xl">
           {/* Header */}
-          <div className="flex items-center justify-between px-5 py-4 bg-slate-900 border-b border-slate-800">
+          <div className="flex items-center justify-between px-5 py-3.5 bg-[#140e0b] border-b-2 border-[#c69429]/40">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center font-bold text-slate-950">
+              <div className="w-10 h-10 rounded-xl bg-[#b83a2e] border border-[#f6d16f] flex items-center justify-center font-bold text-[#f6d16f] shadow-md">
                 <Bot className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-base font-black text-white">{t.chatTitle}</h3>
-                <p className="text-xs text-emerald-400 font-semibold">
-                  {lang === 'bn' ? 'বাংলা ও বাংলিশ সমর্থিত' : 'English & Banglish Ready'}
+                <h3 className="font-rickshaw text-lg font-bold text-[#f6d16f] rickshaw-text-pop tracking-wide">
+                  {t.chatTitle}
+                </h3>
+                <p className="font-anek text-xs text-[#7dd3fc] font-semibold">
+                  {lang === 'bn' ? 'বাংলা ও বাংলিশ সমর্থিত ট্রানজিট গাইড' : 'English & Banglish Ready'}
                 </p>
               </div>
             </div>
 
             <button
               onClick={onClose}
-              className="p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white"
+              className="p-1.5 rounded-lg bg-[#292019] text-[#dfcfb2] hover:text-white border border-[#c69429]/30"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 p-5 overflow-y-auto space-y-4 bg-slate-950/70">
+          <div className="flex-1 p-5 overflow-y-auto space-y-4 bg-[#120e0b] font-anek">
             {messages.map((m, idx) => {
               const isBot = m.sender === 'bot';
               return (
@@ -142,28 +144,28 @@ export default function ChatDrawer({
                 >
                   <div className="flex items-start gap-2.5 max-w-[88%]">
                     {isBot && (
-                      <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-1">
+                      <div className="w-7 h-7 rounded-lg bg-[#b83a2e]/30 text-[#f6d16f] border border-[#c69429]/40 flex items-center justify-center shrink-0 mt-1">
                         <Bot className="w-4 h-4" />
                       </div>
                     )}
                     <div
                       className={`p-3.5 rounded-2xl text-sm leading-relaxed ${
                         isBot
-                          ? 'bg-slate-900 border border-slate-800 text-slate-100 rounded-tl-sm'
-                          : 'bg-emerald-600 text-white font-medium rounded-tr-sm shadow-md'
+                          ? 'bg-[#1e1712] border border-[#c69429]/30 text-[#fbf8f1] rounded-tl-sm shadow-md'
+                          : 'bg-gradient-to-r from-[#b83a2e] to-[#891e17] text-[#fbf8f1] font-medium rounded-tr-sm shadow-md border border-[#f6d16f]/30'
                       }`}
                     >
                       <p>{m.text}</p>
 
                       {/* Action for structured route */}
                       {m.structured_route && (
-                        <div className="mt-3 pt-2.5 border-t border-slate-700/60 flex items-center justify-between">
-                          <span className="font-bold text-emerald-300 text-xs">
+                        <div className="mt-3 pt-2.5 border-t border-[#c69429]/30 flex items-center justify-between">
+                          <span className="font-bold text-[#f6d16f] text-xs">
                             {m.structured_route.title}
                           </span>
                           <button
                             onClick={() => onApplyRouteFromChat && onApplyRouteFromChat(m.structured_route)}
-                            className="px-2.5 py-1 rounded-lg bg-emerald-500 text-slate-950 font-black text-xs"
+                            className="px-2.5 py-1 rounded-lg bg-[#f6d16f] hover:bg-white text-[#140e0b] font-black text-xs transition-colors"
                           >
                             {lang === 'bn' ? 'ম্যাপে দেখুন' : 'View on Map'}
                           </button>
@@ -176,10 +178,10 @@ export default function ChatDrawer({
                   {isBot && (
                     <button
                       onClick={() => speakText(m.text, lang)}
-                      className="ml-9 mt-1.5 text-xs text-slate-400 hover:text-emerald-400 flex items-center gap-1.5 transition-colors font-medium"
+                      className="ml-9 mt-1.5 text-xs text-[#dfcfb2] hover:text-[#f6d16f] flex items-center gap-1.5 transition-colors font-medium"
                       title={t.audioPrompt}
                     >
-                      <Volume2 className="w-3.5 h-3.5" />
+                      <Volume2 className="w-3.5 h-3.5 text-[#c69429]" />
                       <span>{t.listenBriefing}</span>
                     </button>
                   )}
@@ -188,10 +190,10 @@ export default function ChatDrawer({
             })}
 
             {isLoading && (
-              <div className="flex items-center gap-2 text-sm text-slate-400 font-medium">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-bounce" />
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-bounce delay-150" />
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-bounce delay-300" />
+              <div className="flex items-center gap-2 text-sm text-[#dfcfb2] font-medium font-anek">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#f6d16f] animate-bounce" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#f6d16f] animate-bounce delay-150" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#f6d16f] animate-bounce delay-300" />
                 <span>{lang === 'bn' ? 'উত্তর তৈরি হচ্ছে...' : 'Generating reply...'}</span>
               </div>
             )}
@@ -199,9 +201,9 @@ export default function ChatDrawer({
           </div>
 
           {/* Quick Banglish Prompt Suggestions */}
-          <div className="px-3.5 py-2 bg-slate-900/95 border-t border-slate-800/80 flex items-center gap-2 overflow-x-auto">
-            <span className="text-[11px] font-black text-emerald-400 uppercase tracking-wider shrink-0 flex items-center gap-1">
-              <Sparkles className="w-3 h-3" />
+          <div className="px-3.5 py-2.5 bg-[#18130f] border-t border-[#c69429]/30 flex items-center gap-2 overflow-x-auto">
+            <span className="text-[11px] font-black text-[#f6d16f] uppercase tracking-wider shrink-0 flex items-center gap-1 font-anek">
+              <Sparkles className="w-3 h-3 text-[#f6d16f]" />
               <span>বাংলিশ:</span>
             </span>
             {[
@@ -214,7 +216,7 @@ export default function ChatDrawer({
                 key={pIdx}
                 type="button"
                 onClick={() => handleSend(prompt)}
-                className="shrink-0 text-xs px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-emerald-950/80 text-slate-300 hover:text-emerald-300 border border-slate-700 hover:border-emerald-500/50 transition-all font-medium whitespace-nowrap active:scale-95"
+                className="shrink-0 text-xs px-2.5 py-1 rounded-lg bg-[#201712] hover:bg-[#b83a2e] text-[#dfcfb2] hover:text-[#fbf8f1] border border-[#c69429]/30 hover:border-[#f6d16f] transition-all font-anek font-semibold whitespace-nowrap active:scale-95"
               >
                 {prompt}
               </button>
@@ -222,7 +224,7 @@ export default function ChatDrawer({
           </div>
 
           {/* Input Footer */}
-          <div className="p-3.5 bg-slate-900 border-t border-slate-800">
+          <div className="p-3.5 bg-[#140e0b] border-t border-[#c69429]/40 font-anek">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -236,15 +238,15 @@ export default function ChatDrawer({
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   placeholder={isListening ? t.micListening : t.chatPlaceholder}
-                  className={`w-full pl-4 pr-11 py-3 rounded-xl bg-slate-950 border text-white text-sm placeholder:text-slate-500 focus:outline-none ${
-                    isListening ? 'border-rose-500 ring-2 ring-rose-500/40' : 'border-slate-800 focus:border-emerald-500'
+                  className={`w-full pl-4 pr-11 py-3 rounded-xl bg-[#1e1712] border text-[#fbf8f1] text-sm placeholder:text-[#8a7258] focus:outline-none ${
+                    isListening ? 'border-[#b83a2e] ring-2 ring-[#b83a2e]/40' : 'border-[#c69429]/40 focus:border-[#f6d16f]'
                   }`}
                 />
                 <button
                   type="button"
                   onClick={handleMicInput}
                   className={`absolute right-2 top-2 p-1.5 rounded-lg ${
-                    isListening ? 'mic-active text-white' : 'text-slate-400 hover:text-emerald-400'
+                    isListening ? 'bg-[#b83a2e] text-white animate-pulse' : 'text-[#c69429] hover:text-[#f6d16f]'
                   }`}
                   title={t.micTooltip}
                 >
@@ -255,9 +257,9 @@ export default function ChatDrawer({
               <button
                 type="submit"
                 disabled={isLoading || !inputText.trim()}
-                className="p-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-all disabled:opacity-50"
+                className="p-3 rounded-xl bg-gradient-to-r from-[#b83a2e] to-[#891e17] hover:from-[#d6645a] hover:to-[#b83a2e] text-[#fbf8f1] border border-[#f6d16f] font-bold transition-all disabled:opacity-50 shadow-md"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-4 h-4 text-[#f6d16f]" />
               </button>
             </form>
           </div>
