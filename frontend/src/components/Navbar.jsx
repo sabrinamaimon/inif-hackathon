@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Menu, Navigation, AlertTriangle, Cpu, Users, Bus, Globe, Sparkles, Sun, Moon, Download, Map, Shield } from 'lucide-react';
+import { Menu, Navigation, AlertTriangle, Users, Bus, Globe, Sun, Moon, Download, Map, Shield } from 'lucide-react';
 import { I18N, toBnDigits } from '../utils/localization';
 
 export default function Navbar({ 
@@ -27,49 +27,68 @@ export default function Navbar({
   ];
 
   return (
-    <header className="w-full sticky top-0 z-50 bg-[#16110d]/95 backdrop-blur-md border-b border-[#c69429]/40 shadow-xl overflow-x-hidden">
+    <header className={`w-full sticky top-0 z-50 backdrop-blur-md transition-colors duration-200 ${
+      theme === 'light'
+        ? 'bg-white/95 border-b border-slate-200 text-slate-900 shadow-sm'
+        : 'bg-[#16110d]/95 border-b border-[#c69429]/40 text-[#dfcfb2] shadow-xl'
+    }`}>
       {/* ================= DESKTOP HEADER (>=1024px) ================= */}
-      <div className="hidden lg:flex items-center justify-between gap-3 px-3 sm:px-5 lg:px-6 xl:px-8 py-2.5 w-full max-w-[1920px] mx-auto">
-        {/* Clean, High-End Brand Logo - Enlarged & Impactful */}
+      <div className="hidden lg:flex items-center justify-between gap-2 xl:gap-3 px-3 sm:px-4 lg:px-5 xl:px-8 py-2 w-full max-w-[1920px] mx-auto">
+        {/* Brand Logo */}
         <div 
-          className="flex items-center gap-2.5 cursor-pointer select-none group shrink-0"
+          className="flex items-center gap-2 cursor-pointer select-none group shrink-0"
           onClick={() => setCurrentTab('home')}
         >
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-[#b83a2e] to-[#e2b448] p-0.5 shadow-md group-hover:scale-105 transition-transform">
-            <div className="w-full h-full rounded-[10px] bg-[#1a1410] flex items-center justify-center border border-[#f6d16f]/60">
-              <span className="text-2xl">🛺</span>
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#b83a2e] to-[#e2b448] p-0.5 shadow-md group-hover:scale-105 transition-transform">
+            <div className={`w-full h-full rounded-[10px] flex items-center justify-center ${
+              theme === 'light' ? 'bg-white border border-amber-300' : 'bg-[#1a1410] border border-[#f6d16f]/60'
+            }`}>
+              <span className="text-xl">🛺</span>
             </div>
           </div>
 
-          <div className="flex items-baseline gap-2">
-            <span className="font-rickshaw text-3xl text-[#f6d16f] rickshaw-text-pop tracking-normal">
+          <div className="flex items-baseline gap-1.5">
+            <span className={`font-rickshaw text-2xl xl:text-3xl tracking-normal ${
+              theme === 'light' ? 'text-[#b83a2e] font-black' : 'text-[#f6d16f] rickshaw-text-pop'
+            }`}>
               {lang === 'bn' ? 'ঢাকা-পাথ' : 'DhakaPath'}
             </span>
-            <span className="font-regal text-sm text-[#dfcfb2] tracking-[0.22em] font-extrabold uppercase">
+            <span className={`font-regal text-xs xl:text-sm tracking-[0.2em] font-extrabold uppercase ${
+              theme === 'light' ? 'text-slate-500' : 'text-[#dfcfb2]'
+            }`}>
               {lang === 'bn' ? 'ট্রানজিট' : 'TRANSIT'}
             </span>
           </div>
         </div>
 
-        {/* Clean, Compact Navigation Tabs */}
-        <nav className="flex items-center gap-1 bg-[#1e1712]/90 p-1 rounded-xl border border-[#c69429]/30 shadow-inner shrink">
+        {/* Navigation Tabs */}
+        <nav className={`flex items-center gap-0.5 xl:gap-1 p-1 rounded-xl shadow-inner shrink ${
+          theme === 'light' ? 'bg-slate-100 border border-slate-200' : 'bg-[#1e1712]/90 border border-[#c69429]/30'
+        }`}>
           {navLinks.map((tab) => {
             const Icon = tab.icon;
             const isActive = currentTab === tab.id;
             return (
               <button
+                type="button"
                 key={tab.id}
                 onClick={() => setCurrentTab(tab.id)}
-                className={`flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 rounded-lg text-xs lg:text-[13px] font-anek font-bold transition-all duration-200 relative whitespace-nowrap ${
+                className={`flex items-center gap-1.5 px-2 xl:px-3 py-1.5 rounded-lg text-xs xl:text-[13px] font-anek font-bold transition-all duration-200 relative whitespace-nowrap cursor-pointer ${
                   isActive 
                     ? 'bg-gradient-to-r from-[#b83a2e] to-[#96281e] text-[#fbf8f1] border border-[#f6d16f] shadow-md' 
-                    : 'text-[#dfcfb2] hover:text-[#fbf8f1] hover:bg-[#2a2019]'
+                    : (theme === 'light' 
+                        ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-200' 
+                        : 'text-[#dfcfb2] hover:text-[#fbf8f1] hover:bg-[#2a2019]')
                 }`}
               >
-                <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[#f6d16f]' : 'text-[#c69429]'}`} />
+                <Icon className={`w-3.5 h-3.5 shrink-0 ${
+                  isActive ? 'text-[#f6d16f]' : (theme === 'light' ? 'text-slate-500' : 'text-[#c69429]')
+                }`} />
                 <span>{tab.label}</span>
                 {tab.badge !== undefined && tab.badge > 0 && (
-                  <span className="ml-1 px-1.5 py-0.2 text-[10px] font-black rounded-full bg-[#f6d16f] text-[#14100c]">
+                  <span className={`ml-0.5 px-1.5 py-0.2 text-[10px] font-black rounded-full ${
+                    theme === 'light' ? 'bg-[#b83a2e] text-white' : 'bg-[#f6d16f] text-[#140e0b]'
+                  }`}>
                     {lang === 'bn' ? toBnDigits(tab.badge) : tab.badge}
                   </span>
                 )}
@@ -78,44 +97,44 @@ export default function Navbar({
           })}
         </nav>
 
-        {/* Right Action Controls: Postcard Download + Shapla Badge + Theme Toggle + Language Switcher (shrink-0 to prevent clipping) */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          {/* Commute Card Download Button (only on very wide screens to prevent overflow) */}
+        {/* Right Action Controls: Admin + Theme Toggle + Language Switcher */}
+        <div className="flex items-center gap-1.5 xl:gap-2 shrink-0">
+          {/* Commute Card Download Button (on wide screens) */}
           {onDownloadPostcard && (
             <button
+              type="button"
               onClick={onDownloadPostcard}
-              className="hidden 2xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-[#15453b] to-[#0e3b32] hover:from-[#1b5e50] hover:to-[#15453b] text-[#fbf8f1] text-xs font-anek font-bold border-2 border-[#2a6f62] transition-all active:scale-95 shadow-md group cursor-pointer shrink-0"
+              className="hidden 2xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-[#15453b] to-[#0e3b32] hover:from-[#1b5e50] hover:to-[#15453b] text-[#fbf8f1] text-xs font-anek font-bold border border-[#2a6f62] transition-all active:scale-95 shadow-md cursor-pointer shrink-0"
               title={lang === 'bn' ? 'কমিউট কার্ড ডাউনলোড করুন' : 'Download Commute Card'}
             >
-              <Download className="w-3.5 h-3.5 text-[#6ee7b7] group-hover:scale-110 transition-transform" />
+              <Download className="w-3.5 h-3.5 text-[#6ee7b7]" />
               <span className="whitespace-nowrap">
                 {lang === 'bn' ? 'কমিউট কার্ড' : 'Commute Card'}
               </span>
             </button>
           )}
 
-          {/* Shapla Chattar Enamel Badge */}
-          <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#15453b]/40 border border-[#2a6f62] text-xs text-[#f6d16f] font-anek font-semibold shrink-0">
-            <span className="w-2 h-2 rounded-full bg-[#f6d16f] animate-pulse" />
-            <span>{lang === 'bn' ? '১৬টি হাব সচল' : '16 Hubs Active'}</span>
-          </div>
-
-          {/* Admin CMS Portal Link */}
+          {/* Admin CMS Link */}
           <Link
             href="/admin"
-            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#292019] to-[#1e1712] hover:bg-[#3d3026] text-[#f6d16f] border border-[#c69429]/60 text-xs sm:text-sm font-anek font-bold transition-all shadow-md group shrink-0"
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-anek font-bold transition-all shadow-sm shrink-0 ${
+              theme === 'light'
+                ? 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300'
+                : 'bg-gradient-to-r from-[#292019] to-[#1e1712] hover:bg-[#3d3026] text-[#f6d16f] border border-[#c69429]/60'
+            }`}
             title={lang === 'bn' ? 'অ্যাডমিন কন্ট্রোল প্যানেল' : 'Admin Control Panel'}
           >
-            <Shield className="w-3.5 h-3.5 text-[#f6d16f] group-hover:scale-110 transition-transform" />
-            <span className="hidden sm:inline">{lang === 'bn' ? 'অ্যাডমিন' : 'Admin'}</span>
+            <Shield className="w-3.5 h-3.5 text-[#f6d16f]" />
+            <span className="hidden xl:inline">{lang === 'bn' ? 'অ্যাডমিন' : 'Admin'}</span>
           </Link>
 
           {/* Theme Toggle Button (Dark / Light Mode) */}
           <button
+            type="button"
             onClick={() => setTheme && setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-sm font-anek font-bold transition-all active:scale-95 shadow-sm shrink-0 ${
+            className={`flex items-center gap-1.5 px-2.5 xl:px-3 py-1.5 rounded-xl text-xs font-anek font-bold transition-all active:scale-95 shadow-sm shrink-0 cursor-pointer ${
               theme === 'light'
-                ? 'bg-[#ffffff] hover:bg-[#fcf9f2] text-[#140e0b] border-2 border-[#c69429]/40 shadow-sm'
+                ? 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 shadow-sm'
                 : 'bg-[#2a2019] hover:bg-[#3d3026] text-[#f6d16f] border border-[#c69429]/50 shadow-md'
             }`}
             title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
@@ -129,72 +148,88 @@ export default function Navbar({
             ) : (
               <>
                 <Moon className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-                <span className="hidden sm:inline text-[#140e0b] font-extrabold">{lang === 'bn' ? 'ডার্ক' : 'Dark'}</span>
+                <span className="hidden sm:inline font-extrabold">{lang === 'bn' ? 'ডার্ক' : 'Dark'}</span>
               </>
             )}
           </button>
 
-          {/* Language Switcher (Never Clips) */}
-          <button
-            onClick={() => setLang(lang === 'bn' ? 'en' : 'bn')}
-            className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-sm font-anek font-bold transition-all active:scale-95 shadow-sm shrink-0 whitespace-nowrap ${
-              theme === 'light'
-                ? 'bg-[#ffffff] hover:bg-[#fcf9f2] text-[#140e0b] border-2 border-[#c69429]/40 shadow-sm'
-                : 'bg-[#2a2019] hover:bg-[#3d3026] text-[#f6d16f] border border-[#c69429]/50 shadow-md'
-            }`}
-            title="Toggle Language"
-          >
-            <Globe className={`w-3.5 h-3.5 shrink-0 ${theme === 'light' ? 'text-[#b83a2e]' : 'text-[#f6d16f]'}`} />
-            <span className={theme === 'light' ? 'text-[#140e0b] font-extrabold' : ''}>{lang === 'bn' ? 'English' : 'বাংলা'}</span>
-          </button>
+          {/* Language Switcher [বাং | ENG] */}
+          <div className={`flex items-center p-0.5 rounded-xl border text-xs font-anek font-bold shrink-0 ${
+            theme === 'light' ? 'bg-slate-100 border-slate-300' : 'bg-[#1e1712] border-[#c69429]/40'
+          }`}>
+            <button
+              type="button"
+              onClick={() => setLang('bn')}
+              className={`px-2 py-1 rounded-lg transition-all cursor-pointer ${
+                lang === 'bn'
+                  ? (theme === 'light' ? 'bg-white text-[#b83a2e] shadow-sm font-black' : 'bg-[#b83a2e] text-white shadow-md font-black')
+                  : (theme === 'light' ? 'text-slate-600 hover:text-slate-900' : 'text-[#dfcfb2] hover:text-white')
+              }`}
+            >
+              বাং
+            </button>
+            <button
+              type="button"
+              onClick={() => setLang('en')}
+              className={`px-2 py-1 rounded-lg transition-all cursor-pointer ${
+                lang === 'en'
+                  ? (theme === 'light' ? 'bg-white text-[#b83a2e] shadow-sm font-black' : 'bg-[#b83a2e] text-white shadow-md font-black')
+                  : (theme === 'light' ? 'text-slate-600 hover:text-slate-900' : 'text-[#dfcfb2] hover:text-white')
+              }`}
+            >
+              ENG
+            </button>
+          </div>
         </div>
       </div>
 
       {/* ================= MOBILE / TABLET HEADER (<1024px) ================= */}
-      <div className="lg:hidden flex items-center justify-between px-3 sm:px-4 py-2.5 bg-[#17120e]">
+      <div className={`lg:hidden flex items-center justify-between px-3 sm:px-4 py-2.5 transition-colors ${
+        theme === 'light' ? 'bg-white border-b border-slate-200 shadow-sm' : 'bg-[#17120e]'
+      }`}>
         <button
+          type="button"
           onClick={() => setIsDrawerOpen(true)}
           aria-label="Open Mobile Menu"
-          className="w-9 h-9 flex items-center justify-center rounded-xl bg-[#292019] border border-[#c69429]/50 text-[#f6d16f] active:scale-95 transition-all shadow-md"
+          className={`w-9 h-9 flex items-center justify-center rounded-xl border active:scale-95 transition-all shadow-md cursor-pointer ${
+            theme === 'light' ? 'bg-slate-100 border-slate-300 text-slate-800' : 'bg-[#292019] border-[#c69429]/50 text-[#f6d16f]'
+          }`}
         >
-          <Menu className="w-5 h-5 text-[#f6d16f]" strokeWidth={2.4} />
+          <Menu className="w-5 h-5" strokeWidth={2.4} />
         </button>
 
         <div 
-          className="flex items-center gap-2 cursor-pointer"
+          className="flex items-center gap-2 cursor-pointer select-none"
           onClick={() => setCurrentTab('home')}
         >
           <span className="text-xl">🛺</span>
-          <span className="font-rickshaw text-xl text-[#f6d16f] rickshaw-gold-pop">{t.brandName}</span>
+          <span className={`font-rickshaw text-xl ${
+            theme === 'light' ? 'text-[#b83a2e] font-black' : 'text-[#f6d16f] rickshaw-gold-pop'
+          }`}>
+            {lang === 'bn' ? 'ঢাকা-পাথ' : 'DhakaPath'}
+          </span>
         </div>
 
         <div className="flex items-center gap-1.5">
-          {/* Mobile Commute Card Download Button */}
-          <button
-            onClick={onDownloadPostcard}
-            className="flex items-center justify-center w-8 h-8 rounded-full bg-[#15453b] border border-[#2a6f62] text-[#6ee7b7] active:scale-95 transition-all shadow-md"
-            title={lang === 'bn' ? 'কমিউট কার্ড ডাউনলোড' : 'Download Commute Card'}
-            aria-label="Download Commute Card"
-          >
-            <Download className="w-4 h-4 text-[#6ee7b7]" />
-          </button>
-
           {/* Mobile Admin Link */}
           <Link
             href="/admin"
-            className="flex items-center justify-center w-8 h-8 rounded-full bg-[#292019] border border-[#c69429]/60 text-[#f6d16f] active:scale-95 transition-all shadow-md"
+            className={`flex items-center justify-center w-8 h-8 rounded-full border active:scale-95 transition-all shadow-md ${
+              theme === 'light' ? 'bg-slate-100 border-slate-300 text-slate-800' : 'bg-[#292019] border-[#c69429]/60 text-[#f6d16f]'
+            }`}
             title="Admin CMS"
             aria-label="Admin CMS"
           >
-            <Shield className="w-4 h-4 text-[#f6d16f]" />
+            <Shield className="w-4 h-4" />
           </Link>
 
           {/* Mobile Theme Toggle */}
           <button
+            type="button"
             onClick={() => setTheme && setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className={`flex items-center justify-center w-8 h-8 rounded-full active:scale-95 transition-all ${
+            className={`flex items-center justify-center w-8 h-8 rounded-full active:scale-95 transition-all cursor-pointer ${
               theme === 'light'
-                ? 'bg-[#ffffff] border border-[#c69429]/40 text-[#140e0b] shadow-sm'
+                ? 'bg-amber-100 border border-amber-300 text-amber-800 shadow-sm'
                 : 'bg-[#292019] border border-[#c69429]/50 text-[#f6d16f]'
             }`}
             title="Toggle Theme"
@@ -207,17 +242,33 @@ export default function Navbar({
             )}
           </button>
 
-          <button
-            onClick={() => setLang(lang === 'bn' ? 'en' : 'bn')}
-            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-anek font-bold active:scale-95 transition-all ${
-              theme === 'light'
-                ? 'bg-[#ffffff] border border-[#c69429]/40 text-[#140e0b] shadow-sm'
-                : 'bg-[#292019] border border-[#c69429]/50 text-[#f6d16f]'
-            }`}
-          >
-            <Globe className={`w-3.5 h-3.5 ${theme === 'light' ? 'text-[#b83a2e]' : 'text-[#f6d16f]'}`} />
-            <span>{lang === 'bn' ? 'ENG' : 'বাং'}</span>
-          </button>
+          {/* Mobile Language Toggle [বাং | EN] */}
+          <div className={`flex items-center p-0.5 rounded-full border text-[11px] font-anek font-bold ${
+            theme === 'light' ? 'bg-slate-100 border-slate-300' : 'bg-[#292019] border-[#c69429]/50'
+          }`}>
+            <button
+              type="button"
+              onClick={() => setLang('bn')}
+              className={`px-1.5 py-0.5 rounded-full transition-all cursor-pointer ${
+                lang === 'bn'
+                  ? (theme === 'light' ? 'bg-white text-[#b83a2e] font-black shadow-sm' : 'bg-[#b83a2e] text-white font-black')
+                  : (theme === 'light' ? 'text-slate-600' : 'text-[#dfcfb2]')
+              }`}
+            >
+              বাং
+            </button>
+            <button
+              type="button"
+              onClick={() => setLang('en')}
+              className={`px-1.5 py-0.5 rounded-full transition-all cursor-pointer ${
+                lang === 'en'
+                  ? (theme === 'light' ? 'bg-white text-[#b83a2e] font-black shadow-sm' : 'bg-[#b83a2e] text-white font-black')
+                  : (theme === 'light' ? 'text-slate-600' : 'text-[#dfcfb2]')
+              }`}
+            >
+              EN
+            </button>
+          </div>
         </div>
       </div>
     </header>

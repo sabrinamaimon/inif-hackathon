@@ -28,13 +28,51 @@ export default function Home() {
   const [currentTab, setCurrentTab] = useState('home');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  // Synchronize light/dark theme class on document body
+  // Load saved theme and language on initial client mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const savedTheme = localStorage.getItem('dhakapath_theme');
+        if (savedTheme === 'light' || savedTheme === 'dark') {
+          setTheme(savedTheme);
+        }
+        const savedLang = localStorage.getItem('dhakapath_lang');
+        if (savedLang === 'bn' || savedLang === 'en') {
+          setLang(savedLang);
+        }
+      } catch (err) {
+        console.error('Storage access error:', err);
+      }
+    }
+  }, []);
+
+  // Synchronize light/dark theme class on document body and html element
   useEffect(() => {
     if (typeof document !== 'undefined') {
       document.body.classList.remove('light-theme', 'dark-theme');
       document.body.classList.add(theme === 'light' ? 'light-theme' : 'dark-theme');
+      if (theme === 'light') {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+      } else {
+        document.documentElement.classList.remove('light');
+        document.documentElement.classList.add('dark');
+      }
+      try {
+        localStorage.setItem('dhakapath_theme', theme);
+      } catch (err) {}
     }
   }, [theme]);
+
+  // Synchronize language and html lang attribute
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = lang;
+      try {
+        localStorage.setItem('dhakapath_lang', lang);
+      } catch (err) {}
+    }
+  }, [lang]);
 
   // Search parameters
   const [origin, setOrigin] = useState('Mirpur 10');
@@ -433,7 +471,9 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col bg-slate-950 text-slate-100 font-anek">
+    <main className={`min-h-screen flex flex-col font-anek transition-colors duration-200 ${
+      theme === 'light' ? 'bg-[#f8fafc] text-slate-900' : 'bg-slate-950 text-slate-100'
+    }`}>
       {/* Top Navigation */}
       <Navbar
         currentTab={currentTab}
