@@ -25,7 +25,61 @@ export async function POST(request) {
     const { message = '', language = 'bn', conversation_history = [] } = await request.json();
     const low = message.toLowerCase().trim();
 
-    // 1. Check if Gemini API key exists
+    // 1. Check if Groq API key exists (Primary AI - ultra fast, generous free tier quota)
+    const groqKey = process.env.GROQ_API_KEY;
+    if (groqKey) {
+      try {
+        const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${groqKey}`
+          },
+          body: JSON.stringify({
+            model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
+            messages: [
+              {
+                role: 'system',
+                content: `You are DhakaPath AI, an expert, strictly factual urban transit intelligence assistant for Dhaka, Bangladesh.
+Understand English, Bengali, and Banglish ('mirpur theke motijheel kivabe jabo', 'student bhara koto', 'brishti hoile rickshaw fare koto barbe', 'shahbagh e jam ache kina').
+
+MANDATORY ANTI-HALLUCINATION RULES:
+- Never hallucinate non-existent metro stations or fake bus lines.
+- MRT-6 elevated stations: Uttara North, Uttara Center, Uttara South, Pallabi, Mirpur 11, Mirpur 10, Kazipara, Shewrapara, Agargaon, Bijoy Sarani, Farmgate, Karwan Bazar, Shahbagh, Dhaka University, Bangladesh Secretariat, Motijheel, Kamalapur.
+- Areas like Dhanmondi, Mohammadpur, Banasree, Badda DO NOT have metro stations.
+- Bus Fare: BRTA Gazette rate 2.70 BDT/km with 10 BDT statutory minimum floor.
+- Student Concession: 50% discount strictly valid ONLY on local buses. MRT-6 Metro Rail strictly DOES NOT accept student half-pass.
+- Metro fares: 20 BDT min to 100 BDT max. MRT Pass/Rapid Pass gives 10% discount on each trip.
+- Rickshaws surge +50% in rain and +25% in rush hour.
+- Reply politely and concisely in Bengali or English based on the user's question.`
+              },
+              {
+                role: 'user',
+                content: message
+              }
+            ],
+            temperature: 0.1,
+            max_tokens: 1024
+          })
+        });
+
+        if (groqRes.ok) {
+          const groqData = await groqRes.json();
+          const replyText = groqData.choices?.[0]?.message?.content;
+          if (replyText) {
+            return NextResponse.json({
+              reply: replyText,
+              reply_bn: replyText,
+              provider: 'groq (llama-3.3-70b)'
+            });
+          }
+        }
+      } catch (err) {
+        console.warn('Groq API call failed, falling back to Gemini / deterministic parser.');
+      }
+    }
+
+    // 2. Fallback to Gemini if Gemini API key exists
     const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
     if (apiKey) {
       try {
