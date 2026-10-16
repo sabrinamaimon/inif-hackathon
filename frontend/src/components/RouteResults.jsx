@@ -152,19 +152,19 @@ export default function RouteResults({
                   {/* Huge Route Banner (Origin ➔ Destination) */}
                   <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-4 border-b-2 border-[#c69429]/40">
                     <div className="min-w-0 flex-1">
-                      <div className="text-xs font-anek font-bold text-[#b83a2e] uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                        <MapPin className="w-3.5 h-3.5 text-[#b83a2e] shrink-0" />
+                      <div className="text-sm font-anek font-bold text-[#b83a2e] uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                        <MapPin className="w-4 h-4 text-[#b83a2e] shrink-0" />
                         <span>{lang === 'bn' ? 'সরাসরি যাত্রাপথ' : 'DIRECT TRANSIT CORRIDOR'}</span>
                       </div>
                       
                       {/* HUGE ROUTE DISPLAY */}
-                      <h4 className="font-anek text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#120e0b] tracking-tight flex items-center flex-wrap gap-2">
+                      <h4 className="font-anek text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#120e0b] tracking-tight flex items-center flex-wrap gap-2.5">
                         <span>{origin}</span>
                         <span className="text-[#b83a2e] text-2xl sm:text-3xl font-black">➔</span>
                         <span className="text-[#15453b]">{destination}</span>
                       </h4>
 
-                      <p className="font-anek text-sm sm:text-base font-bold text-[#b83a2e] mt-1">
+                      <p className="font-anek text-base sm:text-lg font-bold text-[#b83a2e] mt-1">
                         {lang === 'bn' ? route.title_bn : route.title}
                       </p>
                     </div>
@@ -173,7 +173,7 @@ export default function RouteResults({
                     <div className="w-full xl:w-auto flex items-center justify-around sm:justify-end gap-2 sm:gap-3 bg-[#f5eedf] px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-2xl border-2 border-[#c69429]/40 shadow-inner shrink-0">
                       {/* Total Duration */}
                       <div className="px-2.5 sm:px-3.5 text-center border-r-2 border-[#c69429]/30 flex-1 sm:flex-initial">
-                        <div className="text-[11px] sm:text-xs font-anek font-bold text-[#7a6654] uppercase tracking-wider mb-0.5">
+                        <div className="text-xs sm:text-sm font-anek font-bold text-[#7a6654] uppercase tracking-wider mb-0.5">
                           {t.durationLabel}
                         </div>
                         <div className="flex items-baseline justify-center gap-1 text-[#15453b] whitespace-nowrap">
@@ -188,7 +188,7 @@ export default function RouteResults({
 
                       {/* Regular Fare */}
                       <div className="px-2.5 sm:px-3.5 text-center border-r-2 border-[#c69429]/30 flex-1 sm:flex-initial">
-                        <div className="text-[11px] sm:text-xs font-anek font-bold text-[#7a6654] uppercase tracking-wider mb-0.5">
+                        <div className="text-xs sm:text-sm font-anek font-bold text-[#7a6654] uppercase tracking-wider mb-0.5">
                           {t.regularFare}
                         </div>
                         <div className="flex items-baseline justify-center gap-0.5 text-[#b83a2e] whitespace-nowrap">
@@ -203,7 +203,7 @@ export default function RouteResults({
 
                       {/* Student Half-Pass Fare */}
                       <div className="px-2.5 sm:px-3.5 text-center flex-1 sm:flex-initial">
-                        <div className="text-[11px] sm:text-xs font-anek font-bold text-[#0e6e41] uppercase tracking-wider mb-0.5 flex items-center justify-center gap-1 whitespace-nowrap">
+                        <div className="text-xs sm:text-sm font-anek font-extrabold text-[#0e6e41] uppercase tracking-wider mb-0.5 flex items-center justify-center gap-1 whitespace-nowrap">
                           <span>🎓 {t.studentFare}</span>
                         </div>
                         <div className="flex items-baseline justify-center gap-0.5 text-[#0e6e41] whitespace-nowrap">
@@ -220,52 +220,52 @@ export default function RouteResults({
 
                   {/* Savings Callout Strip */}
                   {hasSavings && (
-                    <div className="mt-3 py-2 px-3.5 rounded-xl bg-[#0e6e41]/10 border border-[#0e6e41]/40 flex items-center justify-between text-xs sm:text-sm font-anek font-bold text-[#0e6e41]">
+                    <div className="mt-3.5 py-2.5 px-4 rounded-xl bg-[#0e6e41]/10 border border-[#0e6e41]/40 flex flex-wrap items-center justify-between gap-2 text-sm sm:text-base font-anek font-bold text-[#0e6e41]">
                       <span className="flex items-center gap-1.5">
                         <span>🎓 সরকারি শিক্ষার্থী ৫০% হাফ-পাস ছাড় প্রযোজ্য (বাসে সর্বনিম্ন ভাড়া ১০ ৳)।</span>
                       </span>
-                      <span className="text-sm font-anek font-extrabold bg-[#0e6e41] text-white px-2.5 py-0.5 rounded-lg shadow-sm">
+                      <span className="text-sm sm:text-base font-anek font-extrabold bg-[#0e6e41] text-white px-3 py-1 rounded-lg shadow-sm">
                         সাশ্রয়: {formatFare(savingsAmount, lang)}
                       </span>
                     </div>
                   )}
 
                   {/* Step-by-Step Large Print Instructions */}
-                  <div className="mt-5 space-y-3">
-                    <div className="font-anek text-sm sm:text-base font-extrabold text-[#120e0b] border-b border-[#c69429]/20 pb-1.5 flex items-center gap-2">
-                      <span className="text-[#b83a2e]">✦</span>
-                      <span>{lang === 'bn' ? 'যাত্রার প্রতিটি ধাপ ও ওঠার স্থান (বোর্ডিং নির্দেশিকা):' : 'Step-by-Step Boarding & Landmark Instructions:'}</span>
+                  <div className="mt-6 space-y-3.5">
+                    <div className="font-anek text-base sm:text-lg font-extrabold text-[#120e0b] border-b border-[#c69429]/20 pb-2 flex items-center gap-2">
+                      <span className="text-[#b83a2e] text-lg">✦</span>
+                      <span>{lang === 'bn' ? 'যাত্রার প্রতিটি ধাপ ও ওঠার স্থান (বড় অক্ষরে বিস্তারিত):' : 'Step-by-Step Boarding & Landmark Instructions:'}</span>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-3.5">
                       {route.legs.map((leg, legIdx) => {
                         const ModeIcon = getModeIcon(leg.mode);
                         return (
                           <div 
                             key={legIdx}
-                            className="p-3.5 sm:p-4 rounded-xl bg-[#ffffff] border-2 border-[#c69429]/30 hover:border-[#b83a2e] transition-all flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm"
+                            className="p-4 sm:p-5 rounded-xl bg-[#ffffff] border-2 border-[#c69429]/30 hover:border-[#b83a2e] transition-all flex flex-col md:flex-row md:items-center justify-between gap-3.5 shadow-sm"
                           >
-                            <div className="flex items-start gap-3">
+                            <div className="flex items-start gap-3.5">
                               {/* Large Step Number Badge */}
-                              <div className="w-8 h-8 rounded-full bg-[#b83a2e] text-white flex items-center justify-center font-bold font-mono text-base shrink-0 shadow-md">
+                              <div className="w-9 h-9 rounded-full bg-[#b83a2e] text-white flex items-center justify-center font-bold font-mono text-lg shrink-0 shadow-md">
                                 {legIdx + 1}
                               </div>
 
                               <div>
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <span className="font-anek font-extrabold text-base sm:text-lg text-[#120e0b]">
+                                <div className="flex items-center gap-2.5 flex-wrap">
+                                  <span className="font-anek font-black text-lg sm:text-xl text-[#120e0b]">
                                     {leg.line_name}
                                   </span>
-                                  <span className="text-xs px-2.5 py-0.5 rounded-md bg-[#15453b]/15 text-[#15453b] font-anek font-bold border border-[#15453b]/30 uppercase">
+                                  <span className="text-xs sm:text-sm px-3 py-0.5 rounded-md bg-[#15453b]/15 text-[#15453b] font-anek font-bold border border-[#15453b]/30 uppercase">
                                     {leg.mode}
                                   </span>
-                                  <span className="text-xs font-mono text-[#7a6654]">
+                                  <span className="text-sm font-mono font-semibold text-[#7a6654]">
                                     ({leg.from_hub} ➔ {leg.to_hub})
                                   </span>
                                 </div>
 
                                 {/* Large Boarding Landmark for Easy Reading */}
-                                <div className="font-anek text-sm sm:text-base font-bold text-[#b83a2e] mt-1 pl-1 border-l-2 border-[#b83a2e]">
+                                <div className="font-anek text-base sm:text-lg font-bold text-[#b83a2e] mt-1.5 pl-1.5 border-l-2 border-[#b83a2e]">
                                   <span>ওঠার স্থান / ল্যান্ডমার্ক: </span>
                                   <span className="text-[#120e0b] font-semibold">{leg.landmark_instructions}</span>
                                 </div>
@@ -273,15 +273,15 @@ export default function RouteResults({
                             </div>
 
                             {/* Leg Metrics */}
-                            <div className="flex items-center gap-2.5 font-anek text-xs sm:text-sm font-bold text-[#120e0b] shrink-0 pl-11 md:pl-0">
-                              <span className="px-2.5 py-1 rounded-lg bg-[#f5eedf] border border-[#c69429]/40 text-[#15453b]">
+                            <div className="flex items-center gap-2.5 sm:gap-3 font-anek text-sm sm:text-base font-bold text-[#120e0b] shrink-0 pl-11 md:pl-0">
+                              <span className="px-3 py-1.5 rounded-lg bg-[#f5eedf] border border-[#c69429]/40 text-[#15453b]">
                                 ⏱ {formatDuration(leg.duration_mins, lang)}
                               </span>
-                              <span className="px-2.5 py-1 rounded-lg bg-[#b83a2e]/10 text-[#b83a2e] border border-[#b83a2e]/30">
+                              <span className="px-3 py-1.5 rounded-lg bg-[#b83a2e]/10 text-[#b83a2e] border border-[#b83a2e]/30">
                                 {formatFare(leg.regular_fare_bdt, lang)}
                               </span>
                               {leg.student_fare_bdt < leg.regular_fare_bdt && (
-                                <span className="px-2.5 py-1 rounded-lg bg-[#0e6e41]/10 text-[#0e6e41] border border-[#0e6e41]/30">
+                                <span className="px-3 py-1.5 rounded-lg bg-[#0e6e41]/10 text-[#0e6e41] border border-[#0e6e41]/30">
                                   🎓 {formatFare(leg.student_fare_bdt, lang)}
                                 </span>
                               )}
@@ -303,7 +303,7 @@ export default function RouteResults({
                         e.stopPropagation();
                         handleAudioBriefing(route);
                       }}
-                      className="flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#292019] to-[#3d3026] hover:from-[#3d3026] hover:to-[#59473a] text-[#f6d16f] font-anek font-bold text-sm border-2 border-[#c69429] active:scale-95 transition-all shadow-lg"
+                      className="flex items-center gap-2 px-4 sm:px-5 py-3 rounded-xl bg-gradient-to-r from-[#292019] to-[#3d3026] hover:from-[#3d3026] hover:to-[#59473a] text-[#f6d16f] font-anek font-bold text-sm sm:text-base border-2 border-[#c69429] active:scale-95 transition-all shadow-lg"
                       title="Audio voice readout of itinerary"
                     >
                       <Volume2 className="w-5 h-5 text-[#f6d16f]" />
@@ -317,7 +317,7 @@ export default function RouteResults({
                         e.stopPropagation();
                         generateOfflineRouteCard({ route, origin, destination, lang });
                       }}
-                      className="flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#15453b] to-[#0d342c] hover:from-[#1f5e51] hover:to-[#15453b] text-[#fbf8f1] font-anek font-bold text-sm border-2 border-[#2a6f62] active:scale-95 transition-all shadow-lg"
+                      className="flex items-center gap-2 px-4 sm:px-5 py-3 rounded-xl bg-gradient-to-r from-[#15453b] to-[#0d342c] hover:from-[#1f5e51] hover:to-[#15453b] text-[#fbf8f1] font-anek font-bold text-sm sm:text-base border-2 border-[#2a6f62] active:scale-95 transition-all shadow-lg"
                       title="Download offline commute card"
                     >
                       <Download className="w-5 h-5 text-[#6ee7b7]" />
@@ -332,7 +332,7 @@ export default function RouteResults({
                       e.stopPropagation();
                       onOpenFareBreakdown && onOpenFareBreakdown(route);
                     }}
-                    className="flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#b83a2e] to-[#891e17] hover:from-[#d6645a] hover:to-[#b83a2e] text-[#fbf8f1] font-anek font-bold text-sm border-2 border-[#f6d16f] active:scale-95 transition-all shadow-lg ml-auto"
+                    className="flex items-center gap-2 px-4 sm:px-5 py-3 rounded-xl bg-gradient-to-r from-[#b83a2e] to-[#891e17] hover:from-[#d6645a] hover:to-[#b83a2e] text-[#fbf8f1] font-anek font-bold text-sm sm:text-base border-2 border-[#f6d16f] active:scale-95 transition-all shadow-lg ml-auto"
                   >
                     <HelpCircle className="w-4 h-4 text-[#f6d16f]" />
                     <span>{t.viewFareBreakdown}</span>

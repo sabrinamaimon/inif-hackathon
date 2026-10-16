@@ -64,8 +64,17 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+html {
+  font-size: 16.5px;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 body {
   font-family: var(--font-ui);
+  font-size: 1rem;
+  line-height: 1.65;
   background-color: var(--ink-950);
   color: #f7f2e8;
   min-height: 100vh;
@@ -78,6 +87,37 @@ body {
     radial-gradient(at 100% 100%, rgba(28, 69, 104, 0.18) 0px, transparent 55%),
     radial-gradient(at 0% 100%, rgba(184, 58, 46, 0.12) 0px, transparent 50%);
   background-attachment: fixed;
+}
+
+/* ==========================================================================
+   STANDARD ACCESSIBLE BENGALI TYPOGRAPHY (NEVER TOO SMALL OR SQUISHED)
+   ========================================================================== */
+.text-xs {
+  font-size: 0.875rem !important; /* ~14.5px instead of tiny 12px */
+  line-height: 1.35rem !important;
+}
+
+[class*="text-[9px]"],
+[class*="text-[10px]"],
+[class*="text-[11px]"],
+[class*="text-[12px]"] {
+  font-size: 0.825rem !important; /* ~13.6px instead of tiny 9-11px */
+  line-height: 1.25rem !important;
+}
+
+.text-sm {
+  font-size: 0.975rem !important; /* ~16px */
+  line-height: 1.5rem !important;
+}
+
+.text-base {
+  font-size: 1.075rem !important; /* ~17.7px */
+  line-height: 1.65rem !important;
+}
+
+/* Form inputs & interactive controls */
+input, select, textarea {
+  font-size: 1rem !important;
 }
 
 /* Typography Utility Classes */

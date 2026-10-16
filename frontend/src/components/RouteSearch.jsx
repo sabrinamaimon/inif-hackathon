@@ -68,10 +68,10 @@ export default function RouteSearch({
             </div>
           </div>
           <div>
-            <h2 className="font-rickshaw text-2xl sm:text-3xl font-bold text-[#f6d16f] tracking-wide rickshaw-text-pop">
+            <h2 className="font-rickshaw text-3xl sm:text-4xl font-bold text-[#f6d16f] tracking-wide rickshaw-text-pop">
               {t.searchTitle}
             </h2>
-            <p className="font-anek text-xs sm:text-sm text-[#dfcfb2]">
+            <p className="font-anek text-sm sm:text-base text-[#dfcfb2] mt-0.5">
               {lang === 'bn' 
                 ? 'মেট্রোরেল, মুড়ির টিন ও লোকাল বাস, লেগুনা এবং কানেক্টর রিকশা ভাড়া বিশ্লেষণ' 
                 : 'Metro Rail, Local Bus, Leguna & Connector Rickshaw Fare Intelligence'}
@@ -80,30 +80,30 @@ export default function RouteSearch({
         </div>
 
         {/* Passenger Category Badge Toggle (General vs Student Half-Pass) */}
-        <div className="flex items-center gap-1.5 bg-[#120e0b] p-1 rounded-2xl border border-[#c69429]/40 shadow-inner">
+        <div className="flex items-center gap-1.5 bg-[#120e0b] p-1.5 rounded-2xl border border-[#c69429]/40 shadow-inner">
           <button
             type="button"
             onClick={() => setPassengerType('general')}
-            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-anek font-bold transition-all ${
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-anek font-bold transition-all ${
               passengerType === 'general'
                 ? 'bg-[#2a2019] text-[#fbf8f1] border border-[#c69429] shadow-md'
                 : 'text-[#dfcfb2] hover:text-[#fbf8f1]'
             }`}
           >
-            <User className="w-3.5 h-3.5 text-[#f6d16f]" />
+            <User className="w-4 h-4 text-[#f6d16f]" />
             <span>{t.generalCommuter}</span>
           </button>
 
           <button
             type="button"
             onClick={() => setPassengerType('student')}
-            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-anek font-bold transition-all ${
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-anek font-bold transition-all ${
               passengerType === 'student'
                 ? 'bg-gradient-to-r from-[#b83a2e] to-[#891e17] text-[#fbf8f1] border border-[#f6d16f] shadow-lg shadow-[#b83a2e]/40'
                 : 'text-[#dfcfb2] hover:text-[#fbf8f1]'
             }`}
           >
-            <GraduationCap className="w-3.5 h-3.5 text-[#f6d16f]" />
+            <GraduationCap className="w-4 h-4 text-[#f6d16f]" />
             <span>{t.studentPass}</span>
           </button>
         </div>
@@ -112,14 +112,14 @@ export default function RouteSearch({
       {/* Origin & Destination Selectors with Swap Button */}
       <div className="grid grid-cols-1 sm:grid-cols-[1fr,auto,1fr] gap-3 items-center mb-5">
         <div>
-          <label className="block font-anek text-xs font-bold text-[#f6d16f] mb-1.5 flex items-center gap-1.5">
-            <MapPin className="w-3.5 h-3.5 text-[#b83a2e]" />
+          <label className="block font-anek text-sm font-bold text-[#f6d16f] mb-1.5 flex items-center gap-1.5">
+            <MapPin className="w-4 h-4 text-[#b83a2e]" />
             <span>{t.originLabel}</span>
           </label>
           <select
             value={origin}
             onChange={(e) => setOrigin(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/40 text-[#fbf8f1] text-sm font-anek font-bold focus:border-[#f6d16f] focus:outline-none transition-all shadow-inner"
+            className="w-full px-4 py-3.5 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/40 text-[#fbf8f1] text-base font-anek font-bold focus:border-[#f6d16f] focus:outline-none transition-all shadow-inner"
           >
             {hubNames.map((name) => (
               <option key={name} value={name} className="bg-[#1a1410] text-[#fbf8f1]">
@@ -137,7 +137,7 @@ export default function RouteSearch({
           <button
             type="button"
             onClick={handleSwap}
-            className="w-10 h-10 rounded-full bg-[#292019] border-2 border-[#c69429] hover:border-[#f6d16f] text-[#f6d16f] hover:bg-[#3d3026] flex items-center justify-center transition-all shadow-md active:rotate-180 duration-300"
+            className="w-11 h-11 rounded-full bg-[#292019] border-2 border-[#c69429] hover:border-[#f6d16f] text-[#f6d16f] hover:bg-[#3d3026] flex items-center justify-center transition-all shadow-md active:rotate-180 duration-300"
             title="Swap Origin and Destination"
           >
             <ArrowRightLeft className="w-4 h-4" />
@@ -145,14 +145,14 @@ export default function RouteSearch({
         </div>
 
         <div>
-          <label className="block font-anek text-xs font-bold text-[#f6d16f] mb-1.5 flex items-center gap-1.5">
-            <MapPin className="w-3.5 h-3.5 text-[#15453b]" />
+          <label className="block font-anek text-sm font-bold text-[#f6d16f] mb-1.5 flex items-center gap-1.5">
+            <MapPin className="w-4 h-4 text-[#15453b]" />
             <span>{t.destLabel}</span>
           </label>
           <select
             value={destination}
             onChange={(e) => setDestination(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/40 text-[#fbf8f1] text-sm font-anek font-bold focus:border-[#f6d16f] focus:outline-none transition-all shadow-inner"
+            className="w-full px-4 py-3.5 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/40 text-[#fbf8f1] text-base font-anek font-bold focus:border-[#f6d16f] focus:outline-none transition-all shadow-inner"
           >
             {hubNames.map((name) => (
               <option key={name} value={name} className="bg-[#1a1410] text-[#fbf8f1]">
@@ -169,7 +169,7 @@ export default function RouteSearch({
       {/* Conditions Toggle Pills: Weather & Rush Hour */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-[#120e0b] border border-[#c69429]/30 mb-5">
         <div className="flex items-center gap-2">
-          <span className="font-anek text-xs font-bold text-[#dfcfb2]">
+          <span className="font-anek text-sm font-bold text-[#dfcfb2]">
             {lang === 'bn' ? 'সড়কের আবহাওয়া ও সময়:' : 'Road Condition & Time:'}
           </span>
         </div>
@@ -179,13 +179,13 @@ export default function RouteSearch({
           <button
             type="button"
             onClick={() => setWeather(weather === 'rain' ? 'normal' : 'rain')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-anek font-bold transition-all border ${
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-anek font-bold transition-all border ${
               weather === 'rain'
                 ? 'bg-[#1c4568] text-[#fbf8f1] border-[#346894] shadow-md shadow-[#1c4568]/40 animate-pulse'
                 : 'bg-[#1c1511] text-[#dfcfb2] border-[#c69429]/30 hover:border-[#c69429]'
             }`}
           >
-            <CloudRain className={`w-3.5 h-3.5 ${weather === 'rain' ? 'text-[#7dd3fc]' : 'text-[#dfcfb2]'}`} />
+            <CloudRain className={`w-4 h-4 ${weather === 'rain' ? 'text-[#7dd3fc]' : 'text-[#dfcfb2]'}`} />
             <span>{weather === 'rain' ? (lang === 'bn' ? 'মৌসুমী ভারী বৃষ্টি (জলজট)' : 'Monsoon Rain Active') : (lang === 'bn' ? 'স্বাভাবিক আবহাওয়া' : 'Normal Weather')}</span>
           </button>
 
@@ -193,13 +193,13 @@ export default function RouteSearch({
           <button
             type="button"
             onClick={() => setIsRushHour(!isRushHour)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-anek font-bold transition-all border ${
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-anek font-bold transition-all border ${
               isRushHour
                 ? 'bg-[#b83a2e] text-[#fbf8f1] border-[#f6d16f] shadow-md shadow-[#b83a2e]/40'
                 : 'bg-[#1c1511] text-[#dfcfb2] border-[#c69429]/30 hover:border-[#c69429]'
             }`}
           >
-            <Clock className={`w-3.5 h-3.5 ${isRushHour ? 'text-[#f6d16f]' : 'text-[#dfcfb2]'}`} />
+            <Clock className={`w-4 h-4 ${isRushHour ? 'text-[#f6d16f]' : 'text-[#dfcfb2]'}`} />
             <span>{isRushHour ? (lang === 'bn' ? 'বিকেল ৫:৩০ অফিস ছুটি (পিক আওয়ার)' : 'Peak Rush Hour Active') : (lang === 'bn' ? 'অফ-পিক সময়' : 'Off-Peak Time')}</span>
           </button>
         </div>
@@ -212,16 +212,16 @@ export default function RouteSearch({
           value={naturalQuery}
           onChange={(e) => setNaturalQuery(e.target.value)}
           placeholder={t.searchPlaceholder}
-          className="w-full pl-4 pr-24 py-3.5 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/50 text-[#fbf8f1] placeholder-[#7a6654] text-xs sm:text-sm font-anek font-semibold focus:border-[#f6d16f] focus:outline-none transition-all shadow-inner"
+          className="w-full pl-4 pr-24 py-4 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/50 text-[#fbf8f1] placeholder-[#7a6654] text-sm sm:text-base font-anek font-semibold focus:border-[#f6d16f] focus:outline-none transition-all shadow-inner"
         />
 
-        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
           {/* Voice Input Mic */}
           <button
             type="button"
             onClick={handleVoiceInput}
             title={t.micTooltip}
-            className={`p-2 rounded-xl transition-all ${
+            className={`p-2.5 rounded-xl transition-all ${
               isListening
                 ? 'bg-[#b83a2e] text-white animate-pulse shadow-lg'
                 : 'bg-[#292019] text-[#f6d16f] hover:bg-[#3d3026] border border-[#c69429]/40'
@@ -233,7 +233,7 @@ export default function RouteSearch({
           {/* NLP Submit */}
           <button
             type="submit"
-            className="p-2 rounded-xl bg-[#15453b] hover:bg-[#1f5e51] text-[#f6d16f] border border-[#2a6f62] transition-all"
+            className="p-2.5 rounded-xl bg-[#15453b] hover:bg-[#1f5e51] text-[#f6d16f] border border-[#2a6f62] transition-all"
             title="Search with AI"
           >
             <Sparkles className="w-4 h-4" />
@@ -246,7 +246,7 @@ export default function RouteSearch({
         type="button"
         onClick={onSearch}
         disabled={isLoading}
-        className="w-full py-4 rounded-xl bg-gradient-to-r from-[#b83a2e] via-[#c69429] to-[#b83a2e] text-[#120e0b] font-anek font-black text-base sm:text-lg border-2 border-[#f6d16f] shadow-xl shadow-[#b83a2e]/30 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 tracking-wide uppercase"
+        className="w-full py-4 rounded-xl bg-gradient-to-r from-[#b83a2e] via-[#c69429] to-[#b83a2e] text-[#120e0b] font-anek font-black text-lg sm:text-xl border-2 border-[#f6d16f] shadow-xl shadow-[#b83a2e]/30 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2.5 tracking-wide uppercase"
       >
         <span className="text-xl">🛺</span>
         <span>{isLoading ? (lang === 'bn' ? 'রুট যাচাই ও হিসাব হচ্ছে...' : 'Calculating Routes...') : t.searchBtn}</span>

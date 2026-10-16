@@ -58,16 +58,16 @@ export default function Navbar({
               <button
                 key={tab.id}
                 onClick={() => setCurrentTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-anek font-bold transition-all duration-200 relative ${
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-anek font-bold transition-all duration-200 relative ${
                   isActive 
                     ? 'bg-gradient-to-r from-[#b83a2e] to-[#96281e] text-[#fbf8f1] border border-[#f6d16f] shadow-md' 
                     : 'text-[#dfcfb2] hover:text-[#fbf8f1] hover:bg-[#2a2019]'
                 }`}
               >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#f6d16f]' : 'text-[#c69429]'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-[#f6d16f]' : 'text-[#c69429]'}`} />
                 <span>{tab.label}</span>
                 {tab.badge !== undefined && tab.badge > 0 && (
-                  <span className="ml-1 px-1.5 py-0.2 text-[10px] font-black rounded-full bg-[#f6d16f] text-[#14100c]">
+                  <span className="ml-1 px-2 py-0.5 text-xs font-black rounded-full bg-[#f6d16f] text-[#14100c]">
                     {lang === 'bn' ? toBnDigits(tab.badge) : tab.badge}
                   </span>
                 )}
@@ -79,26 +79,26 @@ export default function Navbar({
         {/* Right Action Controls: Shapla Badge + Theme Toggle + Language Switcher */}
         <div className="flex items-center gap-2.5">
           {/* Shapla Chattar Enamel Badge */}
-          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#15453b]/40 border border-[#2a6f62] text-xs text-[#f6d16f] font-anek font-semibold">
-            <span className="w-2 h-2 rounded-full bg-[#f6d16f] animate-pulse" />
+          <div className="hidden lg:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#15453b]/40 border border-[#2a6f62] text-sm text-[#f6d16f] font-anek font-semibold">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#f6d16f] animate-pulse" />
             <span>{lang === 'bn' ? '১৬টি হাব সচল' : '16 Hubs Active'}</span>
           </div>
 
           {/* Theme Toggle Button (Dark / Light Mode) */}
           <button
             onClick={() => setTheme && setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#2a2019] hover:bg-[#3d3026] text-[#f6d16f] text-xs font-anek font-bold border border-[#c69429]/50 transition-all active:scale-95 shadow-md"
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#2a2019] hover:bg-[#3d3026] text-[#f6d16f] text-sm font-anek font-bold border border-[#c69429]/50 transition-all active:scale-95 shadow-md"
             title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
             aria-label="Toggle Theme"
           >
             {theme === 'dark' ? (
               <>
-                <Sun className="w-3.5 h-3.5 text-amber-400" />
+                <Sun className="w-4 h-4 text-amber-400" />
                 <span className="hidden sm:inline">{lang === 'bn' ? 'লাইট' : 'Light'}</span>
               </>
             ) : (
               <>
-                <Moon className="w-3.5 h-3.5 text-sky-400" />
+                <Moon className="w-4 h-4 text-sky-400" />
                 <span className="hidden sm:inline">{lang === 'bn' ? 'ডার্ক' : 'Dark'}</span>
               </>
             )}
@@ -107,10 +107,10 @@ export default function Navbar({
           {/* Language Switcher */}
           <button
             onClick={() => setLang(lang === 'bn' ? 'en' : 'bn')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#2a2019] hover:bg-[#3d3026] text-[#f6d16f] text-xs font-anek font-bold border border-[#c69429]/50 transition-all active:scale-95 shadow-md"
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#2a2019] hover:bg-[#3d3026] text-[#f6d16f] text-sm font-anek font-bold border border-[#c69429]/50 transition-all active:scale-95 shadow-md"
             title="Toggle Language"
           >
-            <Globe className="w-3.5 h-3.5 text-[#f6d16f]" />
+            <Globe className="w-4 h-4 text-[#f6d16f]" />
             <span>{lang === 'bn' ? 'English' : 'বাংলা'}</span>
           </button>
         </div>

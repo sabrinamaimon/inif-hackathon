@@ -92,22 +92,22 @@ export default function StreetAlertsFeed({
             >
               <div className="flex flex-wrap items-center justify-between gap-2.5 mb-2.5">
                 <div className="flex items-center gap-2.5">
-                  <span className={`flex items-center gap-1.5 text-xs font-anek font-bold px-3 py-1 rounded-xl border ${badge.color}`}>
+                  <span className={`flex items-center gap-1.5 text-sm font-anek font-extrabold px-3.5 py-1.5 rounded-xl border ${badge.color}`}>
                     <BadgeIcon className="w-4 h-4" />
                     <span>{badge.label}</span>
                   </span>
-                  <span className="text-xs sm:text-sm font-anek font-black px-3 py-1 rounded-lg bg-slate-100 dark:bg-[#292019] text-slate-900 dark:text-[#fbf8f1] border border-slate-300 dark:border-[#c69429]/30 shadow-sm">
+                  <span className="text-sm font-anek font-black px-3.5 py-1.5 rounded-lg bg-slate-100 dark:bg-[#292019] text-slate-900 dark:text-[#fbf8f1] border border-slate-300 dark:border-[#c69429]/30 shadow-sm">
                     {alert.hub}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-4 text-xs font-mono text-slate-600 dark:text-[#dfcfb2]">
+                <div className="flex items-center gap-4 text-sm font-mono text-slate-600 dark:text-[#dfcfb2]">
                   <div className="flex items-center gap-1.5 font-anek">
-                    <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-[#c69429]" />
+                    <Clock className="w-4 h-4 text-amber-600 dark:text-[#c69429]" />
                     <span>{lang === 'bn' ? `${toBnDigits(alert.minutes_ago)} মিনিট আগে` : `${alert.minutes_ago}m ago`}</span>
                   </div>
 
-                  <div className="flex items-center gap-1.5 font-black text-slate-900 dark:text-[#f6d16f] bg-slate-100 dark:bg-[#120e0b] px-2.5 py-0.5 rounded-lg border border-slate-300 dark:border-[#c69429]/30">
+                  <div className="flex items-center gap-1.5 font-black text-slate-900 dark:text-[#f6d16f] bg-slate-100 dark:bg-[#120e0b] px-3 py-1 rounded-lg border border-slate-300 dark:border-[#c69429]/30">
                     <span>{t.trustScoreLabel}:</span>
                     <span>{lang === 'bn' ? `${toBnDigits(Math.round(trust))}%` : `${Math.round(trust)}%`}</span>
                   </div>
@@ -115,34 +115,34 @@ export default function StreetAlertsFeed({
               </div>
 
               {/* Title & Description */}
-              <h4 className="font-rickshaw text-lg sm:text-xl text-slate-900 dark:text-[#fbf8f1] mb-1.5">
+              <h4 className="font-rickshaw text-xl sm:text-2xl text-slate-900 dark:text-[#fbf8f1] mb-1.5">
                 {lang === 'bn' ? (alert.title_bn || alert.title) : alert.title}
               </h4>
-              <p className="font-anek text-xs sm:text-sm text-slate-700 dark:text-[#dfcfb2] leading-relaxed mb-4">
+              <p className="font-anek text-sm sm:text-base text-slate-700 dark:text-[#dfcfb2] leading-relaxed mb-4 font-normal">
                 {alert.description}
               </p>
 
               {/* Action Buttons: Confirm & Resolve */}
-              <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-200 dark:border-[#c69429]/20 font-anek text-xs">
-                <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-200 dark:border-[#c69429]/20 font-anek text-sm">
+                <div className="flex items-center gap-2.5">
                   <button
                     onClick={() => onVote(alert.id, 'upvote')}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#0e6e41] hover:bg-[#0b5834] text-white font-bold border border-emerald-600 active:scale-95 transition-all shadow-sm"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0e6e41] hover:bg-[#0b5834] text-white font-bold text-sm border border-emerald-600 active:scale-95 transition-all shadow-sm"
                   >
-                    <ThumbsUp className="w-3.5 h-3.5 text-white" />
+                    <ThumbsUp className="w-4 h-4 text-white" />
                     <span>{t.confirmBtn} ({toBnDigits(alert.upvotes)})</span>
                   </button>
 
                   <button
                     onClick={() => onVote(alert.id, 'downvote')}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#292019] dark:hover:bg-[#3d3026] text-slate-800 dark:text-[#dfcfb2] font-bold border border-slate-300 dark:border-[#c69429]/40 active:scale-95 transition-all shadow-sm"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#292019] dark:hover:bg-[#3d3026] text-slate-800 dark:text-[#dfcfb2] font-bold text-sm border border-slate-300 dark:border-[#c69429]/40 active:scale-95 transition-all shadow-sm"
                   >
-                    <CheckCircle className="w-3.5 h-3.5 text-amber-600 dark:text-[#d6645a]" />
+                    <CheckCircle className="w-4 h-4 text-amber-600 dark:text-[#d6645a]" />
                     <span>{t.resolveBtn} ({toBnDigits(alert.downvotes)})</span>
                   </button>
                 </div>
 
-                <div className="text-[11px] font-mono text-slate-600 dark:text-[#c69429]">
+                <div className="text-xs font-mono text-slate-600 dark:text-[#c69429] font-medium">
                   {alert.verified ? '✓ পুলিশ ও প্রশাসন দ্বারা পরীক্ষিত' : 'যাত্রী কমিউনিটি রিপোর্ট'}
                 </div>
               </div>

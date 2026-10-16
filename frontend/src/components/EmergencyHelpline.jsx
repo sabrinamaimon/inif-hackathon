@@ -55,15 +55,15 @@ export default function EmergencyHelpline({ lang = 'bn', isHome = true }) {
               className="p-4 rounded-xl bg-[#120e0b] border-2 border-[#c69429]/30 hover:border-[#f6d16f] hover:bg-[#1a1410] transition-all flex items-center justify-between group active:scale-95 shadow-md"
             >
               <div>
-                <div className="font-anek text-sm font-extrabold text-[#fbf8f1] group-hover:text-[#f6d16f] transition-colors">
+                <div className="font-anek text-base font-extrabold text-[#fbf8f1] group-hover:text-[#f6d16f] transition-colors">
                   {lang === 'bn' ? c.name_bn : c.name}
                 </div>
-                <div className="font-anek text-[11px] text-[#dfcfb2] mt-0.5 line-clamp-1">
+                <div className="font-anek text-xs text-[#dfcfb2] mt-0.5 line-clamp-1">
                   {c.desc}
                 </div>
               </div>
 
-              <div className="px-3 py-1 rounded-lg bg-[#b83a2e] text-[#fbf8f1] text-xs font-mono font-black shrink-0 ml-2 group-hover:bg-[#f6d16f] group-hover:text-[#120e0b] transition-all shadow-md">
+              <div className="px-3.5 py-1.5 rounded-lg bg-[#b83a2e] text-[#fbf8f1] text-sm font-mono font-black shrink-0 ml-2 group-hover:bg-[#f6d16f] group-hover:text-[#120e0b] transition-all shadow-md">
                 {c.phone}
               </div>
             </a>
@@ -72,18 +72,18 @@ export default function EmergencyHelpline({ lang = 'bn', isHome = true }) {
       </div>
 
       {/* Classic Vintage Postal Card Footer */}
-      <footer className="w-full py-8 border-t-2 border-[#c69429]/30 text-center font-anek text-xs text-[#dfcfb2]">
+      <footer className="w-full py-8 border-t-2 border-[#c69429]/30 text-center font-anek text-sm text-[#dfcfb2]">
         <div className="flex items-center justify-center gap-2 mb-2">
-          <span className="text-xl">🛺</span>
-          <span className="font-rickshaw text-xl text-[#f6d16f] rickshaw-text-pop">
+          <span className="text-2xl">🛺</span>
+          <span className="font-rickshaw text-2xl text-[#f6d16f] rickshaw-text-pop">
             ঢাকা-পাথ (DhakaPath)
           </span>
-          <span className="text-xl">🛺</span>
+          <span className="text-2xl">🛺</span>
         </div>
-        <p className="text-xs text-[#dfcfb2]">
+        <p className="text-sm text-[#dfcfb2]">
           পুরান ঢাকার ৪০০ বছরের সাংস্কৃতিক ঐতিহ্য, রিকশা আর্ট ও আধুনিক মেট্রোরেল ট্রানজিট ইন্টেলিজেন্স।
         </p>
-        <p className="text-[11px] text-[#9e8a76] mt-1 font-mono">
+        <p className="text-xs text-[#9e8a76] mt-1 font-mono">
           IAIT National IT Fest 2026 | Theme: Smart City | DhakaPath
         </p>
       </footer>
