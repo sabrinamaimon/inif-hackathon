@@ -139,3 +139,13 @@ class CreateRideShareRequest(BaseModel):
     host_name: str
     contact_phone: str
     notes: Optional[str] = None
+
+class FareCalculateRequest(BaseModel):
+    origin: str
+    destination: str
+    distance_km: Optional[float] = None
+    passenger_type: str = "general"  # "general" or "student"
+    card_type: str = "single_journey"  # "single_journey" or "mrt_pass"
+    weather_condition: str = "normal"
+    is_rush_hour: bool = False
+

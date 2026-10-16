@@ -374,7 +374,7 @@ class DhakaTransitGraph:
                 reg_fare = DhakaFareEngine.calculate_metro_fare(u, v)
                 stud_fare = reg_fare  # Metro has no student discount
             elif mode == "bus":
-                reg_fare, stud_fare = DhakaFareEngine.calculate_bus_fare(dist)
+                reg_fare, stud_fare = DhakaFareEngine.calculate_bus_fare(dist, from_hub=u, to_hub=v)
             elif mode == "leguna":
                 reg_fare, stud_fare = DhakaFareEngine.calculate_leguna_fare(u, v, dist)
             else:  # rickshaw

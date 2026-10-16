@@ -152,24 +152,163 @@ DHAKA_HUBS = {
     }
 }
 
-# Official MRT-6 Station to Station Fares (in BDT)
-# Metro rules: No student half-pass discount applies. Fixed distance-based pricing.
+# Official MRT-6 Station to Station Fares (in BDT) from DMTCL Official Fare Chart
+# (Dhaka Mass Transit Company Limited - Road Transport and Highways Division)
+# Rules: No student half-pass discount. MRT Pass/Rapid Pass gives 10% discount on each trip.
+# Single Journey tickets valid for 100 minutes inside paid area.
+
+MRT6_STATIONS_LIST = [
+    {"code": "UTN", "name": "Uttara North", "name_bn": "উত্তরা উত্তর"},
+    {"code": "UTC", "name": "Uttara Center", "name_bn": "উত্তরা সেন্টার"},
+    {"code": "UTS", "name": "Uttara South", "name_bn": "উত্তরা দক্ষিণ"},
+    {"code": "PAL", "name": "Pallabi", "name_bn": "পল্লবী"},
+    {"code": "M11", "name": "Mirpur 11", "name_bn": "মিরপুর ১১"},
+    {"code": "M10", "name": "Mirpur 10", "name_bn": "মিরপুর ১০"},
+    {"code": "KAZ", "name": "Kazipara", "name_bn": "কাজীপাড়া"},
+    {"code": "SHW", "name": "Shewrapara", "name_bn": "শেওড়াপাড়া"},
+    {"code": "AGA", "name": "Agargaon", "name_bn": "আগারগাঁও"},
+    {"code": "BJS", "name": "Bijoy Sarani", "name_bn": "বিজয় সরণি"},
+    {"code": "FMG", "name": "Farmgate", "name_bn": "ফার্মগেট"},
+    {"code": "KBZ", "name": "Karwan Bazar", "name_bn": "কারওয়ান বাজার"},
+    {"code": "SHB", "name": "Shahbagh", "name_bn": "শাহবাগ"},
+    {"code": "DU",  "name": "Dhaka University", "name_bn": "ঢাকা বিশ্ববিদ্যালয়"},
+    {"code": "SEC", "name": "Bangladesh Secretariat", "name_bn": "বাংলাদেশ সচিবালয়"},
+    {"code": "MJL", "name": "Motijheel", "name_bn": "মতিঝিল"},
+    {"code": "KMP", "name": "Kamalapur", "name_bn": "কমলাপুর"}
+]
+
+MRT6_STATION_ALIASES = {
+    "uttara": "Uttara North",
+    "uttara north": "Uttara North",
+    "uttara center": "Uttara Center",
+    "uttara south": "Uttara South",
+    "pallabi": "Pallabi",
+    "mirpur 11": "Mirpur 11",
+    "mirpur 10": "Mirpur 10",
+    "kazipara": "Kazipara",
+    "shewrapara": "Shewrapara",
+    "agargaon": "Agargaon",
+    "bijoy sarani": "Bijoy Sarani",
+    "farmgate": "Farmgate",
+    "karwan bazar": "Karwan Bazar",
+    "kawran bazar": "Karwan Bazar",
+    "shahbagh": "Shahbagh",
+    "shahbag": "Shahbagh",
+    "dhaka university": "Dhaka University",
+    "du": "Dhaka University",
+    "tsc": "Dhaka University",
+    "bangladesh secretariat": "Bangladesh Secretariat",
+    "secretariat": "Bangladesh Secretariat",
+    "press club": "Bangladesh Secretariat",
+    "motijheel": "Motijheel",
+    "kamalapur": "Kamalapur",
+    "kamalapur railway": "Kamalapur"
+}
+
+# Hub-level MRT-6 Fare Table for transit graph routing
 MRT6_FARE_TABLE = {
-    ("Uttara", "Mirpur 10"): 30,
+    ("Uttara", "Mirpur 10"): 40,
     ("Uttara", "Agargaon"): 50,
-    ("Uttara", "Farmgate"): 60,
+    ("Uttara", "Farmgate"): 70,
     ("Uttara", "Shahbagh"): 80,
     ("Uttara", "Motijheel"): 100,
     ("Mirpur 10", "Agargaon"): 20,
     ("Mirpur 10", "Farmgate"): 30,
     ("Mirpur 10", "Shahbagh"): 40,
-    ("Mirpur 10", "Motijheel"): 50,
+    ("Mirpur 10", "Motijheel"): 60,
     ("Agargaon", "Farmgate"): 20,
     ("Agargaon", "Shahbagh"): 30,
     ("Agargaon", "Motijheel"): 40,
     ("Farmgate", "Shahbagh"): 20,
     ("Farmgate", "Motijheel"): 30,
     ("Shahbagh", "Motijheel"): 20
+}
+
+# Complete 17x17 DMTCL official fare matrix
+MRT6_FULL_STATION_FARE_MATRIX = {
+    # 0: Uttara North
+    ("Uttara North", "Uttara Center"): 20, ("Uttara North", "Uttara South"): 20, ("Uttara North", "Pallabi"): 30,
+    ("Uttara North", "Mirpur 11"): 30, ("Uttara North", "Mirpur 10"): 40, ("Uttara North", "Kazipara"): 40,
+    ("Uttara North", "Shewrapara"): 50, ("Uttara North", "Agargaon"): 50, ("Uttara North", "Bijoy Sarani"): 60,
+    ("Uttara North", "Farmgate"): 70, ("Uttara North", "Karwan Bazar"): 80, ("Uttara North", "Shahbagh"): 80,
+    ("Uttara North", "Dhaka University"): 90, ("Uttara North", "Bangladesh Secretariat"): 90,
+    ("Uttara North", "Motijheel"): 100, ("Uttara North", "Kamalapur"): 100,
+
+    # 1: Uttara Center
+    ("Uttara Center", "Uttara South"): 20, ("Uttara Center", "Pallabi"): 20, ("Uttara Center", "Mirpur 11"): 30,
+    ("Uttara Center", "Mirpur 10"): 30, ("Uttara Center", "Kazipara"): 40, ("Uttara Center", "Shewrapara"): 40,
+    ("Uttara Center", "Agargaon"): 50, ("Uttara Center", "Bijoy Sarani"): 50, ("Uttara Center", "Farmgate"): 60,
+    ("Uttara Center", "Karwan Bazar"): 70, ("Uttara Center", "Shahbagh"): 70, ("Uttara Center", "Dhaka University"): 80,
+    ("Uttara Center", "Bangladesh Secretariat"): 80, ("Uttara Center", "Motijheel"): 90, ("Uttara Center", "Kamalapur"): 90,
+
+    # 2: Uttara South
+    ("Uttara South", "Pallabi"): 20, ("Uttara South", "Mirpur 11"): 20, ("Uttara South", "Mirpur 10"): 30,
+    ("Uttara South", "Kazipara"): 30, ("Uttara South", "Shewrapara"): 40, ("Uttara South", "Agargaon"): 40,
+    ("Uttara South", "Bijoy Sarani"): 50, ("Uttara South", "Farmgate"): 60, ("Uttara South", "Karwan Bazar"): 60,
+    ("Uttara South", "Shahbagh"): 70, ("Uttara South", "Dhaka University"): 70, ("Uttara South", "Bangladesh Secretariat"): 80,
+    ("Uttara South", "Motijheel"): 80, ("Uttara South", "Kamalapur"): 90,
+
+    # 3: Pallabi
+    ("Pallabi", "Mirpur 11"): 20, ("Pallabi", "Mirpur 10"): 20, ("Pallabi", "Kazipara"): 20,
+    ("Pallabi", "Shewrapara"): 30, ("Pallabi", "Agargaon"): 30, ("Pallabi", "Bijoy Sarani"): 40,
+    ("Pallabi", "Farmgate"): 50, ("Pallabi", "Karwan Bazar"): 50, ("Pallabi", "Shahbagh"): 60,
+    ("Pallabi", "Dhaka University"): 60, ("Pallabi", "Bangladesh Secretariat"): 70, ("Pallabi", "Motijheel"): 70,
+    ("Pallabi", "Kamalapur"): 80,
+
+    # 4: Mirpur 11
+    ("Mirpur 11", "Mirpur 10"): 20, ("Mirpur 11", "Kazipara"): 20, ("Mirpur 11", "Shewrapara"): 20,
+    ("Mirpur 11", "Agargaon"): 30, ("Mirpur 11", "Bijoy Sarani"): 40, ("Mirpur 11", "Farmgate"): 40,
+    ("Mirpur 11", "Karwan Bazar"): 50, ("Mirpur 11", "Shahbagh"): 50, ("Mirpur 11", "Dhaka University"): 60,
+    ("Mirpur 11", "Bangladesh Secretariat"): 60, ("Mirpur 11", "Motijheel"): 70, ("Mirpur 11", "Kamalapur"): 70,
+
+    # 5: Mirpur 10
+    ("Mirpur 10", "Kazipara"): 20, ("Mirpur 10", "Shewrapara"): 20, ("Mirpur 10", "Agargaon"): 20,
+    ("Mirpur 10", "Bijoy Sarani"): 30, ("Mirpur 10", "Farmgate"): 30, ("Mirpur 10", "Karwan Bazar"): 40,
+    ("Mirpur 10", "Shahbagh"): 40, ("Mirpur 10", "Dhaka University"): 50, ("Mirpur 10", "Bangladesh Secretariat"): 50,
+    ("Mirpur 10", "Motijheel"): 60, ("Mirpur 10", "Kamalapur"): 60,
+
+    # 6: Kazipara
+    ("Kazipara", "Shewrapara"): 20, ("Kazipara", "Agargaon"): 20, ("Kazipara", "Bijoy Sarani"): 20,
+    ("Kazipara", "Farmgate"): 30, ("Kazipara", "Karwan Bazar"): 30, ("Kazipara", "Shahbagh"): 40,
+    ("Kazipara", "Dhaka University"): 40, ("Kazipara", "Bangladesh Secretariat"): 50, ("Kazipara", "Motijheel"): 50,
+    ("Kazipara", "Kamalapur"): 60,
+
+    # 7: Shewrapara
+    ("Shewrapara", "Agargaon"): 20, ("Shewrapara", "Bijoy Sarani"): 20, ("Shewrapara", "Farmgate"): 20,
+    ("Shewrapara", "Karwan Bazar"): 30, ("Shewrapara", "Shahbagh"): 30, ("Shewrapara", "Dhaka University"): 40,
+    ("Shewrapara", "Bangladesh Secretariat"): 40, ("Shewrapara", "Motijheel"): 50, ("Shewrapara", "Kamalapur"): 50,
+
+    # 8: Agargaon
+    ("Agargaon", "Bijoy Sarani"): 20, ("Agargaon", "Farmgate"): 20, ("Agargaon", "Karwan Bazar"): 20,
+    ("Agargaon", "Shahbagh"): 30, ("Agargaon", "Dhaka University"): 30, ("Agargaon", "Bangladesh Secretariat"): 40,
+    ("Agargaon", "Motijheel"): 40, ("Agargaon", "Kamalapur"): 50,
+
+    # 9: Bijoy Sarani
+    ("Bijoy Sarani", "Farmgate"): 20, ("Bijoy Sarani", "Karwan Bazar"): 20, ("Bijoy Sarani", "Shahbagh"): 20,
+    ("Bijoy Sarani", "Dhaka University"): 30, ("Bijoy Sarani", "Bangladesh Secretariat"): 30,
+    ("Bijoy Sarani", "Motijheel"): 40, ("Bijoy Sarani", "Kamalapur"): 40,
+
+    # 10: Farmgate
+    ("Farmgate", "Karwan Bazar"): 20, ("Farmgate", "Shahbagh"): 20, ("Farmgate", "Dhaka University"): 20,
+    ("Farmgate", "Bangladesh Secretariat"): 30, ("Farmgate", "Motijheel"): 30, ("Farmgate", "Kamalapur"): 40,
+
+    # 11: Karwan Bazar
+    ("Karwan Bazar", "Shahbagh"): 20, ("Karwan Bazar", "Dhaka University"): 20,
+    ("Karwan Bazar", "Bangladesh Secretariat"): 20, ("Karwan Bazar", "Motijheel"): 30, ("Karwan Bazar", "Kamalapur"): 30,
+
+    # 12: Shahbagh
+    ("Shahbagh", "Dhaka University"): 20, ("Shahbagh", "Bangladesh Secretariat"): 20,
+    ("Shahbagh", "Motijheel"): 20, ("Shahbagh", "Kamalapur"): 30,
+
+    # 13: Dhaka University
+    ("Dhaka University", "Bangladesh Secretariat"): 20, ("Dhaka University", "Motijheel"): 20,
+    ("Dhaka University", "Kamalapur"): 20,
+
+    # 14: Bangladesh Secretariat
+    ("Bangladesh Secretariat", "Motijheel"): 20, ("Bangladesh Secretariat", "Kamalapur"): 20,
+
+    # 15: Motijheel
+    ("Motijheel", "Kamalapur"): 20
 }
 
 # Public Transport Routes
@@ -305,6 +444,102 @@ TRANSIT_ROUTES = [
         "frequency_mins": 4,
         "hubs": ["Jatrabari", "Motijheel"],
         "landmark_instructions": "Jatrabari: Golapbagh bus shed. Motijheel: Dilkusha bank zone."
+    },
+    {
+        "id": "route-a101-shikhor",
+        "name": "Shikhor Paribahan (A-101)",
+        "name_bn": "শিকর পরিবহন (এ-১০১)",
+        "type": "bus",
+        "operator": "Shikhor Paribahan Ltd",
+        "color": "#d97706",
+        "student_pass_allowed": True,
+        "frequency_mins": 8,
+        "hubs": ["Mirpur 10", "Farmgate", "Shahbagh", "Motijheel", "Jatrabari"],
+        "landmark_instructions": "Mirpur 10: Roundabout pillar 184. Farmgate: Ananda Cinema. Shahbagh: PG Hospital. Jatrabari: Flyover ramp."
+    },
+    {
+        "id": "route-a102-bihanga",
+        "name": "Bihanga Paribahan (A-102)",
+        "name_bn": "বিহঙ্গ পরিবহন (এ-১০২)",
+        "type": "bus",
+        "operator": "Bihanga Transport Ltd",
+        "color": "#2563eb",
+        "student_pass_allowed": True,
+        "frequency_mins": 10,
+        "hubs": ["Mirpur 10", "Agargaon", "Farmgate", "Shahbagh"],
+        "landmark_instructions": "Pallabi/Mirpur 10 to Sadarghat corridor via Agargaon IDB, Farmgate Khamarbari, Shahbagh National Museum."
+    },
+    {
+        "id": "route-a105-shadhin",
+        "name": "Shadhin Paribahan (A-105)",
+        "name_bn": "স্বাধীন পরিবহন (এ-১০৫)",
+        "type": "bus",
+        "operator": "Shadhin Transport",
+        "color": "#059669",
+        "student_pass_allowed": True,
+        "frequency_mins": 12,
+        "hubs": ["Mirpur 10", "Agargaon", "Dhanmondi", "Science Lab"],
+        "landmark_instructions": "Duaripara/Mirpur 10 to Science Lab via Agargaon, Manik Mia Ave, Dhanmondi 27."
+    },
+    {
+        "id": "route-a115-baishakhi",
+        "name": "Baishakhi Paribahan (A-115)",
+        "name_bn": "বৈশাখী পরিবহন (এ-১১৫)",
+        "type": "bus",
+        "operator": "Baishakhi Super Service",
+        "color": "#dc2626",
+        "student_pass_allowed": True,
+        "frequency_mins": 10,
+        "hubs": ["Mirpur 10", "Science Lab", "Shahbagh", "Motijheel", "Jatrabari"],
+        "landmark_instructions": "Mirpur-1/10 to Jatrabari via Shyamoli, Science Lab Priyangon, Shahbagh, Bangladesh Bank."
+    },
+    {
+        "id": "route-a132-dhakaparibahan",
+        "name": "Dhaka Paribahan (A-132)",
+        "name_bn": "ঢাকা পরিবহন (এ-১৩২)",
+        "type": "bus",
+        "operator": "Dhaka Paribahan Ltd",
+        "color": "#7c3aed",
+        "student_pass_allowed": True,
+        "frequency_mins": 12,
+        "hubs": ["Uttara", "Mohakhali", "Farmgate", "Shahbagh"],
+        "landmark_instructions": "Baipail/Uttara House Building to Sadarghat via Mohakhali Terminal, Farmgate, Shahbagh."
+    },
+    {
+        "id": "route-a141-almekka",
+        "name": "Al-Mekka Paribahan (A-141)",
+        "name_bn": "আল-মক্কা পরিবহন (এ-১৪১)",
+        "type": "bus",
+        "operator": "Al-Mekka Transport",
+        "color": "#0284c7",
+        "student_pass_allowed": True,
+        "frequency_mins": 10,
+        "hubs": ["Banasree", "Mohakhali", "Agargaon", "Mohammadpur"],
+        "landmark_instructions": "Banasree Block C to Mohammadpur Shia Mosque via Rampura, Mohakhali Wireless, Agargaon, Shyamoli."
+    },
+    {
+        "id": "route-a160-midline",
+        "name": "Midline Paribahan (A-160)",
+        "name_bn": "মিডলাইন পরিবহন (এ-১৬০)",
+        "type": "bus",
+        "operator": "Midline Express",
+        "color": "#ea580c",
+        "student_pass_allowed": True,
+        "frequency_mins": 12,
+        "hubs": ["Mohammadpur", "Science Lab", "Shahbagh", "Motijheel", "Jatrabari"],
+        "landmark_instructions": "Mohammadpur Japan Garden City to Postogola via Science Lab City College, Shahbagh, Motijheel, Jatrabari."
+    },
+    {
+        "id": "route-a170-labbaik",
+        "name": "Labbaik Paribahan (A-170)",
+        "name_bn": "লাব্বাইক পরিবহন (এ-১৭০)",
+        "type": "bus",
+        "operator": "Labbaik Transport Ltd",
+        "color": "#16a34a",
+        "student_pass_allowed": True,
+        "frequency_mins": 8,
+        "hubs": ["Farmgate", "Shahbagh", "Motijheel", "Jatrabari"],
+        "landmark_instructions": "Savar/Gabtoli to Narayanganj via Farmgate Ananda Cinema, Shahbagh, Motijheel Shapla Chattar, Jatrabari."
     }
 ]
 
@@ -331,7 +566,14 @@ TRANSIT_EDGES = {
     ("Uttara", "Badda"): {"distance_km": 12.0, "base_time_mins": 38, "rickshaw_base_bdt": 210},
     ("Motijheel", "Jatrabari"): {"distance_km": 3.5, "base_time_mins": 15, "rickshaw_base_bdt": 65},
     ("Science Lab", "Jatrabari"): {"distance_km": 6.8, "base_time_mins": 30, "rickshaw_base_bdt": 120},
-    ("Agargaon", "Mohakhali"): {"distance_km": 3.6, "base_time_mins": 15, "rickshaw_base_bdt": 70}
+    ("Agargaon", "Mohakhali"): {"distance_km": 3.6, "base_time_mins": 15, "rickshaw_base_bdt": 70},
+    ("Mohammadpur", "Agargaon"): {"distance_km": 3.5, "base_time_mins": 14, "rickshaw_base_bdt": 65},
+    ("Mohakhali", "Banasree"): {"distance_km": 4.8, "base_time_mins": 20, "rickshaw_base_bdt": 90},
+    ("Shahbagh", "Jatrabari"): {"distance_km": 6.2, "base_time_mins": 25, "rickshaw_base_bdt": 110},
+    ("Farmgate", "Jatrabari"): {"distance_km": 9.2, "base_time_mins": 35, "rickshaw_base_bdt": 160},
+    ("Farmgate", "Uttara"): {"distance_km": 11.5, "base_time_mins": 38, "rickshaw_base_bdt": 220},
+    ("Malibagh", "Mohakhali"): {"distance_km": 4.5, "base_time_mins": 18, "rickshaw_base_bdt": 80},
+    ("Agargaon", "Dhanmondi"): {"distance_km": 3.8, "base_time_mins": 15, "rickshaw_base_bdt": 70}
 }
 
 # Pre-seeded Street Disruption Logs
