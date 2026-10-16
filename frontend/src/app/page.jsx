@@ -388,91 +388,60 @@ export default function Home() {
       {/* Full-Width Laptop Screen Container */}
       <div className="flex-1 w-full max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-8 xl:px-10">
 
-        {/* TAB 1: HOME (Clean 2-Column Commute Workspace + Heritage Showcase) */}
+        {/* TAB 1: HOME (Focused Smart Transit Search & Postcard Itineraries) */}
         {currentTab === 'home' && (
-          <div className="space-y-8 my-4">
-            {/* 2-Column Grid: Left (Search + Postcard Route Cards) | Right (Sticky Map) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              {/* Left Column: Commute Query & Vintage BD Postcard Results */}
-              <div className="lg:col-span-7 space-y-6">
-                <RouteSearch
-                  origin={origin}
-                  setOrigin={setOrigin}
-                  destination={destination}
-                  setDestination={setDestination}
-                  passengerType={passengerType}
-                  setPassengerType={setPassengerType}
-                  weather={weather}
-                  setWeather={setWeather}
-                  isRushHour={isRushHour}
-                  setIsRushHour={setIsRushHour}
-                  onSearch={handleManualSearch}
-                  onNlpSearch={handleNlpSearch}
-                  isLoading={isLoadingRoutes}
-                  lang={lang}
-                />
+          <div className="space-y-8 my-4 max-w-6xl mx-auto">
+            {/* Route Query Engine */}
+            <RouteSearch
+              origin={origin}
+              setOrigin={setOrigin}
+              destination={destination}
+              setDestination={setDestination}
+              passengerType={passengerType}
+              setPassengerType={setPassengerType}
+              weather={weather}
+              setWeather={setWeather}
+              isRushHour={isRushHour}
+              setIsRushHour={setIsRushHour}
+              onSearch={handleManualSearch}
+              onNlpSearch={handleNlpSearch}
+              isLoading={isLoadingRoutes}
+              lang={lang}
+            />
 
-                <RouteResults
-                  routes={routes}
-                  origin={origin}
-                  destination={destination}
-                  passengerType={passengerType}
-                  lang={lang}
-                  selectedRouteId={selectedRoute?.id}
-                  onSelectRoute={(r) => setSelectedRoute(r)}
-                  onOpenFareBreakdown={(r) => setFareModalRoute(r)}
-                />
-              </div>
+            {/* Vintage BD Postcard Results */}
+            <RouteResults
+              routes={routes}
+              origin={origin}
+              destination={destination}
+              passengerType={passengerType}
+              lang={lang}
+              selectedRouteId={selectedRoute?.id}
+              onSelectRoute={(r) => setSelectedRoute(r)}
+              onOpenFareBreakdown={(r) => setFareModalRoute(r)}
+            />
 
-              {/* Right Column: Sticky Live Map View & Quick Simulator Banner */}
-              <div className="lg:col-span-5 lg:sticky lg:top-20 space-y-4">
-                <div className="heritage-card p-3 sm:p-4 border-2 border-[#c69429]/50 shadow-2xl bg-[#18130f] rounded-2xl overflow-hidden">
-                  <div className="flex items-center justify-between px-2 pb-2 mb-2 border-b border-[#c69429]/30">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">🗺️</span>
-                      <h3 className="font-rickshaw text-lg font-bold text-[#f6d16f] rickshaw-text-pop">
-                        {lang === 'bn' ? 'লাইভ ট্রানজিট মানচিত্র' : 'Live Transit Map'}
-                      </h3>
-                    </div>
-                    <span className="text-[11px] font-anek font-bold px-2 py-0.5 rounded-full bg-[#15453b] text-[#7dd3fc] border border-[#2a6f62]">
-                      {lang === 'bn' ? '১৬টি হাব ও রুট' : '16 Active Hubs'}
-                    </span>
-                  </div>
-
-                  <MapView
-                    hubs={hubs}
-                    activeAlerts={alerts}
-                    activeRoute={selectedRoute}
-                    lang={lang}
-                    onSelectHub={(hubName) => {
-                      if (hubName !== origin) setDestination(hubName);
-                    }}
-                  />
+            {/* Quick Simulation & Live Map Shortcut Callout */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#18130f] border-2 border-[#c69429]/40 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-xl bg-[#b83a2e]/30 border border-[#b83a2e] flex items-center justify-center text-2xl shrink-0">
+                  🗺️
                 </div>
-
-                {/* Quick Simulation Shortcut Callout */}
-                <div className="p-4 rounded-2xl bg-[#18130f] border-2 border-[#c69429]/40 flex items-center justify-between gap-3 shadow-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#b83a2e]/30 border border-[#b83a2e] flex items-center justify-center text-xl shrink-0">
-                      ⚡
-                    </div>
-                    <div>
-                      <h4 className="font-rickshaw text-base font-bold text-[#f6d16f]">
-                        {lang === 'bn' ? 'আকস্মিক বৃষ্টি বা জ্যাম পরীক্ষা করুন' : 'Test Sudden Rain & Reroute'}
-                      </h4>
-                      <p className="font-anek text-xs text-[#dfcfb2]">
-                        {lang === 'bn' ? 'লাইভ ডিট্যুর ও রিকশা সার্জ সিমুলেটরে দেখুন' : 'Check dynamic detour and rickshaw surge rates'}
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => setCurrentTab('simulator')}
-                    className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#b83a2e] to-[#891e17] text-[#fbf8f1] font-anek font-bold text-xs border border-[#f6d16f] shrink-0 hover:scale-105 active:scale-95 transition-all shadow-md"
-                  >
-                    {lang === 'bn' ? 'সিমুলেটর ➔' : 'Simulate ➔'}
-                  </button>
+                <div>
+                  <h4 className="font-rickshaw text-base sm:text-lg font-bold text-[#f6d16f]">
+                    {lang === 'bn' ? 'লাইভ ইন্টারঅ্যাক্টিভ ম্যাপ ও ক্রাইসিস সিমুলেটর' : 'Live Interactive Map & Crisis Simulator'}
+                  </h4>
+                  <p className="font-anek text-xs sm:text-sm text-[#dfcfb2]">
+                    {lang === 'bn' ? 'বৃষ্টি, জলজট, জ্যাম বা অবরোধে বিকল্প রুট ও রিয়েল-টাইম ডিট্যুর ম্যাপে দেখুন' : 'Explore alternative detours, rain choke-points, and rerouting on the full interactive map'}
+                  </p>
                 </div>
               </div>
+              <button
+                onClick={() => setCurrentTab('simulator')}
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#b83a2e] to-[#891e17] text-[#fbf8f1] font-anek font-bold text-xs sm:text-sm border border-[#f6d16f] shrink-0 hover:scale-105 active:scale-95 transition-all shadow-md"
+              >
+                {lang === 'bn' ? 'সিমুলেটর ও ম্যাপ খুলুন ➔' : 'Open Simulator & Map ➔'}
+              </button>
             </div>
 
             {/* Dhaka Cultural Heritage & Commute Lifelines Showcase */}
