@@ -137,27 +137,24 @@ export default function MobileDrawer({
             <span className={theme === 'light' ? 'text-slate-700 font-bold' : 'text-[#dfcfb2]'}>
               {lang === 'bn' ? 'থিম নির্বাচন' : 'Theme Mode'}
             </span>
-            <button
-              type="button"
-              onClick={() => setTheme && setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold border transition-all active:scale-95 cursor-pointer ${
-                theme === 'light'
-                  ? 'bg-amber-100 text-amber-900 border-amber-300 shadow-sm'
-                  : 'bg-[#292019] text-[#f6d16f] border-[#c69429]/40'
-              }`}
-            >
-              {theme === 'dark' ? (
-                <>
-                  <Sun className="w-3.5 h-3.5 text-amber-400" />
-                  <span>{lang === 'bn' ? 'লাইট' : 'Light'}</span>
-                </>
-              ) : (
-                <>
-                  <Moon className="w-3.5 h-3.5 text-indigo-600" />
-                  <span className="font-extrabold">{lang === 'bn' ? 'ডার্ক' : 'Dark'}</span>
-                </>
-              )}
-            </button>
+            <div className="navbar-segmented-wrap">
+              <button
+                type="button"
+                onClick={() => setTheme && setTheme('light')}
+                className={`navbar-btn ${theme === 'light' ? 'navbar-btn-active-sun' : 'navbar-btn-inactive'}`}
+              >
+                <Sun className="w-3.5 h-3.5" />
+                <span>{lang === 'bn' ? 'লাইট' : 'Light'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setTheme && setTheme('dark')}
+                className={`navbar-btn ${theme === 'dark' ? 'navbar-btn-active-moon' : 'navbar-btn-inactive'}`}
+              >
+                <Moon className="w-3.5 h-3.5" />
+                <span>{lang === 'bn' ? 'ডার্ক' : 'Dark'}</span>
+              </button>
+            </div>
           </div>
 
           {/* Language Selector */}
@@ -165,28 +162,18 @@ export default function MobileDrawer({
             <span className={theme === 'light' ? 'text-slate-700 font-bold' : 'text-[#dfcfb2]'}>
               {lang === 'bn' ? 'ভাষা নির্বাচন' : 'Language'}
             </span>
-            <div className={`flex items-center p-0.5 rounded-lg border text-xs font-anek font-bold ${
-              theme === 'light' ? 'bg-slate-100 border-slate-300' : 'bg-[#1e1712] border-[#c69429]/40'
-            }`}>
+            <div className="navbar-segmented-wrap">
               <button
                 type="button"
-                onClick={() => setLang('bn')}
-                className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
-                  lang === 'bn'
-                    ? (theme === 'light' ? 'bg-white text-[#b83a2e] shadow-sm font-black' : 'bg-[#b83a2e] text-white shadow-md font-black')
-                    : (theme === 'light' ? 'text-slate-600' : 'text-[#dfcfb2]')
-                }`}
+                onClick={() => setLang && setLang('bn')}
+                className={`navbar-btn ${lang === 'bn' ? 'navbar-btn-active-bn' : 'navbar-btn-inactive'}`}
               >
                 বাংলা
               </button>
               <button
                 type="button"
-                onClick={() => setLang('en')}
-                className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
-                  lang === 'en'
-                    ? (theme === 'light' ? 'bg-white text-[#b83a2e] shadow-sm font-black' : 'bg-[#b83a2e] text-white shadow-md font-black')
-                    : (theme === 'light' ? 'text-slate-600' : 'text-[#dfcfb2]')
-                }`}
+                onClick={() => setLang && setLang('en')}
+                className={`navbar-btn ${lang === 'en' ? 'navbar-btn-active-en' : 'navbar-btn-inactive'}`}
               >
                 English
               </button>

@@ -896,4 +896,147 @@ body.dark-theme .dhaka-weather-summary {
   font-weight: 600 !important;
 }
 
+/* ==========================================================================
+   PROTECTED NAVBAR SEGMENTED CONTROLS (LIGHT/DARK & BN/EN)
+   Immune to blanket CSS overrides, guaranteed high contrast on all devices
+   ========================================================================== */
+.navbar-segmented-wrap {
+  display: flex !important;
+  align-items: center !important;
+  padding: 2.5px !important;
+  border-radius: 12px !important;
+  transition: all 0.2s ease !important;
+}
+body.light-theme .navbar-segmented-wrap {
+  background-color: #f1f5f9 !important;
+  border: 1.5px solid #cbd5e1 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+}
+body.dark-theme .navbar-segmented-wrap {
+  background-color: #1e1712 !important;
+  border: 1.5px solid rgba(198, 148, 41, 0.45) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+}
+
+.navbar-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  padding: 4px 9px !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  user-select: none !important;
+  line-height: 1.1 !important;
+  border: 1px solid transparent !important;
+}
+
+/* Active states in Light Mode */
+body.light-theme .navbar-btn-active-sun {
+  background-color: #fbbf24 !important;
+  color: #0f172a !important;
+  border-color: #f59e0b !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.14) !important;
+}
+body.light-theme .navbar-btn-active-sun svg {
+  color: #0f172a !important;
+}
+body.light-theme .navbar-btn-active-moon {
+  background-color: #b83a2e !important;
+  color: #ffffff !important;
+  border-color: #96281e !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.18) !important;
+}
+body.light-theme .navbar-btn-active-moon svg {
+  color: #ffffff !important;
+}
+body.light-theme .navbar-btn-active-bn {
+  background-color: #b83a2e !important;
+  color: #ffffff !important;
+  border-color: #96281e !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.18) !important;
+}
+body.light-theme .navbar-btn-active-en {
+  background-color: #0d5f4e !important;
+  color: #ffffff !important;
+  border-color: #083e33 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.18) !important;
+}
+
+/* Inactive states in Light Mode */
+body.light-theme .navbar-btn-inactive {
+  background-color: transparent !important;
+  color: #475569 !important;
+  border-color: transparent !important;
+}
+body.light-theme .navbar-btn-inactive:hover {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+body.light-theme .navbar-btn-inactive svg {
+  color: #64748b !important;
+}
+body.light-theme .navbar-btn-inactive:hover svg {
+  color: #0f172a !important;
+}
+
+/* Active states in Dark Mode */
+body.dark-theme .navbar-btn-active-sun {
+  background-color: #fbbf24 !important;
+  color: #0f172a !important;
+  border-color: #f59e0b !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3) !important;
+}
+body.dark-theme .navbar-btn-active-sun svg {
+  color: #0f172a !important;
+}
+body.dark-theme .navbar-btn-active-moon {
+  background-color: #b83a2e !important;
+  color: #ffffff !important;
+  border-color: #f6d16f !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4) !important;
+}
+body.dark-theme .navbar-btn-active-moon svg {
+  color: #ffffff !important;
+}
+body.dark-theme .navbar-btn-active-bn {
+  background-color: #b83a2e !important;
+  color: #ffffff !important;
+  border-color: #f6d16f !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4) !important;
+}
+body.dark-theme .navbar-btn-active-en {
+  background-color: #0e6e41 !important;
+  color: #ffffff !important;
+  border-color: #34d399 !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4) !important;
+}
+
+/* Inactive states in Dark Mode */
+body.dark-theme .navbar-btn-inactive {
+  background-color: transparent !important;
+  color: #dfcfb2 !important;
+  border-color: transparent !important;
+}
+body.dark-theme .navbar-btn-inactive:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+body.dark-theme .navbar-btn-inactive svg {
+  color: #c69429 !important;
+}
+body.dark-theme .navbar-btn-inactive:hover svg {
+  color: #ffffff !important;
+}
+
+/* Active navigation tab in Light theme: clean white text on crimson plate with golden outline */
+body.light-theme nav button[class*="from-[#b83a2e]"],
+body.light-theme nav button[class*="from-[#b83a2e]"] * {
+  color: #ffffff !important;
+}
+
+
 
